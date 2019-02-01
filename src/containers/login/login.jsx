@@ -55,7 +55,7 @@ class Login extends Component {
     window.axios.get('/api/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {
       console.log(rs);
     });
-    //this.props.history.push({pathname: '/main'});
+    this.props.history.push({pathname: '/main'});
   }
   render() {
     return (
