@@ -89,5 +89,13 @@
     "last 2 versions",
     "not ie <= 8"
   ],
-  "proxy": "http://testnmweb.liantuobank.cn"
+  "proxy": {
+    "/api/": {
+      "target": "http://testnmweb.liantuobank.cn",
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/api/": ""
+      }
+    }
+  }
 }

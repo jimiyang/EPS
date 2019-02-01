@@ -45,28 +45,14 @@ class Login extends Component {
       message.error('请输入用户名或密码');
       return false;
     }
-    if (this.state.txtCode === '') {
+    /*if (this.state.txtCode === '') {
       message.error('验证码不能为空，请输入验证码');
-      return false;
+      //return false;
     } else if (this.state.txtCode !== this.state.authCode) {
       message.error('验证码输入不一致');
-      return false;
-    }
-    const ajax = window.axios.create({
-      baseURL: '/api',
-      withCredentials: true
-    });
-    /*ajax.interceptors.request.use(function (config) {
-      return config;
-    }, function (error) {
-      return Promise.reject(error);
-    });
-    ajax.interceptors.response.use(function (response) {
-      return response
-    }, function (error) {
-      return Promise.reject(error)
-    });*/
-    ajax.get('/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {
+      //return false;
+    }*/
+    window.axios.get('/api/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {
       console.log(rs);
     });
     //this.props.history.push({pathname: '/main'});
