@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {Layout, message, Input, Icon} from 'antd';
+import {message, Input, Icon} from 'antd';
 
 import './login.css';
 
@@ -16,6 +16,7 @@ class Login extends Component {
   }
   //组件刚经历constructor,初始完数据,未渲染,dom还未渲染
   componentWillMount() {
+    console.log(window.common);
     this.setState({
       authCode: window.common.createCode()
     });
@@ -45,14 +46,14 @@ class Login extends Component {
       message.error('请输入用户名或密码');
       return false;
     }
-    /*if (this.state.txtCode === '') {
+    if (this.state.txtCode === '') {
       message.error('验证码不能为空，请输入验证码');
       //return false;
     } else if (this.state.txtCode !== this.state.authCode) {
       message.error('验证码输入不一致');
       //return false;
-    }*/
-    window.axios.get('/api/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {
+    }
+    axios.get('/api/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {
       console.log(rs);
     });
     //this.props.history.push({pathname: '/main'});

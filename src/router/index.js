@@ -4,7 +4,7 @@ import {hot} from 'react-hot-loader';
 //登陆
 import Login from '../containers/login/login';
 //主页
-import Main from '../containers/main/main';
+import Main from '../containers/backEnd/main';
 
 const Router = ({component: Component, children, ...rest}) => (
   <Route

@@ -1,4 +1,4 @@
-const obj = {
+const utils = {
   //获取验证码
   createCode() {
     let code = '';
@@ -12,4 +12,4 @@ const obj = {
     return code.toUpperCase();
   }
 };
-export default obj;
+export default utils;

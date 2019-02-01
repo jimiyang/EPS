@@ -1,14 +1,14 @@
 {
-  "extends": "airbnb", // use eslint-config-airbnb
+  "extends": "airbnb",
   "parser": "babel-eslint",
   "env": {
     "es6": true,
     "browser": true
   },
   "globals": {
-    "store": false, //排除定义在window对象上的store
-    "axios": false, //排除定义在window对象上的axios
-    "$": false,  //排除定义在window对象上的$
+    "store": false,
+    "axios": false,
+    "$": false,
     "__DEVTOOLS__": false,
     "__DMTEST__": false,
     "__DEVELOPMENT__": false
@@ -25,7 +25,6 @@
     "no-unused-expressions": ["off"],
     "max-len": ["warn", 100, 2, {"ignoreComments": true}],
     "object-curly-spacing": ["warn", "never"],
-    /* close */
     "react/no-danger": 0,
     "arrow-parens": 0,
     "array-callback-return": 0,
