@@ -13,13 +13,17 @@ import './style/index.styl';
 import './assets/iconfont.css';
 import './assets/iconfont.js';
 
+//commonjs
+import common from './commonJs/common';
+
 const history = createHistory();
 export default history;
 // window object
 window.store = store;
 window.axios = axios;
+window.common = common;
 
-const tid = localStorage.getItem('tid');
+/*const tid = localStorage.getItem('tid');
 axios.defaults.headers.tid = tid || ''; // axios headers token
 axios.interceptors.response.use(
   res => res,
@@ -39,5 +43,5 @@ axios.interceptors.response.use(
       }, 600);
     }
   }
-);
+);*/
 ReactDOM.render(<Root />, document.getElementById('app'));

@@ -5,14 +5,18 @@ import {hot} from 'react-hot-loader';
 import Store from '../redux';
 import DevTools from '../redux/DevTools';
 import App from '../containers/app';
-import Login from '../containers/login';
-import Main from '../containers/main';
+//import Login from '../containers/login';
+//import Main from '../containers/main';
 import NotFound from '../containers/notfound';
 import List from '../containers/list';
 import Img from '../containers/img';
 import Svg from '../containers/svg';
 import Icon from '../containers/icon';
 import User from '../containers/user';
+//登陆
+import Login from '../containers/login/login';
+//主页
+import Main from '../containers/main/main';
 
 const Router = ({component: Component, children, ...rest}) => (
   <Route
