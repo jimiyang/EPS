@@ -23,9 +23,6 @@ const Root = () => (
       <Switch>
         <Route exact path="/login" component={Login} />
         <Route path="/" component={Main} />
-        <Route path="/center" component={Center}>
-          <Route path="/list" component={ProductList} />
-        </Route>
       </Switch>
     </div>
   </BrowserRouter>

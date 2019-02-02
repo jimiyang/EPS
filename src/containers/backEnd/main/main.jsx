@@ -12,7 +12,17 @@ import './main.css';
 
 import Center from '../center';
 
-console.log(Center);
+import List from '../productManagement/list';
+
+import DeliveryList from '../deliveryMangement/deliverylist';
+
+import TypeList from '../productType/typelist';
+
+import Addition from '../employeesMangement/add';
+
+import EmployessList from '../employeesMangement/employesslist';
+
+console.log(EmployessList);
 //const SubMenu = Menu.SubMenu;
 const {SubMenu} = Menu;
 const {
@@ -27,17 +37,21 @@ class Main extends Component {
         <Layout>
           <Sider>
             <Menu mode="inline">
-              <Menu.Item key="1"><Link to="/center/list">商品管理</Link></Menu.Item>
-              <Menu.Item key="2">发货订单管理</Menu.Item>
-              <Menu.Item key="3">商品类型管理</Menu.Item>
+              <Menu.Item key="1"><Link to="/list">商品管理</Link></Menu.Item>
+              <Menu.Item key="2"><Link to="/deliverylist">发货订单管理</Link></Menu.Item>
+              <Menu.Item key="3"><Link to="/typelist">商品类型管理</Link></Menu.Item>
               <SubMenu key="sub1" title={<span>员工管理</span>}>
-                <Menu.Item key="4">员工管理</Menu.Item>
-                <Menu.Item key="5">添加员工</Menu.Item>
+                <Menu.Item key="4"><Link to="/add">添加员工</Link></Menu.Item>
+                <Menu.Item key="5"><Link to="/employesslist">员工管理</Link></Menu.Item>
               </SubMenu>
             </Menu>
           </Sider>
           <Content>
-            <Route path="/center/list" component={Center} />
+            <Route path="/list" component={List} />
+            <Route path="/deliverylist" component={DeliveryList} />
+            <Route path="/typelist" component={TypeList} />
+            <Route path="/add" component={Addition} />
+            <Route path="/employesslist" component={EmployessList} />
           </Content>
         </Layout>
       </Layout>
