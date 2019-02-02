@@ -47,10 +47,10 @@ class Login extends Component {
       return false;
     }
     if (this.state.txtCode === '') {
-      message.error('验证码不能为空，请输入验证码');
+      //message.error('验证码不能为空，请输入验证码');
       //return false;
     } else if (this.state.txtCode !== this.state.authCode) {
-      message.error('验证码输入不一致');
+      //message.error('验证码输入不一致');
       //return false;
     }
     axios.get('/api/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {

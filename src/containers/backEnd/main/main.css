@@ -2,3 +2,4 @@
 .main-blocks .ant-layout-header{background:#fff;font-size:20px;border-bottom:1px solid #ccc;height:80px;}
 .ant-layout-has-sider{position: absolute;bottom: 0;top: 80px;left: 0;right: 0;}
 .main-blocks .ant-layout-sider-children{background:#fff;}
+.main-blocks .ant-layout-sider-children .ant-menu-light{position: absolute;top:0;bottom:0;}
