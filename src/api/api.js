@@ -14,7 +14,6 @@ instance.interceptors.response.use(
   res => res,
   err => {
     const {data: {err: errnum, error}} = (err || {}).response;
-    console.log(err);
     if (errnum === 200 && error) {
       message.success(error);
     } else {

@@ -5,6 +5,7 @@ import axios from './api/api';
 import Root from './router';
 
 // css
+import './style/reset.css';
 import './style/index.styl';
 // iconfont
 import './assets/iconfont.css';

@@ -5,6 +5,8 @@ import {hot} from 'react-hot-loader';
 import Login from '../containers/login/login';
 //主页
 import Main from '../containers/backEnd/main';
+//前台
+import index from '../containers/frontEnd/index';
 
 const Router = ({component: Component, children, ...rest}) => (
   <Route
@@ -20,7 +22,7 @@ const Root = () => (
     <div className="router-content">
       <Switch>
         <Route exact path="/login" component={Login} />
-        <Router path="/" component={Main} />
+        <Router path="/index" component={index} />
       </Switch>
     </div>
   </BrowserRouter>
