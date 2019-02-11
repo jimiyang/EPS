@@ -10,7 +10,7 @@ class Index extends Component {
   componentWillMount() {
   }
   toSearchDetail = () => {
-    this.props.history.push('/searchDetail');
+    this.props.history.push('/index/searchDetail');
   }
   render() {
     return (
@@ -35,7 +35,7 @@ class Index extends Component {
         </section>
         <section>
           <Route path="/index/listOfCommodities" component={listOfCommodities} />
-          <Route path="/searchDetail" component={searchDetail} />
+          <Route path="/index/searchDetail" component={searchDetail} />
         </section>
       </div>
     );
