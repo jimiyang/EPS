@@ -13,6 +13,17 @@
 }
 .product-blocks li label{display:inline-block;width:120px;}
 .product-blocks li input{text-align: left;}
+.product-blocks li .search-list{position: relative;}
+.product-blocks li .search-list .ant-list-bordered{
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+    position: absolute;
+    z-index: 9999;
+    background: #fff;
+    left: 0;
+    right: 0;
+    border: 1px solid #000;
+}
 .ml10{margin:0 10px;}
 .opearte-blocks span{cursor: pointer; color:#1890ff;}
 .product-blocks .table-box{margin-top:30px;}
