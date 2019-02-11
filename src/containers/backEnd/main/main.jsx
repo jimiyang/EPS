@@ -22,7 +22,6 @@ import Addition from '../employeesMangement/add';
 
 import EmployessList from '../employeesMangement/employesslist';
 
-console.log(EmployessList);
 //const SubMenu = Menu.SubMenu;
 const {SubMenu} = Menu;
 const {
@@ -46,7 +45,7 @@ class Main extends Component {
               </SubMenu>
             </Menu>
           </Sider>
-          <Content>
+          <Content className="main-content">
             <Route path="/list" component={List} />
             <Route path="/deliverylist" component={DeliveryList} />
             <Route path="/typelist" component={TypeList} />

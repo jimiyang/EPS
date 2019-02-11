@@ -23,7 +23,7 @@
     "jsx-quotes": ["error"],
     "indent": ["error", 2, {"SwitchCase": 1}],
     "no-unused-expressions": ["off"],
-    "max-len": ["warn", 100, 2, {"ignoreComments": true}],
+    "max-len": ["warn", 1000, 2, {"ignoreComments": true}],
     "object-curly-spacing": ["warn", "never"],
     "react/no-danger": 0,
     "arrow-parens": 0,

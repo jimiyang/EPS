@@ -1,5 +1,6 @@
 .main-blocks{background: #f00;}
-.main-blocks .ant-layout-header{background:#fff;font-size:20px;border-bottom:1px solid #ccc;height:80px;}
+.main-blocks .ant-layout-header{background:#EDEDED;font-size:20px;line-height:80px;border-bottom:1px solid #D9DEE4;height:80px;}
 .ant-layout-has-sider{position: absolute;bottom: 0;top: 80px;left: 0;right: 0;}
 .main-blocks .ant-layout-sider-children{background:#fff;}
-.main-blocks .ant-layout-sider-children .ant-menu-light{position: absolute;top:0;bottom:0;}
+.main-blocks .ant-layout-sider-children .ant-menu-light{position: absolute;top:0;bottom:0;background: #f6f7f8;}
+.main-content{padding:20px;background:#fff;}

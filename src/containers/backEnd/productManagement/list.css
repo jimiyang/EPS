@@ -1,0 +1,18 @@
+.product-blocks .nav-items{border-bottom: 1px solid #ccc;}
+.product-blocks .nav-items a{
+    display: inline-block;font-size:14px;padding:10px 20px;border-bottom: 2px solid transparent;
+    position: relative; top:1px;
+}
+.product-blocks .nav-items a.active{border-bottom: 2px solid #1890ff;}
+.product-blocks ul.search-blocks{
+    display: flex;justify-content: flex-start;margin-top:30px;font-size:14px;
+}
+.product-blocks li.items{
+    text-align: center;margin-right:20px;display: flex;justify-content: flex-start;
+    align-items: center;
+}
+.product-blocks li label{display:inline-block;width:120px;}
+.product-blocks li input{text-align: left;}
+.ml10{margin:0 10px;}
+.opearte-blocks span{cursor: pointer; color:#1890ff;}
+.product-blocks .table-box{margin-top:30px;}
