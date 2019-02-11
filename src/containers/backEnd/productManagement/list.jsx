@@ -18,21 +18,16 @@ class ProductList extends Component {
     };
   }
   componentWillMount() {
-    console.log(this.state.search);
   }
   searchName = () => {
-    console.log('aa');
   }
   selType = () => {
-    console.log(1);
   }
   //编辑
   edit = (item) => {
-    console.log(`id：${item.id}`);
   }
   //下架
   confirm = (item) => {
-    console.log(item);
     message.success('下架成功！');
   }
   cancel = () => {

@@ -4,15 +4,30 @@ import listOfCommodities from './listOfCommodities/listOfCommodities';
 import searchDetail from './searchDetail/searchDetail';
 import './index.less';
 
+function IsLogin(props) {
+  if (props.loginstate) {
+    return <div><img src={require('../../assets/logo.png')} /><p>刘玲一级代理商</p></div>;
+  }
+  return <div><p className="not">您还未登录，请登录</p></div>;
+}
+
 class Index extends Component {
-  state = {
+  constructor() {
+    super();
+    this.state = {
+      loginstate: true, // 0 未登录 1 已登录
+    };
   }
   componentWillMount() {
   }
   toSearchDetail = () => {
     this.props.history.push('/index/searchDetail');
   }
+  logout = () => {
+    this.setState({loginstate: !this.state.loginstate});
+  }
   render() {
+    const {loginstate} = this.state;
     return (
       <div id="frontEnd">
         <header id="header">
@@ -20,8 +35,7 @@ class Index extends Component {
             <li>首页</li>
           </ul>
           <div>
-            <img src={require('../../assets/logo.png')} />
-            <p>刘玲一级代理商</p>
+            <IsLogin loginstate={loginstate} />
             <span>|</span>
             <p>我的订单</p>
           </div>
