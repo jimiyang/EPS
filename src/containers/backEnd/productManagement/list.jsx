@@ -1,19 +1,21 @@
 import React, {Component} from 'react';
 
-import {Icon, Input, AutoComplete, Button, Table, Popconfirm, message, List} from 'antd';
+import {
+  Icon,
+  Input,
+  AutoComplete,
+  Button,
+  Table,
+  Popconfirm,
+  message,
+  Modal
+} from 'antd';
 
 import './list.css';
 
-const {Search} = Input;
+import Tree from './treeMenu';//树形结构商品类型
+
 const {Option} = AutoComplete;
-//const OptGroup = AutoComplete.OptGroup;
-function renderOption(item) {
-  return (
-    <Option key={item.code}>
-      {item}
-    </Option>
-  );
-}
 class ProductList extends Component {
   constructor(props) {
     super(props);
@@ -23,29 +25,26 @@ class ProductList extends Component {
         defaultCurrent: 1,
         pageSize: 2,
         showSizeChanger: true,
+        typeValue: ''
       },
-      productNameData: [
-        {name: '上海银行', code: 141},
-        {name: '中国银行', code: 142},
-        {name: '北京银行', code: 143}
-      ]//, //商品名称数据
-      //barCodeData: [] //条形码数据
+      typeTitle: '',
+      visible: false,
+      productNameData: [], ///商品名称数据
+      barCodeData: [] //条形码数据
     };
   }
-  //{name: '上海银行', code: 141},
-  //{name: '中国银行', code: 142},
-  //{name: '北京银行', code: 143}
+  //数据加载，dom未初始化
   componentWillMount() {
-    //console.log(this.state.search);
-    console.log(this.state.productNameData);
-    console.log(renderOption('a'));
+    //console.log(this.state.productNameData.map(this.renderOption));
+    //console.log(this.state.barCodeData);
   }
-
   searchName = () => {
     console.log('aa');
   }
   selType = () => {
-    console.log(1);
+    this.setState({
+      visible: true
+    });
   }
   //编辑
   edit = (item) => {
@@ -59,8 +58,50 @@ class ProductList extends Component {
   cancel = () => {
     message.error('已取消！');
   }
-  handleSearch = (item) => {
-    this.state.productNameData.map(renderOption);
+  renderOption(item) {
+    return (
+      <Option key={item.name} text={item.name}>
+        {item.name}
+      </Option>
+    );
+  }
+  //商品名称模糊搜索
+  handleNameSearch = (value) => {
+    const data = [
+      {name: '上海银行', code: 141},
+      {name: '中国银行', code: 142},
+      {name: '北京银行', code: 143}
+    ];
+    const node = data.map((item, idx) => ({
+      name: `${item.name}/${item.code}`
+    }));
+    this.setState({
+      productNameData: value ? node : [],
+    });
+  }
+  //商品条形码模糊搜索
+  handleCodeSearch = (value) => {
+    console.log(value);
+  }
+  handleOk = () => {
+    this.setState({
+      typeValue: this.state.typeTitle,
+      visible: false
+    });
+  }
+  handleCancel = () => {
+    this.setState({
+      visible: false
+    });
+  }
+  changeHandler = (key, e) => {
+    this.setState({
+      typeTitle: e.node.props.title
+    });
+    //console.log(this.state.typeTitle);
+  }
+  addProduct = () => {
+    this.props.history.push({pathname: '/addPro'});
   }
   render() {
     const columns = [
@@ -140,9 +181,22 @@ class ProductList extends Component {
     ];
     return (
       <div className="product-blocks">
+        <Modal
+          title="请选择商品类型"
+          okText="确定"
+          cancelText="取消"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <Tree onSelect={this.changeHandler} />
+        </Modal>
         <div className="nav-items">
-          <a href="" className="active">出售中的商品</a>|
-          <a href="">已下架的商品</a>
+          <div>
+            <a href="" className="active">出售中的商品</a>|
+            <a href="">已下架的商品</a>
+          </div>
+          <Button type="primary" onClick={this.addProduct.bind(this)}>新增商品</Button>
         </div>
         <ul className="search-blocks">
           <li className="items"><label>商品名称：</label>
@@ -150,11 +204,10 @@ class ProductList extends Component {
               className="certain-category-search"
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
-              dropdownStyle={{ width: 300 }}
               size="large"
               style={{ width: '100%' }}
-              dataSource={this.state.productNameData.map(renderOption)}
-              onSearch={this.handleSearch}
+              dataSource={this.state.productNameData.map(this.renderOption)}
+              onBlur={this.handleNameSearch}
               placeholder="请输入商品名称"
               optionLabelProp="value"
             >
@@ -162,23 +215,25 @@ class ProductList extends Component {
             </AutoComplete>
           </li>
           <li className="items"><label>商品条形码：</label>
-            <div className="search-list">
-              <Search
-                placeholder="input search text"
-                onSearch={this.handleSearch}
-                style={{ width: 200 }}
-              />
-              <List
-                bordered
-                dataSource={this.state.productNameData}
-                renderItem={item => (<List.Item>{item.name}</List.Item>)}
-              />
-            </div>
+            <AutoComplete
+              className="certain-category-search"
+              dropdownClassName="certain-category-search-dropdown"
+              dropdownMatchSelectWidth={false}
+              size="large"
+              style={{ width: '100%' }}
+              dataSource={this.state.barCodeData.map(this.renderOption)}
+              onBlur={this.handleCodeSearch}
+              placeholder="请输入商品条形码"
+              optionLabelProp="value"
+            >
+              <Input suffix={<Icon type="search" className="certain-category-icon" />} />
+            </AutoComplete>
           </li>
           <li className="items"><label>商品类型：</label>
             <Input
               placeholder="请选择商品类型"
               onClick={this.selType.bind(this)}
+              value={this.state.typeValue}
             />
           </li>
           <li className="items"><Button type="primary">搜索</Button></li>

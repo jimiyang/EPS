@@ -1,4 +1,9 @@
-.product-blocks .nav-items{border-bottom: 1px solid #ccc;}
+.product-blocks .nav-items{
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .product-blocks .nav-items a{
     display: inline-block;font-size:14px;padding:10px 20px;border-bottom: 2px solid transparent;
     position: relative; top:1px;
@@ -27,3 +32,5 @@
 .ml10{margin:0 10px;}
 .opearte-blocks span{cursor: pointer; color:#1890ff;}
 .product-blocks .table-box{margin-top:30px;}
+.add-blocks .form .ant-form-item{display: flex;}
+.add-blocks .form .ant-form-item .ant-form-item-control-wrapper{width: 80%;}
