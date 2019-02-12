@@ -30,29 +30,31 @@ class ListOfCommodities extends Component {
   }
   componentWillMount() {
   }
+  componentDidMount() {
+  }
   render() {
     const {hardware, software} = this.state;
     return (
       <div id="listOfCommodities">
         <section>
-          <h3>硬件</h3>
+          <h3>· 硬件</h3>
           <ul>
             {hardware.map(($0, $1) => (
               <li key={$1}>
-                <img src={$0.bg} />
+                <img src={$0.img} />
                 <p>{$0.title}</p>
-                <p>{$0.price}</p>
+                <p className="price">{$0.price}</p>
               </li>))}
           </ul>
         </section>
         <section>
-          <h3>软件</h3>
+          <h3>· 软件</h3>
           <ul>
             {software.map(($0, $1) => (
               <li key={$1}>
-                <img src={$0.bg} />
+                <img src={$0.img} />
                 <p>{$0.title}</p>
-                <p>{$0.price}</p>
+                <p className="price">{$0.price}</p>
               </li>))}
           </ul>
         </section>

@@ -37,14 +37,18 @@ class Index extends Component {
           <div>
             <IsLogin loginstate={loginstate} />
             <span>|</span>
-            <p>我的订单</p>
+            <p>购物车</p>
+            <span>|</span>
+            <p className="myOrder">我的订单</p>
           </div>
         </header>
         <section id="search">
           <h1>联拓富新零售赋能平台</h1>
-          <input type="text" />
-          <div onClick={this.toSearchDetail}>
-            <img src={require('../../assets/frontENd/search.png')} />
+          <div className="search">
+            <input type="text" />
+            <div onClick={this.toSearchDetail}>
+              <img src={require('../../assets/frontENd/search.png')} />
+            </div>
           </div>
         </section>
         <section>

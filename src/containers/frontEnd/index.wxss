@@ -1,3 +1,6 @@
+#frontEnd {
+  width: 100%;
+}
 #frontEnd #header {
   display: flex;
   justify-content: space-between;
@@ -29,26 +32,35 @@
 #frontEnd #header > div div .not {
   color: #fc3339;
 }
+#frontEnd #header .myOrder {
+  color: #fc3339;
+}
 #frontEnd #search {
   height: 78px;
-  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #d7d7d7;
+  padding: 0 60px;
+}
+#frontEnd #search h1 {
+  font-size: 20px;
+}
+#frontEnd #search .search {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #d7d7d7;
 }
-#frontEnd #search h1 {
-  position: absolute;
-  left: 60px;
-  top: 30px;
-  font-size: 20px;
-}
-#frontEnd #search input {
-  width: 500px;
+#frontEnd #search .search input {
+  width: 350px;
   height: 40px;
   border: 1px solid #ccc;
+  padding: 0 10px;
 }
-#frontEnd #search div {
+#frontEnd #search .search input:focus {
+  outline: none;
+}
+#frontEnd #search .search div {
   background: #aeaeae;
   width: 40px;
   height: 40px;
@@ -56,6 +68,6 @@
   justify-content: center;
   align-items: center;
 }
-#frontEnd #search div img {
+#frontEnd #search .search div img {
   width: 20px;
 }

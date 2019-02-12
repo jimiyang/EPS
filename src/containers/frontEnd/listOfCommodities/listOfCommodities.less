@@ -1,4 +1,41 @@
 #listOfCommodities {
-  width: 1700px;
-  margin: 0 auto;
+  width: 1200px;
+  margin: 20px auto 0;
+  h3 {
+    font-size: 20px;
+    background: #3290FF;
+    color: #fff;
+    line-height: 40px;
+    padding-left: 10px;
+  }
+  ul {
+    overflow: hidden;
+    li {
+      width: 250px;
+      margin: 25px 25px;
+      height: 300px;
+      border: 1px solid #797979;
+      float: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      &:hover {
+        border-color: #3290FF;
+        cursor: pointer;
+      }
+      img {
+        width: 185px;
+        height: 160px;
+        margin-bottom: 20px;
+      }
+      p {
+        margin-top: 10px;
+      }
+      .price {
+        color: #FF4430;
+      }
+    }
+  }
 }

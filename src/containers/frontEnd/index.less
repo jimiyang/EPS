@@ -1,4 +1,5 @@
 #frontEnd {
+  width: 100%;
   #header {
     display: flex;
     justify-content: space-between;
@@ -29,34 +30,43 @@
         }
       }
     }
+    .myOrder {
+      color: #fc3339;
+    }
   }
   #search {
     height: 78px;
-    position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #d7d7d7;
+    padding: 0 60px;
     h1 {
-      position: absolute;
-      left: 60px;
-      top: 30px;
       font-size: 20px;
     }
-    input {
-        width: 500px;
-        height: 40px;
-        border: 1px solid #ccc;
-    }
-    div {
-      background: #aeaeae;
-      width: 40px;
-      height: 40px;
+    .search {
       display: flex;
       justify-content: center;
       align-items: center;
-      img {
-        width: 20px;
+      input {
+        width: 350px;
+        height: 40px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        &:focus {
+          outline: none;
+        }
+      }
+      div {
+        background: #aeaeae;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          width: 20px;
+        }
       }
     }
   }
