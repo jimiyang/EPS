@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, Route, Switch, Link} from 'react-router-dom';
+import {hashHistory} from 'react-router';
 import listOfCommodities from './listOfCommodities/listOfCommodities';
 import searchDetail from './searchDetail/searchDetail';
 import './index.less';
@@ -16,15 +17,27 @@ class Index extends Component {
     super();
     this.state = {
       loginstate: true, // 0 未登录 1 已登录
+      canSearch: false, // 是否能够搜索
+      searchContent: '', // 搜索的内容
     };
   }
-  componentWillMount() {
+  toHome = () => {
+    this.props.history.push('/');
   }
-  toSearchDetail = () => {
-    this.props.history.push('/index/searchDetail');
-  }
+  // 登出
   logout = () => {
     this.setState({loginstate: !this.state.loginstate});
+  }
+  // 获取搜索框内容
+  getSearchContent = (e) => {
+    e.target.value !== this.state.searchContent ? this.setState({searchContent: e.target.value, canSearch: true}) : null;
+  }
+  // 跳转到搜索页
+  toSearchDetail = () => {
+    if (this.state.canSearch) {
+      this.props.history.push(`/searchDetail/${this.state.searchContent}`);
+      this.setState({canSearch: false});
+    }
   }
   render() {
     const {loginstate} = this.state;
@@ -32,12 +45,10 @@ class Index extends Component {
       <div id="frontEnd">
         <header id="header">
           <ul>
-            <li>首页</li>
+            <li onClick={this.toHome}>首页</li>
           </ul>
           <div>
             <IsLogin loginstate={loginstate} />
-            <span>|</span>
-            <p>购物车</p>
             <span>|</span>
             <p className="myOrder">我的订单</p>
           </div>
@@ -45,15 +56,16 @@ class Index extends Component {
         <section id="search">
           <h1>联拓富新零售赋能平台</h1>
           <div className="search">
-            <input type="text" />
+            <input type="text" onChange={this.getSearchContent} value={this.state.searchContent} />
             <div onClick={this.toSearchDetail}>
               <img src={require('../../assets/frontENd/search.png')} />
             </div>
           </div>
         </section>
         <section>
-          <Route path="/index/listOfCommodities" component={listOfCommodities} />
-          <Route path="/index/searchDetail" component={searchDetail} />
+          <Route path="/listOfCommodities" component={listOfCommodities} />
+          <Route exact path="/" component={listOfCommodities} />
+          <Route path="/searchDetail" params={this.state.searchCOntent} component={searchDetail} />
         </section>
       </div>
     );

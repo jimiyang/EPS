@@ -24,7 +24,7 @@ const Root = () => (
     <div className="router-content">
       <Switch>
         <Route exact path="/login" component={Login} />
-        <Router path="/index" component={index} />
+        <Router path="/" component={index} />
       </Switch>
     </div>
   </BrowserRouter>

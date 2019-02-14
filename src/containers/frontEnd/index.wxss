@@ -10,6 +10,10 @@
   border-bottom: 1px solid #797979;
   background: #f2f2f2;
 }
+#frontEnd #header ul li {
+  color: #fc3339;
+  cursor: pointer;
+}
 #frontEnd #header > div {
   display: flex;
   justify-content: center;
@@ -33,7 +37,7 @@
   color: #fc3339;
 }
 #frontEnd #header .myOrder {
-  color: #fc3339;
+  color: #1DC06F;
 }
 #frontEnd #search {
   height: 78px;
@@ -50,6 +54,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 #frontEnd #search .search input {
   width: 350px;
