@@ -2,7 +2,7 @@ import axios from 'axios';
 import {message} from 'antd';
 
 const instance = axios.create({
-  baseURL: '',
+  baseURL: '/api',
   timeout: 1000,
   withCredentials: true,
   headers: {'content-type': 'application/x-www-form-urlencoded'}

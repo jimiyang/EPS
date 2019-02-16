@@ -34,3 +34,10 @@
 .product-blocks .table-box{margin-top:30px;}
 .add-blocks .form .ant-form-item{display: flex;}
 .add-blocks .form .ant-form-item .ant-form-item-control-wrapper{width: 80%;}
+.add-blocks .ant-form-item-label label{display: inline-block;width:120px;}
+.ant-form-item-control-wrapper img{width:200px;height: 200px;}
+.add-blocks .ant-upload.ant-upload-select-picture-card{width:220px;height:220px;}
+.add-blocks .ant-form-item-children input{width:60%;margin-right:10px;}
+.add-blocks .ql-snow .ql-picker{line-height:24px;}
+.g-tc{text-align:center;}
+.h400{height:400px;}

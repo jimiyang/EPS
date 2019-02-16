@@ -16,7 +16,7 @@ class Login extends Component {
   }
   //组件刚经历constructor,初始完数据,未渲染,dom还未渲染
   componentWillMount() {
-    console.log(window.common);
+    //console.log(window.common);
     this.setState({
       authCode: window.common.createCode()
     });
@@ -53,7 +53,8 @@ class Login extends Component {
       //message.error('验证码输入不一致');
       //return false;
     }
-    axios.get('/api/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {
+    console.log(axios);
+    axios.get('/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {
       console.log(rs);
     });
     this.props.history.push({pathname: '/main'});

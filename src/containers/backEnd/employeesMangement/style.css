@@ -1,0 +1,24 @@
+.employess-blocks .search-box button{
+    margin-left:20px;
+}
+.employess-blocks table{margin-top:20px;}
+.employess-blocks .ant-row{
+    display: flex;
+}
+.employess-blocks .ant-row .ant-form-item-label label{
+    display: inline-block;width:120px;
+}
+.employess-blocks .ant-row .ant-form-item-control-wrapper{width:90%;}
+.employess-blocks .ant-row input{width:50%;}
+.employess-blocks .btn-blocks{padding-left:20%;}
+.employess-blocks .btn-blocks button{margin:0 20px;}
+.employess-blocks .detail-box li{
+    display: flex;align-items: center;
+    font-size:15px;padding:10px 0;
+}
+.employess-blocks .detail-box li label{
+    display: inline-block;width: 100px;text-align: right;
+}
+.employess-blocks .detail-box li .content{
+    padding-left:10px;
+}
