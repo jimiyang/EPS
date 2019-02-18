@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {Layout, Menu, Icon} from 'antd';
+import {Layout, Menu, message} from 'antd';
 
 import {
   BrowserRouter as Router,
@@ -31,10 +31,19 @@ const {
 } = Layout;
 
 class Main extends Component {
+  componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
+  }
   render() {
     return (
       <Layout className="main-blocks">
-        <Header>采购平台-管理后台</Header>
+        <Header>
+          采购平台-管理后台
+          <div>
+            <Link to="/login">退出登录</Link>
+          </div>
+        </Header>
         <Layout>
           <Sider>
             <Menu mode="inline">

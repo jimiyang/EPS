@@ -15,37 +15,34 @@ import './list.css';
 
 import Tree from './treeMenu';//树形结构商品类型
 
-import api from '../../../api/inst.js';
-
 const {Option} = AutoComplete;
 class ProductList extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isActive: 0,
+      typeTitle: '',
+      visible: false,
+      productNameData: [], ///商品名称数据
+      barCodeData: [], //条形码数据
       search: {
         total: 3,
         defaultCurrent: 1,
         pageSize: 2,
         showSizeChanger: true,
         typeValue: ''
-      },
-      typeTitle: '',
-      visible: false,
-      productNameData: [], ///商品名称数据
-      barCodeData: [] //条形码数据
+      }
     };
   }
   //数据加载，dom未初始化
-  componentWillMount() {
-    //console.log(this.state.productNameData.map(this.renderOption));
-    //console.log(this.state.barCodeData);
-    const params = {userName: 'TMMD', passWord: '123@abc'};
-    api.userLogin(params).then(rs => {
-      console.log(rs.data);
-    });
-  }
+  componentWillMount() {}
   searchName = () => {
     console.log('aa');
+  }
+  selTap = (index) => {
+    this.setState({
+      isActive: index
+    });
   }
   selType = () => {
     this.setState({
@@ -104,7 +101,6 @@ class ProductList extends Component {
     this.setState({
       typeTitle: e.node.props.title
     });
-    //console.log(this.state.typeTitle);
   }
   addProduct = () => {
     this.props.history.push({pathname: '/addPro'});
@@ -113,28 +109,28 @@ class ProductList extends Component {
     const columns = [
       {
         title: '商品名称',
-        key: 'name',
-        dataIndex: 'name'
+        key: 'goods_name',
+        dataIndex: 'goods_name'
       },
       {
         title: '商品类型',
-        key: 'type',
-        dataIndex: 'type'
+        key: 'goods_category_name',
+        dataIndex: 'goods_category_name'
       },
       {
         title: '商品单价',
-        key: 'price',
-        dataIndex: 'price'
+        key: 'sale_price',
+        dataIndex: 'sale_price'
       },
       {
         title: '商品条形码',
-        key: 'code',
-        dataIndex: 'code'
+        key: 'goods_bar_no',
+        dataIndex: 'goods_bar_no'
       },
       {
         title: '已卖出数量',
-        key: 'count',
-        dataIndex: 'count'
+        key: 'sell_out',
+        dataIndex: 'sell_out'
       },
       {
         title: '操作',
@@ -159,30 +155,27 @@ class ProductList extends Component {
     const data = [
       {
         key: 1,
-        id: 1,
-        name: '联富通',
-        type: '软件',
-        price: '999999',
-        code: '2004903625979',
-        count: '99999999'
+        goods_name: '联富通',
+        goods_category_name: '软件',
+        sale_price: '999999',
+        goods_bar_no: '2004903625979',
+        sell_out: '99999999'
       },
       {
         key: 2,
-        id: 2,
-        name: '联富通1',
-        type: '软件',
-        price: '999999',
-        code: '2004903625979',
-        count: '5555'
+        goods_name: '联富通1',
+        goods_category_name: '软件',
+        sale_price: '999999',
+        goods_bar_no: '2004903625979',
+        sell_out: '5555'
       },
       {
-        key: 3,
-        id: 3,
-        name: '联富通2',
-        type: '软件',
-        price: '999999',
-        code: '2004903625979',
-        count: '88888'
+        key: 2,
+        goods_name: '联富通1',
+        goods_category_name: '软件',
+        sale_price: '999999',
+        goods_bar_no: '2004903625979',
+        sell_out: '5555'
       }
     ];
     return (
@@ -199,8 +192,8 @@ class ProductList extends Component {
         </Modal>
         <div className="nav-items">
           <div className="tap-items">
-            <span className="active">出售中的商品</span>|
-            <span>已下架的商品</span>
+            <span className={this.state.isActive === 0 ? 'active' : ''} onClick={this.selTap.bind(this, 0)}>出售中的商品</span>|
+            <span className={this.state.isActive === 1 ? 'active' : ''} onClick={this.selTap.bind(this, 1)}>已下架的商品</span>
           </div>
           <Button type="primary" onClick={this.addProduct.bind(this)}>新增商品</Button>
         </div>

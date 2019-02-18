@@ -7,7 +7,8 @@ import {
   Button,
   Upload,
   Icon,
-  message
+  message,
+  Modal
 } from 'antd';
 
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
@@ -16,6 +17,8 @@ import 'react-quill/dist/quill.snow.css'; // ES6
 
 import './list.css';
 
+import Tree from './treeMenu';//树形结构商品类型
+
 const RadioGroup = Radio.Group;
 class Add extends Component {
   constructor(props) {
@@ -23,18 +26,14 @@ class Add extends Component {
     this.state = {
       loading: false,
       form: {
-        isPost: 0,
+        is_post: 0,
         goodDetaile: ''
       }
     };
     //this.handleChange = this.handleChange.bind(this);
   }
   componentWillMount() {
-    //console.log(this.props);
-    const params = {userName: 'TMMD', passWord: '123@abc'};
-    axios.get('/login', {params}).then((rs) => {
-      console.log(rs.data);
-    });
+    console.log(this.props);
   }
   componentDidMount() {
     const textbox = this.refs.textarea;
@@ -100,7 +99,7 @@ class Add extends Component {
             label="商品名称"
           >
             {getFieldDecorator(
-              'name',
+              'goods_name',
               {
                 rules: [{required: true, message: '请输入商品名称！'}]
               }
@@ -112,7 +111,7 @@ class Add extends Component {
           >
             <div>
               {getFieldDecorator(
-                'code',
+                'goods_bar_no',
                 {
                   rules: [{required: true, message: '请输入商品条形码！'}]
                 }
@@ -125,7 +124,7 @@ class Add extends Component {
             label="商品类型"
           >
             {getFieldDecorator(
-              'type',
+              'goods_category_name',
               {
                 rules: [{required: true, message: '请选择商品类型！'}]
               }
@@ -136,9 +135,9 @@ class Add extends Component {
             label="商品成本价"
           >
             {getFieldDecorator(
-              'type',
+              'cost_price',
               {
-                rules: [{required: true, message: '请选择商品类型！'}]
+                rules: [{required: true, message: '请输入商品原价！'}]
               }
             )(<Input />)
             }
@@ -147,7 +146,7 @@ class Add extends Component {
             label="商品售价"
           >
             {getFieldDecorator(
-              'soldprice',
+              'sale_price',
               {
                 rules: [{required: true, message: '请输入商品售价！'}]
               }
@@ -157,7 +156,7 @@ class Add extends Component {
           <Form.Item
             label="是否需要发货"
           >
-            <RadioGroup onChange={this.onChange} value={this.state.form.isPost}>
+            <RadioGroup onChange={this.onChange} value={this.state.form.is_post}>
               <Radio value={0}>是</Radio>
               <Radio value={1}>否</Radio>
             </RadioGroup>

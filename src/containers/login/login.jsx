@@ -2,21 +2,22 @@ import React, {Component} from 'react';
 
 import {message, Input, Icon} from 'antd';
 
+import api from '../../api/instance.js';
+
 import './login.css';
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: '111',
-      userPwd: '111',
+      userName: 'TMMD',
+      userPwd: '123@abc',
       authCode: '',
       txtCode: ''
     };
   }
   //组件刚经历constructor,初始完数据,未渲染,dom还未渲染
   componentWillMount() {
-    //console.log(window.common);
     this.setState({
       authCode: window.common.createCode()
     });
@@ -47,17 +48,18 @@ class Login extends Component {
       return false;
     }
     if (this.state.txtCode === '') {
-      //message.error('验证码不能为空，请输入验证码');
-      //return false;
+      message.error('验证码不能为空，请输入验证码');
+      return false;
     } else if (this.state.txtCode !== this.state.authCode) {
-      //message.error('验证码输入不一致');
-      //return false;
+      message.error('验证码输入不一致');
+      return false;
     }
-    console.log(axios);
-    axios.get('/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {
-      console.log(rs);
+    api.baseInstance({userName: this.state.userName, passWord: this.state.userPwd}).then(rs => {
+      if (rs.data.returnCode === 'S') {
+        window.localStorage.setItem('checkLogin', '100');
+        this.props.history.push({pathname: '/main'});
+      }
     });
-    this.props.history.push({pathname: '/main'});
   }
   render() {
     return (

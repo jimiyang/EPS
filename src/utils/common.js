@@ -10,6 +10,12 @@ const utils = {
       code += random[index];
     }
     return code.toUpperCase();
+  },
+  loginOut(obj, msg) {
+    if (window.localStorage.getItem('checkLogin') === null) {
+      msg.error('登录已超时，请重新登录！');
+      obj.props.history.push({pathname: '/login'});
+    }
   }
 };
 export default utils;
