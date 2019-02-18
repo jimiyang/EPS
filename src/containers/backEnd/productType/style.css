@@ -8,3 +8,10 @@
     padding-top:20px;
 }
 .type-blocks .left button{margin-top:20px;}
+.typeedit-blocks .ant-row{
+    display: flex;
+}
+.typeedit-blocks .ant-row .ant-form-item-label{
+    width:100px;
+}
+.typeedit-blocks .ant-row .ant-form-item-control-wrapper{width:60%;}

@@ -10,8 +10,6 @@ import {
 
 import './main.css';
 
-import Center from '../center';
-
 import List from '../productManagement/list';
 
 import DeliveryList from '../deliveryMangement/deliverylist';

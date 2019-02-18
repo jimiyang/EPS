@@ -15,6 +15,8 @@ import './list.css';
 
 import Tree from './treeMenu';//树形结构商品类型
 
+import api from '../../../api/inst.js';
+
 const {Option} = AutoComplete;
 class ProductList extends Component {
   constructor(props) {
@@ -37,6 +39,10 @@ class ProductList extends Component {
   componentWillMount() {
     //console.log(this.state.productNameData.map(this.renderOption));
     //console.log(this.state.barCodeData);
+    const params = {userName: 'TMMD', passWord: '123@abc'};
+    api.userLogin(params).then(rs => {
+      console.log(rs.data);
+    });
   }
   searchName = () => {
     console.log('aa');
@@ -192,9 +198,9 @@ class ProductList extends Component {
           <Tree onSelect={this.changeHandler} />
         </Modal>
         <div className="nav-items">
-          <div>
-            <a href="" className="active">出售中的商品</a>|
-            <a href="">已下架的商品</a>
+          <div className="tap-items">
+            <span className="active">出售中的商品</span>|
+            <span>已下架的商品</span>
           </div>
           <Button type="primary" onClick={this.addProduct.bind(this)}>新增商品</Button>
         </div>

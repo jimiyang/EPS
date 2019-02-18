@@ -4,11 +4,11 @@
     justify-content: space-between;
     align-items: center;
 }
-.delivery-blocks .nav-items a{
+.delivery-blocks .nav-items .tap-items span{
     display: inline-block;font-size:14px;padding:10px 20px;border-bottom: 2px solid transparent;
     position: relative; top:1px;
 }
-.delivery-blocks .nav-items a.active{border-bottom: 2px solid #1890ff;}
+.delivery-blocks .nav-items span.active{border-bottom: 2px solid #1890ff;color:#1890ff;}
 .delivery-blocks ul.search-blocks{
     display: flex;justify-content: flex-start;margin-top:30px;font-size:14px;
 }

@@ -55,13 +55,13 @@ class DeliveryList extends Component {
           <OrderDetaile />
         </Modal>
         <div className="nav-items">
-          <div>
-            <a href="" className="active">全部订单</a>|
-            <a href="">待发货的订单</a>|
-            <a href="">已发货的订单</a>|
-            <a href="">已完成的订单</a>|
-            <a href="">待付款的订单</a>|
-            <a href="">已取消的订单</a>
+          <div className="tap-items">
+            <span className="active">全部订单</span>|
+            <span>待发货的订单</span>|
+            <span>已发货的订单</span>|
+            <span>已完成的订单</span>|
+            <span>待付款的订单</span>|
+            <span>已取消的订单</span>
           </div>
         </div>
         <ul className="search-blocks">

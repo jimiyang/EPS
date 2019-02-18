@@ -29,6 +29,11 @@ class ProductType extends Component {
       visible: true
     });
   }
+  cancelEvent = () => {
+    this.setState({
+      visible: false
+    });
+  }
   render() {
     const columns = [{
       title: '类别名称',
@@ -87,6 +92,7 @@ class ProductType extends Component {
           title="编辑"
           okText="保存"
           cancelText="取消"
+          onCancel={this.cancelEvent}
           visible={this.state.visible}
         >
           <TypeEdit />
