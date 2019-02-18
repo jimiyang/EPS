@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {Layout, Menu, Icon} from 'antd';
+import {Layout, Menu, message} from 'antd';
 
 import {
   BrowserRouter as Router,
@@ -9,8 +9,6 @@ import {
 } from 'react-router-dom';
 
 import './main.css';
-
-import Center from '../center';
 
 import List from '../productManagement/list';
 
@@ -22,6 +20,10 @@ import Addition from '../employeesMangement/add';
 
 import EmployessList from '../employeesMangement/employesslist';
 
+import employessDetaile from '../employeesMangement/detaile';//员工详情
+
+import AddPro from '../productManagement/addPro';
+
 //const SubMenu = Menu.SubMenu;
 const {SubMenu} = Menu;
 const {
@@ -29,10 +31,19 @@ const {
 } = Layout;
 
 class Main extends Component {
+  componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
+  }
   render() {
     return (
       <Layout className="main-blocks">
-        <Header>采购平台-管理后台</Header>
+        <Header>
+          采购平台-管理后台
+          <div>
+            <Link to="/login">退出登录</Link>
+          </div>
+        </Header>
         <Layout>
           <Sider>
             <Menu mode="inline">
@@ -40,8 +51,8 @@ class Main extends Component {
               <Menu.Item key="2"><Link to="/deliverylist">发货订单管理</Link></Menu.Item>
               <Menu.Item key="3"><Link to="/typelist">商品类型管理</Link></Menu.Item>
               <SubMenu key="sub1" title={<span>员工管理</span>}>
-                <Menu.Item key="4"><Link to="/add">添加员工</Link></Menu.Item>
                 <Menu.Item key="5"><Link to="/employesslist">员工管理</Link></Menu.Item>
+                <Menu.Item key="4"><Link to="/add">添加员工</Link></Menu.Item>
               </SubMenu>
             </Menu>
           </Sider>
@@ -51,6 +62,8 @@ class Main extends Component {
             <Route path="/typelist" component={TypeList} />
             <Route path="/add" component={Addition} />
             <Route path="/employesslist" component={EmployessList} />
+            <Route path="/detaile" component={employessDetaile} />
+            <Route path="/addPro" component={AddPro} />
           </Content>
         </Layout>
       </Layout>

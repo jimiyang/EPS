@@ -62,6 +62,16 @@
     "react/require-default-props": 0,
     "react/sort-comp": 0,
     "jsx-a11y/click-events-have-key-events": 0,
+<<<<<<< HEAD
     "jsx-a11y/no-noninteractive-element-interactions": 0
+=======
+    "jsx-a11y/no-noninteractive-element-interactions": 0,
+    "prefer-destructuring": ["error", {
+      "array": false,
+      "object": false
+    }, {
+      "enforceForRenamedProperties": false
+    }]
+>>>>>>> jimiyang
   }
 }
