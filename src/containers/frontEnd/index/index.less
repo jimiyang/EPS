@@ -8,12 +8,6 @@
     padding: 0 60px;
     border-bottom: 1px solid #797979;
     background: #f2f2f2;
-    ul {
-      li {
-        color: #fc3339;
-        cursor: pointer;
-      }
-    }
     >div {
       display: flex;
       justify-content: center;
@@ -60,11 +54,12 @@
         height: 40px;
         border: 1px solid #ccc;
         padding: 0 10px;
+        border-radius: 0;
         &:focus {
           outline: none;
         }
       }
-      div {
+      .searchButton {
         background: #aeaeae;
         width: 40px;
         height: 40px;
@@ -76,5 +71,9 @@
         }
       }
     }
+  }
+  #content {
+    width: 1200px;
+    margin: 20px auto 0;
   }
 }

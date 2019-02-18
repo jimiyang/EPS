@@ -1,18 +1,18 @@
 import React from 'react';
+import moment from 'moment';
 import ReactDOM from 'react-dom';
+import 'moment/locale/zh-cn';
 import axios from './api/api';
-
 import Root from './router';
-
+import common from './utils/common';
 // css
 import './style/reset.css';
-import './style/index.styl';
 // iconfont
 import './assets/iconfont.css';
 import './assets/iconfont.js';
 //utils
-import common from './utils/common';
 
+moment.locale('zh-cn');
 window.axios = axios;
 window.common = common;
 

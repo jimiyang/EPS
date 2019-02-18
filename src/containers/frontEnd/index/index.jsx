@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
-import {BrowserRouter, Route, Switch, Link} from 'react-router-dom';
+import {BrowserRouter, Route, Switch, Link, Redirect} from 'react-router-dom';
 import {hashHistory} from 'react-router';
-import listOfCommodities from './listOfCommodities/listOfCommodities';
-import searchDetail from './searchDetail/searchDetail';
+import {Breadcrumb, AutoComplete} from 'antd';
+import listOfCommodities from '../listOfCommodities/listOfCommodities';
+import searchDetail from '../searchDetail/searchDetail';
 import './index.less';
 
 function IsLogin(props) {
   if (props.loginstate) {
-    return <div><img src={require('../../assets/logo.png')} /><p>刘玲一级代理商</p></div>;
+    return <div><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div>;
   }
   return <div><p className="not">您还未登录，请登录</p></div>;
 }
@@ -28,9 +29,13 @@ class Index extends Component {
   logout = () => {
     this.setState({loginstate: !this.state.loginstate});
   }
+  itemRender = (route, params, routes, paths) => {
+    const last = routes.indexOf(route) === routes.length - 1;
+    return last ? <span>{route.breadcrumbName}</span> : <Link to={paths.join('/')}>{route.breadcrumbName}</Link>;
+  }
   // 获取搜索框内容
-  getSearchContent = (e) => {
-    e.target.value !== this.state.searchContent ? this.setState({searchContent: e.target.value, canSearch: true}) : null;
+  getSearchContent = (value) => {
+    value !== this.state.searchContent ? this.setState({searchContent: value, canSearch: true}) : null;
   }
   // 跳转到搜索页
   toSearchDetail = () => {
@@ -41,12 +46,21 @@ class Index extends Component {
   }
   render() {
     const {loginstate} = this.state;
+    const dataSource = ['12345', '23456', '34567'];
+    const routes = [{
+      path: 'index',
+      breadcrumbName: '首页'
+    }, {
+      path: 'first',
+      breadcrumbName: '一级面包屑'
+    }, {
+      path: 'second',
+      breadcrumbName: '当前页面'
+    }];
     return (
       <div id="frontEnd">
         <header id="header">
-          <ul>
-            <li onClick={this.toHome}>首页</li>
-          </ul>
+          <Breadcrumb itemRender={this.itemRender} routes={routes} />
           <div>
             <IsLogin loginstate={loginstate} />
             <span>|</span>
@@ -56,14 +70,17 @@ class Index extends Component {
         <section id="search">
           <h1>联拓富新零售赋能平台</h1>
           <div className="search">
-            <input type="text" onChange={this.getSearchContent} value={this.state.searchContent} />
-            <div onClick={this.toSearchDetail}>
-              <img src={require('../../assets/frontENd/search.png')} />
+            <AutoComplete
+              dataSource={dataSource}
+              value={this.state.searchContent}
+              onChange={this.getSearchContent}
+            />
+            <div onClick={this.toSearchDetail} className="searchButton">
+              <img src={require('../../../assets/frontEnd/search.png')} />
             </div>
           </div>
         </section>
-        <section>
-          <Route path="/listOfCommodities" component={listOfCommodities} />
+        <section id="content">
           <Route exact path="/" component={listOfCommodities} />
           <Route path="/searchDetail" params={this.state.searchCOntent} component={searchDetail} />
         </section>
