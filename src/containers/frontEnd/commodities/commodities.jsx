@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import bg from '../../../assets/bg.jpg';
-import './listOfCommodities.less';
+import './commodities.less';
 
-class ListOfCommodities extends Component {
+class Commodities extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -32,15 +32,19 @@ class ListOfCommodities extends Component {
   }
   componentDidMount() {
   }
+  // 跳转到详情页
+  toDetail = () => {
+    this.props.history.push('/commoditiesDetail');
+  }
   render() {
     const {hardware, software} = this.state;
     return (
-      <div id="listOfCommodities">
+      <div id="commodities">
         <section>
           <h3>· 硬件</h3>
           <ul>
             {hardware.map(($0, $1) => (
-              <li key={$1}>
+              <li key={$1} onClick={this.toDetail}>
                 <img src={$0.img} />
                 <p>{$0.title}</p>
                 <p className="price">{$0.price}</p>
@@ -51,7 +55,7 @@ class ListOfCommodities extends Component {
           <h3>· 软件</h3>
           <ul>
             {software.map(($0, $1) => (
-              <li key={$1}>
+              <li key={$1} onClick={this.toDetail}>
                 <img src={$0.img} />
                 <p>{$0.title}</p>
                 <p className="price">{$0.price}</p>
@@ -63,4 +67,4 @@ class ListOfCommodities extends Component {
   }
 }
 
-export default ListOfCommodities;
+export default Commodities;

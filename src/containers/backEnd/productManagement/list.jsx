@@ -81,7 +81,7 @@ class ProductList extends Component {
   }
   //商品条形码模糊搜索
   handleCodeSearch = (value) => {
-    console.log(value);
+    // console.log(value);
   }
   handleOk = () => {
     this.setState({

@@ -50,7 +50,7 @@ class DeliveryList extends Component {
       <div className="delivery-blocks">
         <Modal
           visible={this.state.detailVisible}
-          style={{ width: '900px' }}
+          style={{width: '900px'}}
         >
           <OrderDetaile />
         </Modal>
@@ -71,7 +71,7 @@ class DeliveryList extends Component {
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               size="large"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               dataSource={this.state.agentNumberData.map(this.renderOption)}
               onBlur={this.handleNameSearch}
               placeholder="请输入商品名称"
@@ -86,7 +86,7 @@ class DeliveryList extends Component {
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               size="large"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               dataSource={this.state.orderNumberData.map(this.renderOption)}
               onBlur={this.handleCodeSearch}
               placeholder="请输入商品条形码"

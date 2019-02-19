@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import {BrowserRouter, Route, Switch, Link, Redirect} from 'react-router-dom';
 import {hashHistory} from 'react-router';
 import {Breadcrumb, AutoComplete} from 'antd';
-import listOfCommodities from '../listOfCommodities/listOfCommodities';
+import commodities from '../commodities/commodities';
 import searchDetail from '../searchDetail/searchDetail';
-import './index.less';
+import commoditiesDetail from '../commoditiesDetail/commoditiesDetail';
+import generateOrder from '../generateOrder/generateOrder';
+import './app.less';
 
 function IsLogin(props) {
   if (props.loginstate) {
@@ -13,7 +15,7 @@ function IsLogin(props) {
   return <div><p className="not">您还未登录，请登录</p></div>;
 }
 
-class Index extends Component {
+class App extends Component {
   constructor() {
     super();
     this.state = {
@@ -81,12 +83,14 @@ class Index extends Component {
           </div>
         </section>
         <section id="content">
-          <Route exact path="/" component={listOfCommodities} />
-          <Route path="/searchDetail" params={this.state.searchCOntent} component={searchDetail} />
+          <Route exact path="/" component={commodities} />
+          <Route path="/searchDetail" params={this.state.searchContent} component={searchDetail} />
+          <Route path="/commoditiesDetail" component={commoditiesDetail} />
+          <Route path="/generateOrder" component={generateOrder} />
         </section>
       </div>
     );
   }
 }
 
-export default Index;
+export default App;

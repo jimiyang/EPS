@@ -33,7 +33,7 @@ class Add extends Component {
     //this.handleChange = this.handleChange.bind(this);
   }
   componentWillMount() {
-    console.log(this.props);
+    // console.log(this.props);
   }
   componentDidMount() {
     const textbox = this.refs.textarea;
@@ -42,8 +42,8 @@ class Add extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-        console.log(this.state.form.goodDetaile);
+        // console.log('Received values of form: ', values);
+        // console.log(this.state.form.goodDetaile);
       }
     });
   }

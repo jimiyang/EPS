@@ -25,28 +25,7 @@ class SearchDetail extends Component {
     ],
     sortIndex: 1, // 1 综合 2 价格up 3 价格
   }
-  componentWillMount() {
-    console.log(1);
-  }
-  componentDidMount() {
-    console.log(2);
-  }
-  componentWillReceiveProps() {
-    console.log(this.props);
-  }
-  shouldComponentUpdate() {
-    console.log(4);
-    return true;
-  }
-  componentWillUpdate() {
-    console.log(5);
-  }
-  componentDidUpdate() {
-    console.log(6);
-  }
-  componentWillUnmount() {
-    console.log(7);
-  }
+  // 改变排序方法
   changeSort = (index) => {
     if (this.state.sortIndex === 2 && index === 2) {
       this.setState({sortIndex: 3});
@@ -54,8 +33,14 @@ class SearchDetail extends Component {
       this.setState({sortIndex: index});
     }
   }
+  // 跳转到详情页
+  toDetail = () => {
+    console.log(1);
+    this.props.history.push('/commoditiesDetail');
+  }
+  // 翻页
   changePage = (pageNumber) => {
-    console.log(pageNumber);
+    // console.log(pageNumber);
   }
   render() {
     const {list} = this.state;
@@ -77,14 +62,16 @@ class SearchDetail extends Component {
           <ul>
             {
               list.map((item, index) => (
-                <li key={index}>
+                <li key={index} onClick={this.toDetail}>
                   <img src={item.img} />
                   <p className="price">{item.price}</p>
                   <p className="title">{item.title}</p>
                 </li>))}
           </ul>
         </section>
-        <Pagination showQuickJumper defaultCurrent={2} total={500} onChange={this.changePage} />
+        <section className="pagination">
+          <Pagination showQuickJumper defaultCurrent={1} total={500} onChange={this.changePage} />
+        </section>
       </div>
     );
   }

@@ -14,7 +14,7 @@ import './style.css';
 import TypeEdit from './typeedit';
 
 const Option = Select.Option;
-const { TextArea } = Input;
+const {TextArea} = Input;
 const CheckboxGroup = Checkbox.Group;
 class ProductType extends Component {
   constructor(props) {
@@ -80,10 +80,10 @@ class ProductType extends Component {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       },*/
       onSelect: (record, selected, selectedRows) => {
-        console.log(record, selected, selectedRows);
+        // console.log(record, selected, selectedRows);
       },
       onSelectAll: (selected, selectedRows, changeRows) => {
-        console.log(selected, selectedRows, changeRows);
+        // console.log(selected, selectedRows, changeRows);
       }
     };
     return (
@@ -102,7 +102,7 @@ class ProductType extends Component {
           <p>添加新分类项目</p>
           <Input />
           <p>父级分类目录</p>
-          <Select defaultValue="lucy" style={{ width: '100%'}}>
+          <Select defaultValue="lucy" style={{width: '100%'}}>
             <Option value="lucy">Lucy</Option>
           </Select>
           <p>类别描述</p>

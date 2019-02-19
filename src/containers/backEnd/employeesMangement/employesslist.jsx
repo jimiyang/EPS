@@ -31,7 +31,6 @@ class EmployeesList extends Component {
   }
   //查看详情
   detaileEvent = (item) => {
-    console.log(item);
     this.setState({
       visible: true
     });
@@ -42,7 +41,6 @@ class EmployeesList extends Component {
     });
   }
   modifyEvent = (item) => {
-    console.log(item);
     this.props.history.push({pathname: '/add'});
   }
   render() {
