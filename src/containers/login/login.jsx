@@ -54,15 +54,11 @@ class Login extends Component {
       message.error('验证码输入不一致');
       return false;
     }
-<<<<<<< HEAD
-    axios.get('/api/login', {params: {userName: 'TMMD', passWord: '123@abc'}}).then((rs) => {
-=======
     api.baseInstance({userName: this.state.userName, passWord: this.state.userPwd}).then(rs => {
       if (rs.data.returnCode === 'S') {
         window.localStorage.setItem('checkLogin', '100');
         this.props.history.push({pathname: '/main'});
       }
->>>>>>> jimiyang
     });
   }
   render() {

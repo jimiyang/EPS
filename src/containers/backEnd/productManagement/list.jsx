@@ -34,13 +34,8 @@ class ProductList extends Component {
       }
     };
   }
-<<<<<<< HEAD
-  componentWillMount() {
-  }
-=======
   //数据加载，dom未初始化
   componentWillMount() {}
->>>>>>> jimiyang
   searchName = () => {
   }
   selTap = (index) => {
@@ -49,12 +44,9 @@ class ProductList extends Component {
     });
   }
   selType = () => {
-<<<<<<< HEAD
-=======
     this.setState({
       visible: true
     });
->>>>>>> jimiyang
   }
   //编辑
   edit = (item) => {
