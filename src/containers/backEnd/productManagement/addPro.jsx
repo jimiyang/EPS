@@ -8,7 +8,7 @@ import {
   Upload,
   Icon,
   message,
-  Modal
+  Cascader
 } from 'antd';
 
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
@@ -17,7 +17,7 @@ import 'react-quill/dist/quill.snow.css'; // ES6
 
 import './list.css';
 
-import Tree from './treeMenu';//树形结构商品类型
+import api from '../../../api/instance.js';
 
 const RadioGroup = Radio.Group;
 class Add extends Component {
@@ -25,18 +25,28 @@ class Add extends Component {
     super(props);
     this.state = {
       loading: false,
+      disabled: true,
+      goods_bar_no: '',
       form: {
         is_post: 0,
-        goodDetaile: ''
+        goodDetaile: '',
+        goods_category_id: '',
+        goods_category_name: 'wwwww',
       }
     };
     //this.handleChange = this.handleChange.bind(this);
   }
   componentWillMount() {
-    console.log(this.props);
+    this.initForm();
   }
   componentDidMount() {
     const textbox = this.refs.textarea;
+  }
+  initForm = () => {
+    if (!this.props.location.query) {
+      return false;
+    }
+    console.log(this.props.location.query.id);
   }
   handleSubmit = (e) => {
     e.preventDefault();
@@ -44,6 +54,11 @@ class Add extends Component {
       if (!err) {
         console.log('Received values of form: ', values);
         console.log(this.state.form.goodDetaile);
+        this.setState({
+          form: {
+            is_post: 0
+          }
+        });
       }
     });
   }
@@ -83,6 +98,28 @@ class Add extends Component {
       }
     });
   }
+  //生成条形码
+  getbarno = () => {
+    const params = {
+      service: 'goods.getbarno',
+      sign: 'ewqrewq',
+      partner_id: '22',
+      login_name: 'TMMD'
+    };
+    //console.log(JSON.stringify(params));
+    api.baseInstance(params).then((rs) => {
+      console.log(rs);
+    });
+    this.setState({
+      goods_bar_no: '3838737373373'
+    });
+  }
+  displayRender(label) {
+    return label[label.length - 1];
+  }
+  onChange = (value) => {
+    console.log(value[value.length - 1]);
+  }
   render() {
     const {getFieldDecorator} = this.props.form;
     const imageUrl = this.state.imageUrl;
@@ -92,6 +129,24 @@ class Add extends Component {
         <div className="ant-upload-text">请上传2M以内,JPG/JPEG/PNG格式</div>
       </div>
     );
+    const data = [
+      {
+        value: '1-1',
+        label: '父级1',
+        children: [{
+          value: '1-01',
+          label: '子级1',
+        }]
+      },
+      {
+        value: '1-2',
+        label: '父级2',
+        children: [{
+          value: '1-02',
+          label: '子级2',
+        }],
+      }
+    ];
     return (
       <div className="add-blocks">
         <Form onSubmit={this.handleSubmit} className="form" name="form">
@@ -103,7 +158,7 @@ class Add extends Component {
               {
                 rules: [{required: true, message: '请输入商品名称！'}]
               }
-            )(<Input />)
+            )(<Input placeholder="请输入商品名称" />)
             }
           </Form.Item>
           <Form.Item
@@ -113,11 +168,12 @@ class Add extends Component {
               {getFieldDecorator(
                 'goods_bar_no',
                 {
-                  rules: [{required: true, message: '请输入商品条形码！'}]
+                  initialValue: this.state.goods_bar_no || '',
+                  rules: [{required: true, message: '请输入商品条形码！'}],
                 }
-              )(<Input />)
+              )(<Input placeholder="请生成商品条形码" disabled={this.state.disabled} />)
               }
-              <Button type="primary">生成条形码</Button>
+              <Button type="primary" onClick={this.getbarno.bind(this)}>生成条形码</Button>
             </div>
           </Form.Item>
           <Form.Item
@@ -128,7 +184,13 @@ class Add extends Component {
               {
                 rules: [{required: true, message: '请选择商品类型！'}]
               }
-            )(<Input />)
+            )(<Cascader
+              placeholder="请选择商品类型"
+              options={data}
+              expandTrigger="hover"
+              displayRender={this.displayRender}
+              onChange={this.onChange.bind(this)}
+            />)
             }
           </Form.Item>
           <Form.Item
@@ -137,9 +199,12 @@ class Add extends Component {
             {getFieldDecorator(
               'cost_price',
               {
-                rules: [{required: true, message: '请输入商品原价！'}]
+                rules: [
+                  {required: true, message: '请输入商品原价！'},
+                  { pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数（保留后两位）' }
+                ]
               }
-            )(<Input />)
+            )(<Input placeholder="请输入商品成本价" />)
             }
           </Form.Item>
           <Form.Item
@@ -148,9 +213,12 @@ class Add extends Component {
             {getFieldDecorator(
               'sale_price',
               {
-                rules: [{required: true, message: '请输入商品售价！'}]
+                rules: [
+                  {required: true, message: '请输入商品售价！'},
+                  { pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数（保留后两位）' }
+                ]
               }
-            )(<Input />)
+            )(<Input placeholder="请输入商品售价" />)
             }
           </Form.Item>
           <Form.Item
