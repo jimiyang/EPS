@@ -18,7 +18,9 @@ class GenerateOrder extends Component {
   render() {
     return (
       <div id="generateOrder">
-        <section className="top">1</section>
+        <section className="top">
+          
+        </section>
       </div>
     );
   }
