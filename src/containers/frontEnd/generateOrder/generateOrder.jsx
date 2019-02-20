@@ -17,11 +17,7 @@ class GenerateOrder extends Component {
   }
   render() {
     return (
-      <div id="generateOrder">
-        <section className="top">
-          
-        </section>
-      </div>
+      <div id="generateOrder">1</div>
     );
   }
 }
