@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {BrowserRouter, Route, Switch, Link, Redirect} from 'react-router-dom';
 import {hashHistory} from 'react-router';
-import {Breadcrumb, AutoComplete} from 'antd';
+import {Breadcrumb, AutoComplete, Icon, Input, Button} from 'antd';
 import commodities from '../commodities/commodities';
 import searchDetail from '../searchDetail/searchDetail';
 import commoditiesDetail from '../commoditiesDetail/commoditiesDetail';
@@ -10,13 +10,10 @@ import cashier from '../cashier/cashier';
 import './app.less';
 
 function IsLogin(props) {
-  if (props.loginstate) {
-    return <div><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div>;
-  }
-  return <div><p className="not">您还未登录，请登录</p></div>;
+  return props.loginstate ? <div className="header-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
 }
 
-class App extends Component {
+export default class App extends Component {
   constructor() {
     super();
     this.state = {
@@ -61,38 +58,58 @@ class App extends Component {
       breadcrumbName: '当前页面'
     }];
     return (
-      <div id="frontEnd">
-        <header id="header">
-          <Breadcrumb itemRender={this.itemRender} routes={routes} />
-          <div>
-            <IsLogin loginstate={loginstate} />
-            <span>|</span>
-            <p className="myOrder">我的订单</p>
-          </div>
-        </header>
-        <section id="search">
-          <h1>联拓富新零售赋能平台</h1>
-          <div className="search">
-            <AutoComplete
-              dataSource={dataSource}
-              value={this.state.searchContent}
-              onChange={this.getSearchContent}
-            />
-            <div onClick={this.toSearchDetail} className="searchButton">
-              <img src={require('../../../assets/frontEnd/search.png')} />
+      <div className="page">
+        <div className="header-bar">
+          <div className="container">
+            <div className="header-bar-nav">
+              <div>首页</div>
+              <div>其他入口</div>
+              <div>其他链接</div>
+              <div>MS系统</div>
+            </div>
+            <div className="header-tool">
+              <IsLogin loginstate={loginstate} />  <div className="header-order"><Icon type="file-text" />我的订单</div>
             </div>
           </div>
-        </section>
-        <section id="content">
+        </div>
+        <header className="header">
+          <div className="container header-container">
+            <h1 className="header-logo"><Icon type="code-sandbox" />联拓富商城 </h1>
+            <div className="header-cont">
+              <div className="header-menu">
+                <div className="nav">
+                  <div>首页</div>
+                  <div>商品分类1</div>
+                  <div>商品分类2</div>
+                  <div>我的订单</div>
+                </div>
+              </div>
+              <div className="search" style={{ width: 300 }}>
+                <AutoComplete
+                  dataSource={dataSource}
+                  className="search-cont"
+                  size="large"
+                  value={this.state.searchContent}
+                  onChange={this.getSearchContent}
+                  placeholder="搜索商品"
+                  style={{ width: '100%' }}
+                ><Input suffix={(<Button className="search-btn" size="large" type="primary" ><Icon type="search" /></Button>)} />
+                </AutoComplete>
+              </div>
+            </div>
+          </div>
+        </header>
+        <section className="container">
           <Route exact path="/" component={commodities} />
           <Route path="/searchDetail" params={this.state.searchContent} component={searchDetail} />
           <Route path="/commoditiesDetail" component={commoditiesDetail} />
           <Route path="/generateOrder" component={generateOrder} />
           <Route path="/cashier" component={cashier} />
         </section>
+        <div className="footer">
+          ©2019 lianfutong.com
+        </div>
       </div>
     );
   }
 }
-
-export default App;
