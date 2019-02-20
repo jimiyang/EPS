@@ -7,17 +7,7 @@ import './list.css';
 const { TreeNode } = Tree;
 const DirectoryTree = Tree.DirectoryTree;
 class TreeMenu extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedTitle: '',
-      selectedKey: ''
-    };
-  }
-  componentWillMount() {
-    console.log(this.state.selectedTitle);
-    console.log(this.state.selectedKey);
-  }
+  componentWillMount() {}
   render() {
     return (
       <div className="tree-blocks">

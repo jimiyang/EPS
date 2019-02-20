@@ -50,6 +50,7 @@ class ProductList extends Component {
   }
   //编辑
   edit = (item) => {
+    this.props.history.push({pathname: '/addPro', query: {id: item.goods_bar_no}});
   }
   //下架
   confirm = (item) => {
