@@ -6,6 +6,7 @@ import commodities from '../commodities/commodities';
 import searchDetail from '../searchDetail/searchDetail';
 import commoditiesDetail from '../commoditiesDetail/commoditiesDetail';
 import generateOrder from '../generateOrder/generateOrder';
+import cashier from '../cashier/cashier';
 import './app.less';
 
 function IsLogin(props) {
@@ -87,6 +88,7 @@ class App extends Component {
           <Route path="/searchDetail" params={this.state.searchContent} component={searchDetail} />
           <Route path="/commoditiesDetail" component={commoditiesDetail} />
           <Route path="/generateOrder" component={generateOrder} />
+          <Route path="/cashier" component={cashier} />
         </section>
       </div>
     );
