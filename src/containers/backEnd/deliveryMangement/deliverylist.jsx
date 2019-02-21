@@ -8,9 +8,6 @@ import {
   DatePicker,
   Checkbox,
   Pagination,
-  Table,
-  Popconfirm,
-  message,
   Modal
 } from 'antd';
 
@@ -22,17 +19,30 @@ import './delivery.css';
 
 import OrderDetaile from './orderDetaile';
 
+import SendDelivery from './sendDelivery';
+
 moment.locale('zh-cn');
 const {Option} = AutoComplete;
+const CheckboxGroup = Checkbox.Group;
+const plainOptions = ['Apple', 'Pear', 'Orange'];
 class DeliveryList extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isActive: 0,
+      index: 0,
       agentNumberData: [],
       orderNumberData: [],
       detailVisible: false,
+      expressVisible: false,
+      menuData: ['全部订单', '待发货的订单', '已发货的订单', '已完成的订单', '待付款的订单', '已取消的订单'],
+      checkedList: [],
+      publicNumberChecked: [],
+      defaultValue: '请选择快递',
+      orderNumber: ''
     };
   }
+  componentWillMount() {}
   renderOption(item) {
     return (
       <Option key={item.name} text={item.name}>
@@ -40,28 +50,107 @@ class DeliveryList extends Component {
       </Option>
     );
   }
+  selTap = (index) => {
+    this.setState({
+      isActive: index
+    });
+  }
   orderDetailEvent = () => {
     this.setState({
       detailVisible: true
     });
   }
+  sendDeliveryEvent = () => {
+    this.setState({
+      expressVisible: true
+    });
+  }
+  closeEvent = () => {
+    this.setState({
+      expressVisible: false,
+      detailVisible: false
+    });
+  }
+  openEvent = (idx) => {
+    this.setState({
+      index: idx
+    });
+  }
+  onCheckAllChange = (e) => {
+    const index = e.target.value;
+    const publicNumberChecked = this.state.publicNumberChecked;
+    const checkedList = this.state.checkedList;
+    console.log(e.target);
+    if (e.target.checked === true) {
+      publicNumberChecked[index] = true;
+      checkedList[index] = true;
+    } else {
+      publicNumberChecked[index] = false;
+      checkedList[index] = false;
+    }
+    this.setState({
+      publicNumberChecked,
+      checkedList
+    });
+  }
+  onChange = (e) => {
+    const index = e.target.value;
+    const checkedList = this.state.checkedList;
+    if (e.target.checked === true) {
+      checkedList[index] = true;
+    } else {
+      checkedList[index] = false;
+    }
+    this.setState({
+      checkedList
+    });
+  }
+  selExpressNameEvent = (value) => {
+    this.setState({
+      defaultValue: value
+    });
+  }
+  orderNumberEvent = (value) => {
+    this.setState({
+      orderNumber: value
+    });
+  }
+  sendEvent = () => {
+    console.log(`快递名称：${this.state.defaultValue}`);
+    console.log(`快递单号：${this.state.orderNumber}`);
+  }
   render() {
     return (
       <div className="delivery-blocks">
         <Modal
+          title="订单详情"
           visible={this.state.detailVisible}
           style={{ width: '900px' }}
+          onCancel={this.closeEvent}
+          footer={
+            <Button type="primary" onClick={this.closeEvent.bind(this)}>确定</Button>
+          }
         >
           <OrderDetaile />
         </Modal>
+        <Modal
+          title="填写快递信息"
+          okText="提交"
+          cancelText="取消"
+          onOk={this.sendEvent}
+          onCancel={this.closeEvent}
+          visible={this.state.expressVisible}
+        >
+          <SendDelivery
+            selExpressNameEvent={this.selExpressNameEvent.bind(this)}
+            orderNumberEvent={this.orderNumberEvent}
+          />
+        </Modal>
         <div className="nav-items">
           <div className="tap-items">
-            <span className="active">全部订单</span>|
-            <span>待发货的订单</span>|
-            <span>已发货的订单</span>|
-            <span>已完成的订单</span>|
-            <span>待付款的订单</span>|
-            <span>已取消的订单</span>
+            {
+              this.state.menuData.map((item, index) => <span onClick={this.selTap.bind(this, index)} className={this.state.isActive === index ? 'active' : ''}>{item}</span>)
+            }
           </div>
         </div>
         <ul className="search-blocks">
@@ -107,24 +196,30 @@ class DeliveryList extends Component {
           <ul>
             <li>
               <div className="order-title">
-                <Icon type="down" />
-                <Checkbox />
+                <div className="arrow-ico" onClick={this.openEvent.bind(this, 0)}>
+                  <Icon type={this.state.index === 0 ? 'up' : 'down'} />
+                </div>
+                <Checkbox
+                  onChange={this.onCheckAllChange}
+                  checked={this.state.publicNumberChecked[223]}
+                  value={223}
+                />
                 <span>待发货</span>
                 <span>EW_N8484741367/刘玲一级代理商</span>
                 <span>订单号：0928213248</span>
                 <span>2018-12-21 06:12:22</span>
                 <Button type="primary" onClick={this.orderDetailEvent.bind(this)}>订单详情</Button>
-                <Button type="primary">发货</Button>
+                <Button type="primary" onClick={this.sendDeliveryEvent.bind(this)}>发货</Button>
               </div>
-              <div className="order-detaile">
+              <div className={['order-detaile', this.state.index === 0 ? null : 'hide'].join(' ')} >
                 <div className="items-1">
                   <span>下单账号：dddddd</span>
                   <span>数量：11111111</span>
                   <span>合计：<em className="red">09999999</em></span>
                 </div>
-                <div className="items-2">收货地址：</div>
+                <div className="items-2">收货地址：开快点快点快点快点快点快点快点快点打开的开口道</div>
                 <div className="items-3">
-                  <Checkbox />
+                  <Checkbox value={223} onChange={this.onChange} checked={this.state.checkedList[223]} />
                   <img src={require('../../../assets/bg.jpg')} />
                   <div>
                     <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>
@@ -136,24 +231,39 @@ class DeliveryList extends Component {
             </li>
             <li>
               <div className="order-title">
-                <Icon type="down" />
-                <Checkbox />
+                <div className="arrow-ico" onClick={this.openEvent.bind(this, 1)}>
+                  <Icon type={this.state.index === 1 ? 'up' : 'down'} />
+                </div>
+                <Checkbox
+                  onChange={this.onCheckAllChange}
+                  checked={this.state.publicNumberChecked[1]}
+                  value={1}
+                />
                 <span>待发货</span>
                 <span>EW_N8484741367/刘玲一级代理商</span>
                 <span>订单号：0928213248</span>
                 <span>2018-12-21 06:12:22</span>
-                <Button type="primary">订单详情</Button>
+                <Button type="primary" onClick={this.orderDetailEvent.bind(this)}>订单详情</Button>
                 <Button type="primary">发货</Button>
               </div>
-              <div className="order-detaile">
+              <div className={['order-detaile', this.state.index === 1 ? null : 'hide'].join(' ')} >
                 <div className="items-1">
                   <span>下单账号：dddddd</span>
                   <span>数量：11111111</span>
                   <span>合计：<em className="red">09999999</em></span>
                 </div>
-                <div className="items-2">收货地址：</div>
+                <div className="items-2">收货地址：开快点快点快点快点快点快点快点快点打开的开口道</div>
                 <div className="items-3">
-                  <Checkbox />
+                  <Checkbox value={this.state.index} onChange={this.onChange} checked={this.state.checkedList[1]} />
+                  <img src={require('../../../assets/bg.jpg')} />
+                  <div>
+                    <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>
+                    <p>¥344324321</p>
+                    <p>商品类型：哈哈哈哈哈</p>
+                  </div>
+                </div>
+                <div className="items-3">
+                  <Checkbox value={this.state.index} onChange={this.onChange} checked={this.state.checkedList[1]} />
                   <img src={require('../../../assets/bg.jpg')} />
                   <div>
                     <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>

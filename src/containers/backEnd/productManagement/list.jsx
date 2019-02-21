@@ -25,6 +25,7 @@ class ProductList extends Component {
       visible: false,
       productNameData: [], ///商品名称数据
       barCodeData: [], //条形码数据
+      menuData: ['出售中的商品', '已下架的商品'],
       search: {
         total: 3,
         defaultCurrent: 1,
@@ -192,8 +193,9 @@ class ProductList extends Component {
         </Modal>
         <div className="nav-items">
           <div className="tap-items">
-            <span className={this.state.isActive === 0 ? 'active' : ''} onClick={this.selTap.bind(this, 0)}>出售中的商品</span>|
-            <span className={this.state.isActive === 1 ? 'active' : ''} onClick={this.selTap.bind(this, 1)}>已下架的商品</span>
+            {
+              this.state.menuData.map((item, index) => <span onClick={this.selTap.bind(this, index)} className={this.state.isActive === index ? 'active' : ''}>{item}</span>)
+            }
           </div>
           <Button type="primary" onClick={this.addProduct.bind(this)}>新增商品</Button>
         </div>
