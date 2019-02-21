@@ -1,37 +1,20 @@
 import React, {Component} from 'react';
-import { Radio, Input } from 'antd';
+import bg from '../../../assets//bg.jpg';
 import './cashier.less';
-
-const RadioGroup = Radio.Group;
-
-const residences = [{
-  value: 'zhejiang',
-  label: '北京',
-  children: [{
-    value: 'hangzhou',
-    label: '北京',
-    children: [{
-      value: 'xihu',
-      label: '丰台区',
-    }],
-  }],
-}, {
-  value: 'jiangsu',
-  label: '天津',
-  children: [{
-    value: 'nanjing',
-    label: '天津',
-    children: [{
-      value: 'zhonghuamen',
-      label: '海州区',
-    }],
-  }],
-}];
 
 class Cashier extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      index: 0,
+      way: [
+        {
+          icon: bg, name: '返佣dsadasd账户', remainder: '999999.00', price: '99.00'
+        },
+        {
+          icon: bg, name: '充值账户', remainder: '999999.00', price: '99.00'
+        },
+      ]
     };
   }
   componentWillMount() {
@@ -39,15 +22,19 @@ class Cashier extends Component {
   componentDidMount() {
   }
   // 跳转到收银台
-  toCashier = () => {
-    this.props.history.push('/cashier');
+  toSuccess = () => {
+    this.props.history.push('/successfulPayment');
+  }
+  changeWay = (index) => {
+    this.setState({index});
   }
   render() {
+    const {way} = this.state;
     return (
       <div id="cashier">
         <section className="pay">
           <div>订单提交成功，请尽快付款！订单号：123456789</div>
-          <div>应付金额<p>99.00</p>元</div>
+          <div className="money">应付金额<p>99.00</p>元</div>
         </section>
         <section className="info">
           <p>收货地址：北京市第三据交通委</p>
@@ -57,11 +44,24 @@ class Cashier extends Component {
           <div className="title">选择支付方式</div>
           <div className="content">
             <ul>
-              <li>
-                <span>√</span>
-              </li>
+              {
+                way.map((item, index) => (
+                  <li onClick={this.changeWay.bind(this, index)} key={index}>
+                    <div>
+                      <span className={this.state.index === index ? 'isChecked' : 'notChecked'} />
+                      <img src={item.icon} />
+                      <p className="name">{item.name}</p>
+                    </div>
+                    <p className="remainder">账户余额: {item.remainder}</p>
+                    <p className={this.state.index === index ? null : 'notChecked'}>支付<span className="price">{item.price}</span>元</p>
+                  </li>
+                ))
+              }
             </ul>
           </div>
+        </section>
+        <section className="button">
+          <button onClick={this.toSuccess}>立即支付</button>
         </section>
       </div>
     );

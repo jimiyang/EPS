@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
-import {BrowserRouter, Route, Switch, Link, Redirect} from 'react-router-dom';
-import {hashHistory} from 'react-router';
-import {Breadcrumb, AutoComplete, Icon, Input, Button} from 'antd';
+import {Route, Link} from 'react-router-dom';
+import {AutoComplete, Icon, Input, Button} from 'antd';
 import commodities from '../commodities/commodities';
 import searchDetail from '../searchDetail/searchDetail';
 import commoditiesDetail from '../commoditiesDetail/commoditiesDetail';
 import generateOrder from '../generateOrder/generateOrder';
 import cashier from '../cashier/cashier';
+import successfulPayment from '../successfulPayment/successfulPayment';
+import orderList from '../orderList/orderList';
+import orderDetail from '../orderDetail/orderDetail';
 import './app.less';
 
 function IsLogin(props) {
@@ -93,7 +95,7 @@ export default class App extends Component {
                   onChange={this.getSearchContent}
                   placeholder="搜索商品"
                   style={{ width: '100%' }}
-                ><Input suffix={(<Button className="search-btn" size="large" type="primary" ><Icon type="search" /></Button>)} />
+                ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail}><Icon type="search" /></Button>)} />
                 </AutoComplete>
               </div>
             </div>
@@ -105,6 +107,9 @@ export default class App extends Component {
           <Route path="/commoditiesDetail" component={commoditiesDetail} />
           <Route path="/generateOrder" component={generateOrder} />
           <Route path="/cashier" component={cashier} />
+          <Route path="/successfulPayment" component={successfulPayment} />
+          <Route path="/orderList" component={orderList} />
+          <Route path="/orderDetail" component={orderDetail} />
         </section>
         <div className="footer">
           ©2019 lianfutong.com

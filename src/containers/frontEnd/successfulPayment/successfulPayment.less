@@ -1,0 +1,65 @@
+#successfulPayment {
+  section {
+    border: 1px solid #000;
+    height: 310px;
+    padding: 50px 0 50px 45px;
+    display: flex;
+    justify-content: center;
+    .info {
+      width: 535px;
+      border-right: 1px solid #000;
+      padding-right: 75px;
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      .success {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        font-size: 20px;
+        margin-bottom: 35px;
+        span {
+          color: red;
+        }
+      }
+      .address, .link {
+        padding-left: 55px;
+        display: flex;
+        justify-content: flex-start;
+        font-size: 12px;
+        >p:first-of-type {
+          width: 90px;
+          margin-right: 10px;
+        }
+      }
+      .address {
+        margin-bottom: 50px;
+        p:last-of-type {
+          max-width: 380px;
+        }
+      }
+      .link {
+        div {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          p {
+            margin: 0 10px;
+          }
+          span {
+            color: #009dd2;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    .progress {
+      padding: 0 50px;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
