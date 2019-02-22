@@ -23,8 +23,6 @@ import SendDelivery from './sendDelivery';
 
 moment.locale('zh-cn');
 const {Option} = AutoComplete;
-const CheckboxGroup = Checkbox.Group;
-const plainOptions = ['Apple', 'Pear', 'Orange'];
 class DeliveryList extends Component {
   constructor(props) {
     super(props);
@@ -39,7 +37,8 @@ class DeliveryList extends Component {
       checkedList: [],
       publicNumberChecked: [],
       defaultValue: '请选择快递',
-      orderNumber: ''
+      orderNumber: '',
+      detaileData: ['我是代理商1', '我是代理商2', '我是代理商3']
     };
   }
   componentWillMount() {}
@@ -194,85 +193,45 @@ class DeliveryList extends Component {
         </ul>
         <div className="order-blocks">
           <ul>
-            <li>
-              <div className="order-title">
-                <div className="arrow-ico" onClick={this.openEvent.bind(this, 0)}>
-                  <Icon type={this.state.index === 0 ? 'up' : 'down'} />
-                </div>
-                <Checkbox
-                  onChange={this.onCheckAllChange}
-                  checked={this.state.publicNumberChecked[223]}
-                  value={223}
-                />
-                <span>待发货</span>
-                <span>EW_N8484741367/刘玲一级代理商</span>
-                <span>订单号：0928213248</span>
-                <span>2018-12-21 06:12:22</span>
-                <Button type="primary" onClick={this.orderDetailEvent.bind(this)}>订单详情</Button>
-                <Button type="primary" onClick={this.sendDeliveryEvent.bind(this)}>发货</Button>
-              </div>
-              <div className={['order-detaile', this.state.index === 0 ? null : 'hide'].join(' ')} >
-                <div className="items-1">
-                  <span>下单账号：dddddd</span>
-                  <span>数量：11111111</span>
-                  <span>合计：<em className="red">09999999</em></span>
-                </div>
-                <div className="items-2">收货地址：开快点快点快点快点快点快点快点快点打开的开口道</div>
-                <div className="items-3">
-                  <Checkbox value={223} onChange={this.onChange} checked={this.state.checkedList[223]} />
-                  <img src={require('../../../assets/bg.jpg')} />
-                  <div>
-                    <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>
-                    <p>¥344324321</p>
-                    <p>商品类型：哈哈哈哈哈</p>
+            {
+              this.state.detaileData.map((item, index) => (
+                <li>
+                  <div className="order-title">
+                    <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
+                      <Icon type={this.state.index === index ? 'up' : 'down'} />
+                    </div>
+                    <Checkbox
+                      onChange={this.onCheckAllChange}
+                      checked={this.state.publicNumberChecked[index]}
+                      value={index}
+                    />
+                    <span>待发货</span>
+                    <span>{item}</span>
+                    <span>订单号：0928213248</span>
+                    <span>2018-12-21 06:12:22</span>
+                    <Button type="primary" onClick={this.orderDetailEvent.bind(this)}>订单详情</Button>
+                    <Button type="primary" onClick={this.sendDeliveryEvent.bind(this)}>发货</Button>
                   </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div className="order-title">
-                <div className="arrow-ico" onClick={this.openEvent.bind(this, 1)}>
-                  <Icon type={this.state.index === 1 ? 'up' : 'down'} />
-                </div>
-                <Checkbox
-                  onChange={this.onCheckAllChange}
-                  checked={this.state.publicNumberChecked[1]}
-                  value={1}
-                />
-                <span>待发货</span>
-                <span>EW_N8484741367/刘玲一级代理商</span>
-                <span>订单号：0928213248</span>
-                <span>2018-12-21 06:12:22</span>
-                <Button type="primary" onClick={this.orderDetailEvent.bind(this)}>订单详情</Button>
-                <Button type="primary">发货</Button>
-              </div>
-              <div className={['order-detaile', this.state.index === 1 ? null : 'hide'].join(' ')} >
-                <div className="items-1">
-                  <span>下单账号：dddddd</span>
-                  <span>数量：11111111</span>
-                  <span>合计：<em className="red">09999999</em></span>
-                </div>
-                <div className="items-2">收货地址：开快点快点快点快点快点快点快点快点打开的开口道</div>
-                <div className="items-3">
-                  <Checkbox value={this.state.index} onChange={this.onChange} checked={this.state.checkedList[1]} />
-                  <img src={require('../../../assets/bg.jpg')} />
-                  <div>
-                    <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>
-                    <p>¥344324321</p>
-                    <p>商品类型：哈哈哈哈哈</p>
+                  <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} >
+                    <div className="items-1">
+                      <span>下单账号：dddddd</span>
+                      <span>数量：11111111</span>
+                      <span>合计：<em className="red">09999999</em></span>
+                    </div>
+                    <div className="items-2">收货地址：开快点快点快点快点快点快点快点快点打开的开口道</div>
+                    <div className="items-3">
+                      <Checkbox value={index} onChange={this.onChange} checked={this.state.checkedList[index]} />
+                      <img src={require('../../../assets/bg.jpg')} />
+                      <div>
+                        <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>
+                        <p>¥344324321</p>
+                        <p>商品类型：哈哈哈哈哈</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="items-3">
-                  <Checkbox value={this.state.index} onChange={this.onChange} checked={this.state.checkedList[1]} />
-                  <img src={require('../../../assets/bg.jpg')} />
-                  <div>
-                    <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>
-                    <p>¥344324321</p>
-                    <p>商品类型：哈哈哈哈哈</p>
-                  </div>
-                </div>
-              </div>
-            </li>
+                </li>
+              ))
+            }
           </ul>
           <div className="g-tc pagination">
             <Pagination showSizeChanger defaultCurrent={1} total={100} />

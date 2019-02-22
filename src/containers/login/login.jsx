@@ -24,7 +24,37 @@ class Login extends Component {
   }
   //组件渲染完成
   componentDidMount() {
-    //alert('已加载dom树');
+    //注册keydown事件
+    document.addEventListener('keydown', this.onKeyDown);
+  }
+  //组件销毁
+  componentWillUnmount() {
+    document.addEventListener('keydown', this.onKeyDown);
+  }
+  login() {
+    if (this.state.userName === '' || this.state.userPwd === '') {
+      message.error('请输入用户名或密码');
+      return false;
+    }
+    if (this.state.txtCode === '') {
+      message.error('验证码不能为空，请输入验证码');
+      return false;
+    } else if (this.state.txtCode !== this.state.authCode) {
+      message.error('验证码输入不一致');
+      return false;
+    }
+    api.baseInstance({userName: this.state.userName, passWord: this.state.userPwd}).then(rs => {
+      if (rs.data.returnCode === 'S') {
+        window.localStorage.setItem('checkLogin', '100');
+        this.props.history.push({pathname: '/main'});
+      }
+    });
+  }
+  onKeyDown = (e) => {
+    //console.log(e.keyCode);
+    if (e.keyCode === 13) {
+      this.login();
+    }
   }
   onChangeUserName = (e) => {
     this.setState({
@@ -43,23 +73,7 @@ class Login extends Component {
   }
   //登录
   loginInEvent = () => {
-    if (this.state.userName === '' || this.state.userPwd === '') {
-      message.error('请输入用户名或密码');
-      return false;
-    }
-    if (this.state.txtCode === '') {
-      message.error('验证码不能为空，请输入验证码');
-      return false;
-    } else if (this.state.txtCode !== this.state.authCode) {
-      message.error('验证码输入不一致');
-      return false;
-    }
-    api.baseInstance({userName: this.state.userName, passWord: this.state.userPwd}).then(rs => {
-      if (rs.data.returnCode === 'S') {
-        window.localStorage.setItem('checkLogin', '100');
-        this.props.history.push({pathname: '/main'});
-      }
-    });
+    this.login();
   }
   render() {
     return (

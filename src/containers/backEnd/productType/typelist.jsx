@@ -5,8 +5,8 @@ import {
   Select,
   Button,
   Table,
-  Checkbox,
-  Modal
+  Modal,
+  TreeSelect
 } from 'antd';
 
 import './style.css';
@@ -14,14 +14,27 @@ import './style.css';
 import TypeEdit from './typeedit';
 
 const Option = Select.Option;
-const { TextArea } = Input;
-const CheckboxGroup = Checkbox.Group;
 class ProductType extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      form: {
+        goods_category_name: '',
+        id: '',
+        superior_id: ''
+      },
       visible: false,
-      defaultExpandAllRows: true //是否默认展开树形结构
+      defaultExpandAllRows: true, //是否默认展开树形结构
+      typeData: [],
+      parentData: [{
+        id: 1,
+        goods_category_name: '父级1',
+        children: [
+          {
+            goods_category_name: '子级1',
+          }
+        ]
+      }]
     };
   }
   edit = (item) => {
@@ -34,15 +47,26 @@ class ProductType extends Component {
       visible: false
     });
   }
+  selTypeId = (id) => {
+    const form = Object.assign({}, this.state.form, {id});
+    this.setState({
+      form
+    });
+  }
+  goodsNameEvent = (e) => {
+    const form = Object.assign({}, this.state.form, {goods_category_name: e.target.value});
+    this.setState({
+      form
+    });
+  }
+  addTypeEvent = () => {
+    console.log(this.state.form);
+  }
   render() {
     const columns = [{
       title: '类别名称',
-      dataIndex: 'name',
-      key: 'name',
-    }, {
-      title: '描述',
-      dataIndex: 'describe',
-      key: 'describe'
+      dataIndex: 'goods_category_name',
+      key: 'goods_category_name',
     }, {
       title: '操作',
       dataIndex: '',
@@ -53,39 +77,24 @@ class ProductType extends Component {
         </div>
       )
     }];
-    const data = [
-      {
-        key: 1,
-        name: '父级1',
-        describe: '我是父级1',
-        children: [{
-          key: 11,
-          name: '子级1',
-          describe: '我是子级1',
-        }]
-      },
-      {
-        key: 12,
-        name: '父级2',
-        describe: '我是父级2',
-        children: [{
-          key: 121,
-          name: '子级2',
-          describe: '我是子级2',
-        }],
-      }
-    ];
-    const rowSelection = {
-      /*onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-      },*/
-      onSelect: (record, selected, selectedRows) => {
-        console.log(record, selected, selectedRows);
-      },
-      onSelectAll: (selected, selectedRows, changeRows) => {
-        console.log(selected, selectedRows, changeRows);
-      }
-    };
+    const treeData = [{
+      title: 'Node1',
+      value: '0-0',
+      key: '0-0',
+      children: [{
+        title: 'Child Node1',
+        value: '0-0-1',
+        key: '0-0-1',
+      }, {
+        title: 'Child Node2',
+        value: '0-0-2',
+        key: '0-0-2',
+      }],
+    }, {
+      title: 'Node2',
+      value: '0-1',
+      key: '0-1',
+    }];
     return (
       <div className="type-blocks">
         <Modal
@@ -100,17 +109,20 @@ class ProductType extends Component {
         <div className="left">
           <h1 className="title">分类目录</h1>
           <p>添加新分类项目</p>
-          <Input />
-          <p>父级分类目录</p>
-          <Select defaultValue="lucy" style={{ width: '100%'}}>
-            <Option value="lucy">Lucy</Option>
+          <Input value={this.state.form.goods_category_name} onChange={this.goodsNameEvent} />
+          <p>所属分类</p>
+          <Select defaultValue={this.state.form.id} onSelect={this.selTypeId} style={{ width: '100%'}}>
+            {
+              this.state.typeData.map((item) => (
+                <Option value={item.id}>{item.name}</Option>
+              ))
+            }
           </Select>
-          <p>类别描述</p>
-          <TextArea rows={4} />
-          <Button type="primary">添加新分类目录</Button>
+          <p>父级分类目录</p>
+          <Button type="primary" onClick={this.addTypeEvent}>添加新分类目录</Button>
         </div>
         <div className="right">
-          <Table defaultExpandAllRows={this.state.defaultExpandAllRows} rowSelection={rowSelection} columns={columns} dataSource={data} />
+          <Table rowKey="id" defaultExpandAllRows={this.state.defaultExpandAllRows} columns={columns} dataSource={this.state.parentData} />
         </div>
       </div>
     );

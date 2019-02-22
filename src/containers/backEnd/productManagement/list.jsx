@@ -15,6 +15,8 @@ import './list.css';
 
 import Tree from './treeMenu';//树形结构商品类型
 
+import api from '../../../api/instance.js';
+
 const {Option} = AutoComplete;
 class ProductList extends Component {
   constructor(props) {
@@ -59,9 +61,7 @@ class ProductList extends Component {
     console.log(item);
     message.success('下架成功！');
   }
-  cancel = () => {
-    message.error('已取消！');
-  }
+  cancel = () => {}
   renderOption(item) {
     return (
       <Option key={item.name} text={item.name}>
@@ -86,6 +86,15 @@ class ProductList extends Component {
   //商品条形码模糊搜索
   handleCodeSearch = (value) => {
     console.log(value);
+  }
+  //列表查询
+  searchEvent = () => {
+    const params = {
+      seivece: 'goods.getgoodslist'
+    };
+    api.baseInstance(params).then((rs) => {
+      console.log(rs);
+    });
   }
   handleOk = () => {
     this.setState({
@@ -237,13 +246,14 @@ class ProductList extends Component {
               value={this.state.typeValue}
             />
           </li>
-          <li className="items"><Button type="primary">搜索</Button></li>
+          <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
         <Table
           columns={columns}
           dataSource={data}
           pagination={this.state.search}
           className="table-box"
+          rowKey="key"
         />
       </div>
     );

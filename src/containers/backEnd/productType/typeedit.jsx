@@ -10,7 +10,7 @@ import {
 import './style.css';
 
 const Option = Select.Option;
-const { TextArea } = Input;
+const {TextArea} = Input;
 class TypeEdit extends Component {
   render() {
     const {getFieldDecorator} = this.props.form;
