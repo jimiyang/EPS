@@ -24,7 +24,13 @@ class SearchDetail extends Component {
       {img: bg, title: '联拓POS机', price: '￥999.00'},
     ],
     sortIndex: 1, // 1 综合 2 价格up 3 价格
+    // searchContent: '', // 搜索内容
   }
+
+  componentWillUpdate() {
+    console.log(window.localStorage.getItem('searchContent'));
+  }
+
   // 改变排序方法
   changeSort = (index) => {
     if (this.state.sortIndex === 2 && index === 2) {
@@ -33,15 +39,18 @@ class SearchDetail extends Component {
       this.setState({sortIndex: index});
     }
   }
+
   // 跳转到详情页
   toDetail = () => {
     console.log(1);
     this.props.history.push('/commoditiesDetail');
   }
+
   // 翻页
   changePage = (pageNumber) => {
     // console.log(pageNumber);
   }
+
   render() {
     const {list} = this.state;
     return (

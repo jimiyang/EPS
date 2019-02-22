@@ -22,55 +22,82 @@ export default class App extends Component {
       loginstate: true, // 0 未登录 1 已登录
       canSearch: false, // 是否能够搜索
       searchContent: '', // 搜索的内容
+      dataSource: [], // 搜索列表
     };
   }
-  toHome = () => {
-    this.props.history.push('/');
+
+  componentWillMount() {
+    if (!window.localStorage) {
+      alert('浏览器不支持localstorage');
+    } else {
+      const list = window.localStorage.getItem('dataSource');
+      const dataSource = list !== null ? JSON.parse(list) : [];
+      this.setState({dataSource});
+    }
   }
+
+  // 跳转到首页
+  toHome = () => {
+    if (this.props.location.pathname !== '/') {
+      this.props.history.push('/');
+    }
+  }
+
+  // 跳转到我的订单
+  toMyOrder = () => {
+    if (this.props.location.pathname !== '/orderList') {
+      this.props.history.push('/orderList');
+    }
+  }
+
+  // 跳转到搜索页
+  toSearchDetail = () => {
+    const {
+      searchContent, dataSource, canSearch
+    } = this.state;
+    if (canSearch) {
+      if (searchContent !== '') {
+        const list = dataSource;
+        const index = dataSource.indexOf(searchContent);
+        list.unshift(searchContent);
+        if (list.length > 5) {
+          index === -1 ? list.splice(5, 1) : list.splice(index + 1, 1);
+        }
+        window.localStorage.setItem('dataSource', JSON.stringify(list));
+      }
+      if (this.props.location.pathname !== '/searchDetail') {
+        this.props.history.push('/searchDetail');
+      } else {
+        window.localStorage.setItem('searchContent', searchContent);
+      }
+      this.setState({canSearch: false});
+    }
+  }
+
   // 登出
   logout = () => {
     this.setState({loginstate: !this.state.loginstate});
   }
-  itemRender = (route, params, routes, paths) => {
-    const last = routes.indexOf(route) === routes.length - 1;
-    return last ? <span>{route.breadcrumbName}</span> : <Link to={paths.join('/')}>{route.breadcrumbName}</Link>;
-  }
+
   // 获取搜索框内容
   getSearchContent = (value) => {
     value !== this.state.searchContent ? this.setState({searchContent: value, canSearch: true}) : null;
   }
-  // 跳转到搜索页
-  toSearchDetail = () => {
-    if (this.state.canSearch) {
-      this.props.history.push(`/searchDetail/${this.state.searchContent}`);
-      this.setState({canSearch: false});
-    }
-  }
+
   render() {
-    const {loginstate} = this.state;
-    const dataSource = ['12345', '23456', '34567'];
-    const routes = [{
-      path: 'index',
-      breadcrumbName: '首页'
-    }, {
-      path: 'first',
-      breadcrumbName: '一级面包屑'
-    }, {
-      path: 'second',
-      breadcrumbName: '当前页面'
-    }];
+    const {dataSource, loginstate} = this.state;
     return (
       <div className="page">
         <div className="header-bar">
           <div className="container">
             <div className="header-bar-nav">
-              <div>首页</div>
+              <div onClick={this.toHome}>首页</div>
               <div>其他入口</div>
               <div>其他链接</div>
               <div>MS系统</div>
             </div>
             <div className="header-tool">
-              <IsLogin loginstate={loginstate} />  <div className="header-order"><Icon type="file-text" />我的订单</div>
+              <IsLogin loginstate={loginstate} />  <div className="header-order" onClick={this.toMyOrder}><Icon type="file-text" />我的订单</div>
             </div>
           </div>
         </div>
@@ -86,7 +113,7 @@ export default class App extends Component {
                   <div>我的订单</div>
                 </div>
               </div>
-              <div className="search" style={{ width: 300 }}>
+              <div className="search" style={{width: 300}}>
                 <AutoComplete
                   dataSource={dataSource}
                   className="search-cont"
@@ -94,7 +121,7 @@ export default class App extends Component {
                   value={this.state.searchContent}
                   onChange={this.getSearchContent}
                   placeholder="搜索商品"
-                  style={{ width: '100%' }}
+                  style={{width: '100%'}}
                 ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail}><Icon type="search" /></Button>)} />
                 </AutoComplete>
               </div>
@@ -103,7 +130,7 @@ export default class App extends Component {
         </header>
         <section className="container">
           <Route exact path="/" component={commodities} />
-          <Route path="/searchDetail" params={this.state.searchContent} component={searchDetail} />
+          <Route path="/searchDetail" component={searchDetail} />
           <Route path="/commoditiesDetail" component={commoditiesDetail} />
           <Route path="/generateOrder" component={generateOrder} />
           <Route path="/cashier" component={cashier} />
