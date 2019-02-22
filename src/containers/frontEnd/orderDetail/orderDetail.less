@@ -1,3 +1,122 @@
 #orderDetail {
-
+  header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 125px;
+    padding: 20px 0;
+    border: 1px solid #d7d7d7;
+    .order {
+      width: 270px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid #d7d7d7;
+      p:first-of-type {
+        margin-bottom: 30px;
+      }
+    }
+    .progress {
+      flex: 1;
+      padding: 0 100px;
+    }
+  }
+  section {
+    border: 1px solid #d7d7d7;
+    margin: 30px 0;
+    display: flex;
+    justify-content: space-between;
+    >div {
+      padding: 0 15px;
+      margin: 20px 0;
+      width: 400px;
+      border-left: 1px solid #000;
+      min-height: 265px;
+      &:first-of-type {
+        border: 0;
+      }
+      &:nth-of-type(2) {
+        flex: 1;
+      }
+      div {
+        font-size: 14px;
+        margin-top: 30px;
+        position: relative;
+        p {
+          float: left;
+          width: 100px;
+        }
+        .address {
+          width: 270px;
+          position: absolute;
+          word-wrap: break-word;
+          word-break: normal;
+        }
+      }
+    }
+  }
+  .status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #e4e4e4;
+    line-height: 40px;
+    li {
+      text-align: center;
+    }
+  }
+  .content {
+    border: 1px solid #d7d7d7;
+    border-top: 0;
+    padding: 50px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    p {
+      text-align: center;
+    }
+    .info {
+      display: flex;
+      justify-content: flex-start;
+      p {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+    img {
+      width: 80px;
+      height: 80px;
+      margin: 0 15px 0 30px
+    }
+    .operation {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 120px;
+      button {
+        font-size: 14px;
+        width: 70px;
+        height: 30px;
+        margin: 10px 25px;
+        background: #009dd2;
+        color: #fff;
+        border-radius: 5px;
+        border: 0;
+      }
+    }
+  }
+  .content2 {
+    border: 1px solid #d7d7d7;
+    border-top: 0;
+    padding: 10px 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    p {
+      padding: 20px 40px;
+    }
+  }
 }
