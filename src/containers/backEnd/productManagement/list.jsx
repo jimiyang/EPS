@@ -202,7 +202,7 @@ class ProductList extends Component {
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               size="large"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               dataSource={this.state.productNameData.map(this.renderOption)}
               onBlur={this.handleNameSearch}
               placeholder="请输入商品名称"
@@ -217,7 +217,7 @@ class ProductList extends Component {
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               size="large"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               dataSource={this.state.barCodeData.map(this.renderOption)}
               onBlur={this.handleCodeSearch}
               placeholder="请输入商品条形码"

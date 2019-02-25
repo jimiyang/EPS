@@ -4,7 +4,7 @@ import {Tree} from 'antd';
 
 import './list.css';
 
-const { TreeNode } = Tree;
+const {TreeNode} = Tree;
 const DirectoryTree = Tree.DirectoryTree;
 class TreeMenu extends Component {
   componentWillMount() {}

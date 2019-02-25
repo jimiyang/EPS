@@ -1,66 +1,41 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
 import {Form, Input, Cascader, Button} from 'antd';
+import area from '../../../utils/area';
 import './generateOrder.less';
 
-const residences = [{
-  value: 'zhejiang',
-  label: '北京',
-  children: [{
-    value: 'hangzhou',
-    label: '北京',
-    children: [{
-      value: 'xihu',
-      label: '丰台区',
-    }],
-  }],
-}, {
-  value: 'jiangsu',
-  label: '天津',
-  children: [{
-    value: 'nanjing',
-    label: '天津',
-    children: [{
-      value: 'zhonghuamen',
-      label: '海州区',
-    }],
-  }],
-}];
+@connect((state) => ({commoditiesDetail: state.frontEnd.commoditiesDetail}))
 
 class GenerateOrder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      form: {
-        consignee: null,
-        address: null,
-        phoneNumber: null,
-        postalCode: null,
-      }
+      info: {}, // 商品信息
+      consignee: {}, // 收货人信息
     };
   }
+
   componentWillMount() {
+    const consignee = JSON.parse(window.localStorage.getItem('orderInfo'));
+    this.setState({info: this.props.commoditiesDetail, consignee});
   }
-  componentDidMount() {
-  }
+
   // 跳转到收银台
   toCashier = () => {
   }
+
+  // 提交表单
   handleSubmit = (e) => {
     e.preventDefault();
-    this.props.history.push('/cashier');
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-        console.log(this.state.form.goodDetaile);
-        this.setState({
-          form: {
-            is_post: 0
-          }
-        });
+        window.localStorage.setItem('orderInfo', JSON.stringify(values));
+        this.props.history.push('/cashier');
       }
     });
   }
   render() {
+    const {info, consignee} = this.state;
     const {getFieldDecorator} = this.props.form;
     return (
       <div id="generateOrder">
@@ -75,12 +50,12 @@ class GenerateOrder extends Component {
             </ul>
             <ul className="commodities">
               <li>
-                <img src={require('../../../assets//bg.jpg')} />
-                <p>联拓POS机</p>
+                <img src={info.img} />
+                <p>{info.title}</p>
               </li>
-              <li>￥999.00</li>
-              <li>1</li>
-              <li>￥999.00</li>
+              <li>￥{info.price}</li>
+              <li>{info.count}</li>
+              <li>￥{(info.count * Number(info.price)).toFixed(2)}</li>
             </ul>
           </div>
         </section>
@@ -94,9 +69,10 @@ class GenerateOrder extends Component {
                 {getFieldDecorator(
                   'residence',
                   {
+                    initialValue: consignee.residence || '',
                     rules: [{type: 'array', required: true, message: '请选择所在地区'}],
                   }
-                )(<Cascader options={residences} placeholder="请选择所在地区" />)
+                )(<Cascader options={area.node} placeholder="请选择所在地区" />)
                 }
               </Form.Item>
               <Form.Item
@@ -105,6 +81,7 @@ class GenerateOrder extends Component {
                 {getFieldDecorator(
                   'consignee',
                   {
+                    initialValue: consignee.consignee || '',
                     rules: [{required: true, message: '请输入收货人'}]
                   }
                 )(<Input placeholder="请输入收货人" />)
@@ -116,6 +93,7 @@ class GenerateOrder extends Component {
                 {getFieldDecorator(
                   'address',
                   {
+                    initialValue: consignee.address || '',
                     rules: [{required: true, message: '请输入详细地址'}]
                   }
                 )(<Input placeholder="请输入详细地址" />)
@@ -127,6 +105,7 @@ class GenerateOrder extends Component {
                 {getFieldDecorator(
                   'phoneNumber',
                   {
+                    initialValue: consignee.phoneNumber || '',
                     rules: [
                       {required: true, message: '请输入手机号码'},
                       {pattern: /^1\d{10}$/, message: '请输入正确的手机号码'}
@@ -141,6 +120,7 @@ class GenerateOrder extends Component {
                 {getFieldDecorator(
                   'postalCode',
                   {
+                    initialValue: consignee.postalCode || '',
                     rules: [
                       {required: false},
                       {pattern: /^[0-9]{6}$/, message: '邮政编码格式有误'}

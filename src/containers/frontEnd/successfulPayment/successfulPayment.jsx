@@ -8,6 +8,17 @@ const Step = Steps.Step;
 class SearchDetail extends Component {
   state = {
   }
+
+  // 跳转到订单列表
+  toOrderList = () => {
+    this.props.history.push('/orderList');
+  }
+
+  // 跳转到订单详情
+  toOrderDetail = () => {
+    this.props.history.push('/orderDetail');
+  }
+
   render() {
     return (
       <div id="successfulPayment">
@@ -24,9 +35,9 @@ class SearchDetail extends Component {
             <div className="link">
               <p>您可以查看：</p>
               <div>
-                <span>订单列表</span>
+                <span onClick={this.toOrderList}>订单列表</span>
                 <p>|</p>
-                <span>订单详情</span>
+                <span onClick={this.toOrderDetail}>订单详情</span>
               </div>
             </div>
           </div>

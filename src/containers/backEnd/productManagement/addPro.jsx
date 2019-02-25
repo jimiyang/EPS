@@ -46,7 +46,7 @@ class Add extends Component {
     if (!this.props.location.query) {
       return false;
     }
-    console.log(this.props.location.query.id);
+    // console.log(this.props.location.query.id);
   }
   handleSubmit = (e) => {
     e.preventDefault();
@@ -80,7 +80,7 @@ class Add extends Component {
   }
   uploadImgEvent = (info) => {
     if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
+      this.setState({loading: true});
       return;
     }
     if (info.file.status === 'done') {
@@ -118,7 +118,7 @@ class Add extends Component {
     return label[label.length - 1];
   }
   onChange = (value) => {
-    console.log(value[value.length - 1]);
+    // console.log(value[value.length - 1]);
   }
   render() {
     const {getFieldDecorator} = this.props.form;
@@ -201,7 +201,7 @@ class Add extends Component {
               {
                 rules: [
                   {required: true, message: '请输入商品原价！'},
-                  { pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数（保留后两位）' }
+                  {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数（保留后两位）'}
                 ]
               }
             )(<Input placeholder="请输入商品成本价" />)
@@ -215,7 +215,7 @@ class Add extends Component {
               {
                 rules: [
                   {required: true, message: '请输入商品售价！'},
-                  { pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数（保留后两位）' }
+                  {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数（保留后两位）'}
                 ]
               }
             )(<Input placeholder="请输入商品售价" />)
@@ -251,19 +251,19 @@ class Add extends Component {
             <ReactQuill
               placeholder="请输入商品描述详情。。。。。。"
               theme="snow"
-              style={{ width: 700, height: 300 }}
+              style={{width: 700, height: 300}}
               value={this.state.form.goodDetaile}
               onChange={this.handleChange}
               modules={{
                 toolbar: [
                   ['bold', 'italic', 'underline', 'strike'],
                   ['blockquote', 'code-block'],
-                  [{header: 1 }, {header: 2 }],
+                  [{header: 1}, {header: 2}],
                   [{list: 'ordered'}, {list: 'bullet'}],
-                  [{script: 'sub'}, {script: 'super' }],
-                  [{indent: '-1'}, {indent: '+1' }],
-                  [{direction: 'rtl' }],
-                  [{header: [1, 2, 3, 4, 5, 6, false] }],
+                  [{script: 'sub'}, {script: 'super'}],
+                  [{indent: '-1'}, {indent: '+1'}],
+                  [{direction: 'rtl'}],
+                  [{header: [1, 2, 3, 4, 5, 6, false]}],
                   [{color: []}, {background: []}],
                   [{font: []}],
                   [{align: []}],

@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
-import {Route, Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {Route} from 'react-router-dom';
 import {AutoComplete, Icon, Input, Button} from 'antd';
+// 路由
 import commodities from '../commodities/commodities';
 import searchDetail from '../searchDetail/searchDetail';
 import commoditiesDetail from '../commoditiesDetail/commoditiesDetail';
@@ -9,12 +11,18 @@ import cashier from '../cashier/cashier';
 import successfulPayment from '../successfulPayment/successfulPayment';
 import orderList from '../orderList/orderList';
 import orderDetail from '../orderDetail/orderDetail';
+
 import './app.less';
+import {changeSearchContent} from '../../../store/reduces/frontEnd';
 
 function IsLogin(props) {
   return props.loginstate ? <div className="header-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
 }
 
+@connect(
+  (state) => ({searchContent: state.frontEnd.searchContent}),
+  {changeSearchContent},
+)
 export default class App extends Component {
   constructor() {
     super();
@@ -27,12 +35,18 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    if (!window.localStorage) {
-      alert('浏览器不支持localstorage');
-    } else {
+    if (window.localStorage) {
       const list = window.localStorage.getItem('dataSource');
       const dataSource = list !== null ? JSON.parse(list) : [];
       this.setState({dataSource});
+    } else {
+      alert('浏览器不支持localStorage');
+    }
+  }
+
+  componentWillReceiveProps(props) {
+    if (props.searchContent === '') {
+      this.setState({searchContent: props.searchContent});
     }
   }
 
@@ -55,8 +69,9 @@ export default class App extends Component {
     const {
       searchContent, dataSource, canSearch
     } = this.state;
+    this.props.location.pathname !== '/searchDetail' ? this.props.history.push('/searchDetail') : null;
     if (canSearch) {
-      if (searchContent !== '') {
+      if (searchContent !== '') { // 获取下拉列表
         const list = dataSource;
         const index = dataSource.indexOf(searchContent);
         list.unshift(searchContent);
@@ -65,12 +80,7 @@ export default class App extends Component {
         }
         window.localStorage.setItem('dataSource', JSON.stringify(list));
       }
-      if (this.props.location.pathname !== '/searchDetail') {
-        this.props.history.push('/searchDetail');
-      } else {
-        window.localStorage.setItem('searchContent', searchContent);
-      }
-      this.setState({canSearch: false});
+      this.props.changeSearchContent(searchContent);
     }
   }
 

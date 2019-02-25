@@ -722,5 +722,5 @@ const node = [
       }
     ]
   }
-]
-export default {node}
+];
+export default {node};

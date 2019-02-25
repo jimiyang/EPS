@@ -1,7 +1,14 @@
 import React, {Component} from 'react';
 import {Pagination} from 'antd';
+import {connect} from 'react-redux';
 import bg from '../../../assets/bg.jpg';
 import './searchDetail.less';
+import {changeSearchContent} from '../../../store/reduces/frontEnd';
+
+@connect(
+  (state) => ({searchContent: state.frontEnd.searchContent}),
+  {changeSearchContent},
+)
 
 class SearchDetail extends Component {
   state = {
@@ -24,31 +31,40 @@ class SearchDetail extends Component {
       {img: bg, title: '联拓POS机', price: '￥999.00'},
     ],
     sortIndex: 1, // 1 综合 2 价格up 3 价格
-    // searchContent: '', // 搜索内容
+    pageNumber: 1,
   }
 
-  componentWillUpdate() {
-    console.log(window.localStorage.getItem('searchContent'));
+  componentWillReceiveProps(props) {
+    this.getList(props.searchContent);
+  }
+
+  componentWillUnmount() {
+    this.props.changeSearchContent('');
+  }
+
+  // 获取搜寻的商品列表
+  getList = (searchContent) => {
+    const index = this.state.sortIndex;
+    const page = this.state.pageNumber;
   }
 
   // 改变排序方法
   changeSort = (index) => {
-    if (this.state.sortIndex === 2 && index === 2) {
-      this.setState({sortIndex: 3});
-    } else {
-      this.setState({sortIndex: index});
+    if (this.state.sortIndex !== index) {
+      this.state.sortIndex === 2 && index === 2 ? this.setState({sortIndex: 3, pageNumber: 1}) : this.setState({sortIndex: index, pageNumber: 1});
+      this.getList(this.props.searchContent);
     }
   }
 
   // 跳转到详情页
   toDetail = () => {
-    console.log(1);
     this.props.history.push('/commoditiesDetail');
   }
 
   // 翻页
   changePage = (pageNumber) => {
-    // console.log(pageNumber);
+    this.setState({pageNumber});
+    this.getList(this.props.searchContent);
   }
 
   render() {
@@ -79,7 +95,15 @@ class SearchDetail extends Component {
           </ul>
         </section>
         <section className="pagination">
-          <Pagination showQuickJumper defaultCurrent={1} total={500} onChange={this.changePage} />
+          <Pagination
+            showQuickJumper
+            showSizeChange
+            current={this.state.pageNumber}
+            defaultCurrent={1}
+            defaultPageSize={20}
+            total={500}
+            onChange={this.changePage}
+          />
         </section>
       </div>
     );

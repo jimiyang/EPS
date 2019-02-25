@@ -56,17 +56,19 @@ class OrderList extends Component {
 
   // 改变分页
   changeTab = (e) => {
-    console.log(e);
   }
 
   //搜索列表
   changeList = (e) => {
-    console.log(e);
   }
 
   // 跳转到订单详情
   toOrderDetail = (e) => {
     this.props.history.push('/orderDetail');
+  }
+
+  changePage = (value) => {
+    console.log(value);
   }
 
   render() {
