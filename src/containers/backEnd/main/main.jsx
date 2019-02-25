@@ -27,13 +27,13 @@ const {
 class Main extends Component {
   componentWillMount() {
     //验证是否需要登录
-    window.common.loginOut(this, message);
+    //window.common.loginOut(this, message);
   }
   render() {
     return (
       <Layout className="main-blocks">
         <Header>
-          采购平台-管理后台
+          联拓富新零售赋能平台
           <div>
             <Link to="/login">退出登录</Link>
           </div>

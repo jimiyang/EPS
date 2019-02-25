@@ -17,7 +17,7 @@ import 'react-quill/dist/quill.snow.css'; // ES6
 
 import './list.css';
 
-import api from '../../../api/instance.js';
+import api from '../../../api/api.js';
 
 const RadioGroup = Radio.Group;
 class Add extends Component {
@@ -46,14 +46,17 @@ class Add extends Component {
     if (!this.props.location.query) {
       return false;
     }
-    // console.log(this.props.location.query.id);
+    //console.log(this.props.location.query.id);
+    window.api.baseInstance('goods.getgoodsdetail', {goods_id: this.props.location.query.id}).then((rs) => {
+      console.log(rs);
+    });
   }
-  handleSubmit = (e) => {
+  addtionProEvent = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-        console.log(this.state.form.goodDetaile);
+        //console.log('Received values of form: ', values);
+        //console.log(this.state.form.goodDetaile);
         this.setState({
           form: {
             is_post: 0
@@ -61,6 +64,15 @@ class Add extends Component {
         });
       }
     });
+    if (!this.props.location.query) {
+      window.api.baseInstance('goods.addgoods', this.state.form).then((rs) => {
+        console.log(rs);
+      });
+    } else {
+      window.api.baseInstance('goods.modgoods', this.state.form).then((rs) => {
+        console.log(rs);
+      });
+    }
   }
   getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -107,9 +119,7 @@ class Add extends Component {
       login_name: 'TMMD'
     };
     //console.log(JSON.stringify(params));
-    api.baseInstance(params).then((rs) => {
-      console.log(rs);
-    });
+    api.baseInstance(params).then((rs) => {});
     this.setState({
       goods_bar_no: '3838737373373'
     });
@@ -117,9 +127,7 @@ class Add extends Component {
   displayRender(label) {
     return label[label.length - 1];
   }
-  onChange = (value) => {
-    // console.log(value[value.length - 1]);
-  }
+  onChange = (value) => {}
   render() {
     const {getFieldDecorator} = this.props.form;
     const imageUrl = this.state.imageUrl;
@@ -149,7 +157,7 @@ class Add extends Component {
     ];
     return (
       <div className="add-blocks">
-        <Form onSubmit={this.handleSubmit} className="form" name="form">
+        <Form onSubmit={this.addtionProEvent} className="form" name="form">
           <Form.Item
             label="商品名称"
           >
@@ -201,7 +209,7 @@ class Add extends Component {
               {
                 rules: [
                   {required: true, message: '请输入商品原价！'},
-                  {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数（保留后两位）'}
+                  {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
                 ]
               }
             )(<Input placeholder="请输入商品成本价" />)
@@ -215,7 +223,7 @@ class Add extends Component {
               {
                 rules: [
                   {required: true, message: '请输入商品售价！'},
-                  {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数（保留后两位）'}
+                  {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
                 ]
               }
             )(<Input placeholder="请输入商品售价" />)
@@ -246,7 +254,7 @@ class Add extends Component {
           </Form.Item>
           <Form.Item
             label="商品详情"
-            style={{height: 400 }}
+            style={{height: 400}}
           >
             <ReactQuill
               placeholder="请输入商品描述详情。。。。。。"
