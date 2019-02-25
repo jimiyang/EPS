@@ -27,7 +27,7 @@ const {
 class Main extends Component {
   componentWillMount() {
     //验证是否需要登录
-    window.common.loginOut(this, message);
+    //window.common.loginOut(this, message);
   }
   render() {
     return (

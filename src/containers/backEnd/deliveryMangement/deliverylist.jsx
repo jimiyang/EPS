@@ -38,10 +38,23 @@ class DeliveryList extends Component {
       publicNumberChecked: [],
       defaultValue: '请选择快递',
       orderNumber: '',
-      detaileData: ['我是代理商1', '我是代理商2', '我是代理商3']
+      detaileData: ['我是代理商1', '我是代理商2', '我是代理商3'],
+      order_no: '',
+      search: {
+        order_no: '',
+        status: 0,
+        page_size: 3,
+        current_page: 1,
+        end_time: '',
+        agent_no: '',
+        next: '',
+        previous: ''
+      }
     };
   }
-  componentWillMount() {}
+  componentWillMount() {
+    console.log(this.state.search);
+  }
   renderOption(item) {
     return (
       <Option key={item.name} text={item.name}>
@@ -54,9 +67,10 @@ class DeliveryList extends Component {
       isActive: index
     });
   }
-  orderDetailEvent = () => {
+  orderDetailEvent = (value) => {
     this.setState({
-      detailVisible: true
+      detailVisible: true,
+      order_no: value
     });
   }
   sendDeliveryEvent = () => {
@@ -76,10 +90,9 @@ class DeliveryList extends Component {
     });
   }
   onCheckAllChange = (e) => {
-    const index = e.target.value;
+    const index = e.target.value[0];
     const publicNumberChecked = this.state.publicNumberChecked;
     const checkedList = this.state.checkedList;
-    console.log(e.target);
     if (e.target.checked === true) {
       publicNumberChecked[index] = true;
       checkedList[index] = true;
@@ -114,9 +127,27 @@ class DeliveryList extends Component {
       orderNumber: value
     });
   }
-  sendEvent = () => {
+  sendEvent = (value) => {
     console.log(`快递名称：${this.state.defaultValue}`);
     console.log(`快递单号：${this.state.orderNumber}`);
+    const params = {
+      order_no: value,
+      express_name: this.state.defaultValue,
+      express_no: this.state.orderNumber,
+      ids: []
+    };
+    window.api.baseInstance('order.send', params).then((rs) => {
+      console.log(rs);
+    });
+  }
+  searchEvent = () => {
+    const params = {
+      order_no: '',
+      status: ''
+    };
+    window.api.baseInstance('order.orderList', params).then(rs => {
+      console.log(rs);
+    });
   }
   render() {
     return (
@@ -124,13 +155,13 @@ class DeliveryList extends Component {
         <Modal
           title="订单详情"
           visible={this.state.detailVisible}
-          style={{ width: '900px' }}
+          style={{width: '900px'}}
           onCancel={this.closeEvent}
           footer={
             <Button type="primary" onClick={this.closeEvent.bind(this)}>确定</Button>
           }
         >
-          <OrderDetaile />
+          <OrderDetaile order_no={this.state.order_no} />
         </Modal>
         <Modal
           title="填写快递信息"
@@ -148,7 +179,7 @@ class DeliveryList extends Component {
         <div className="nav-items">
           <div className="tap-items">
             {
-              this.state.menuData.map((item, index) => <span onClick={this.selTap.bind(this, index)} className={this.state.isActive === index ? 'active' : ''}>{item}</span>)
+              this.state.menuData.map((item, index) => <span key={index} onClick={this.selTap.bind(this, index)} className={this.state.isActive === index ? 'active' : ''}>{item}</span>)
             }
           </div>
         </div>
@@ -159,7 +190,7 @@ class DeliveryList extends Component {
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               size="large"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               dataSource={this.state.agentNumberData.map(this.renderOption)}
               onBlur={this.handleNameSearch}
               placeholder="请输入商品名称"
@@ -174,7 +205,7 @@ class DeliveryList extends Component {
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               size="large"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               dataSource={this.state.orderNumberData.map(this.renderOption)}
               onBlur={this.handleCodeSearch}
               placeholder="请输入商品条形码"
@@ -189,13 +220,13 @@ class DeliveryList extends Component {
           <li className="items"><label>结束日期：</label>
             <DatePicker />
           </li>
-          <li className="items"><Button type="primary">搜索</Button></li>
+          <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
         <div className="order-blocks">
           <ul>
             {
               this.state.detaileData.map((item, index) => (
-                <li>
+                <li key={index}>
                   <div className="order-title">
                     <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
                       <Icon type={this.state.index === index ? 'up' : 'down'} />
@@ -203,14 +234,14 @@ class DeliveryList extends Component {
                     <Checkbox
                       onChange={this.onCheckAllChange}
                       checked={this.state.publicNumberChecked[index]}
-                      value={index}
+                      value={[index]}
                     />
                     <span>待发货</span>
                     <span>{item}</span>
                     <span>订单号：0928213248</span>
                     <span>2018-12-21 06:12:22</span>
-                    <Button type="primary" onClick={this.orderDetailEvent.bind(this)}>订单详情</Button>
-                    <Button type="primary" onClick={this.sendDeliveryEvent.bind(this)}>发货</Button>
+                    <Button type="primary" onClick={this.orderDetailEvent.bind(this, item)}>订单详情</Button>
+                    <Button type="primary" onClick={this.sendDeliveryEvent.bind(this, item)}>发货</Button>
                   </div>
                   <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} >
                     <div className="items-1">

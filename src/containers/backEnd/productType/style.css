@@ -4,9 +4,6 @@
 .type-blocks .title{font-size:16px;}
 .type-blocks .left{width:30%;}
 .type-blocks .right{width:65%;margin-left:5%;}
-.type-blocks .left p{
-    padding-top:20px;
-}
 .type-blocks .left button{margin-top:20px;}
 .typeedit-blocks .ant-row{
     display: flex;

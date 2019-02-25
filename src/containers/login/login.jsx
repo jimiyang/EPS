@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 
 import {message, Input, Icon} from 'antd';
 
-import api from '../../api/instance.js';
-
 import './login.css';
 
 class Login extends Component {
@@ -43,7 +41,12 @@ class Login extends Component {
       message.error('验证码输入不一致');
       return false;
     }
-    api.baseInstance({userName: this.state.userName, passWord: this.state.userPwd}).then(rs => {
+    const params = {
+      login_name: this.state.userName,
+      login_pwd: this.state.userPwd
+    };
+    window.api.baseInstance('service', params).then(rs => {
+      console.log(rs);
       if (rs.data.returnCode === 'S') {
         window.localStorage.setItem('checkLogin', '100');
         this.props.history.push({pathname: '/main'});

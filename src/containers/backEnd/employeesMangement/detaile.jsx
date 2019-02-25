@@ -1,13 +1,5 @@
 import React, {Component} from 'react';
 
-import {
-  AutoComplete,
-  Icon,
-  Input,
-  Button,
-  Form
-} from 'antd';
-
 import './style.css';
 
 class Detaile extends Component {

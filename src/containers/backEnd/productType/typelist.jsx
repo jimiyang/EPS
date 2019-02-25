@@ -6,7 +6,9 @@ import {
   Button,
   Table,
   Modal,
-  TreeSelect
+  TreeSelect,
+  Form,
+  Popconfirm
 } from 'antd';
 
 import './style.css';
@@ -25,21 +27,53 @@ class ProductType extends Component {
       },
       visible: false,
       defaultExpandAllRows: true, //是否默认展开树形结构
-      typeData: [],
+      typeData: ['硬件', '软件'],
       parentData: [{
-        id: 1,
+        uid: '1',
         goods_category_name: '父级1',
         children: [
           {
+            uid: '01',
             goods_category_name: '子级1',
           }
         ]
-      }]
+      }, {
+        uid: '2',
+        goods_category_name: '父级2',
+        children: [
+          {
+            uid: '02',
+            goods_category_name: '子级2',
+          }
+        ]
+      }
+      ]
     };
   }
-  edit = (item) => {
+  componentWillMount() {
+    console.log('sseee');
+    this.loadList();
+  }
+  //商品类型查询接口
+  loadList = () => {
+    const params = {
+      service: 'goods.getcategorylist'
+    };
+    window.api.baseInstance('goods.getcategorylist').then((rs) => {
+      console.log(rs);
+    });
+  }
+  editEvent = (item) => {
     this.setState({
       visible: true
+    });
+    window.api.baseInstance('goods.modcategory').then((rs) => {
+      console.log(rs);
+    });
+  }
+  delEvent = (item) => {
+    window.api.baseInstance('goods.delcategory').then((rs) => {
+      console.log(rs);
     });
   }
   cancelEvent = () => {
@@ -59,8 +93,19 @@ class ProductType extends Component {
       form
     });
   }
-  addTypeEvent = () => {
-    console.log(this.state.form);
+  //新增商品类型
+  addTypeEvent = (e) => {
+    //console.log(this.state.form);
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+    });
+    //Object.assign(this.form, {service: 'goods.addcategory'});
+    window.api.baseInstance('goods.addcategory', this.form).then((rs) => {
+      console.log(rs);
+    });
   }
   render() {
     const columns = [{
@@ -73,28 +118,33 @@ class ProductType extends Component {
       key: 'operation',
       render: (record) => (
         <div className="opearte-blocks">
-          <span className="ml10" onClick={() => this.edit(record)}>编辑</span>
+          <span className="ml10" onClick={() => this.editEvent(record)}>编辑</span>
+          <Popconfirm title="是否要删除此分类?" onConfirm={() => this.delEvent(record)} onCancel={this.cancelEvent} okText="确定" cancelText="取消">
+            <span className="ml10">删除</span>
+          </Popconfirm>
         </div>
       )
     }];
     const treeData = [{
-      title: 'Node1',
+      title: '我的分类',
       value: '0-0',
       key: '0-0',
       children: [{
-        title: 'Child Node1',
+        title: '首款小精灵',
         value: '0-0-1',
         key: '0-0-1',
       }, {
-        title: 'Child Node2',
+        title: '硬件',
         value: '0-0-2',
         key: '0-0-2',
       }],
     }, {
-      title: 'Node2',
+      title: '软件',
       value: '0-1',
       key: '0-1',
-    }];
+    }
+    ];
+    const {getFieldDecorator} = this.props.form;
     return (
       <div className="type-blocks">
         <Modal
@@ -107,25 +157,65 @@ class ProductType extends Component {
           <TypeEdit />
         </Modal>
         <div className="left">
-          <h1 className="title">分类目录</h1>
-          <p>添加新分类项目</p>
-          <Input value={this.state.form.goods_category_name} onChange={this.goodsNameEvent} />
-          <p>所属分类</p>
-          <Select defaultValue={this.state.form.id} onSelect={this.selTypeId} style={{ width: '100%'}}>
-            {
-              this.state.typeData.map((item) => (
-                <Option value={item.id}>{item.name}</Option>
-              ))
-            }
-          </Select>
-          <p>父级分类目录</p>
-          <Button type="primary" onClick={this.addTypeEvent}>添加新分类目录</Button>
+          <Form onSubmit={this.addTypeEvent} className="form" name="form">
+            <h1 className="title">分类目录</h1>
+            <p>添加新分类项目</p>
+            <Form.Item>
+              {getFieldDecorator(
+                'goods_category_name',
+                {
+                  initialValue: this.state.form.goods_category_name || '',
+                  rules: [{required: true, message: '请输入商品名称！'}]
+                }
+              )(<Input onChange={this.goodsNameEvent} placeholder="请输入商品名称" />)
+              }
+            </Form.Item>
+            <p>所属分类</p>
+            <Form.Item>
+              {getFieldDecorator(
+                'id',
+                {
+                  initialValue: this.state.form.id || '',
+                  rules: [{required: true, message: '请选择所属分类'}]
+                }
+              )(<Select onSelect={this.selTypeId} style={{width: '100%'}}>
+                {
+                  this.state.typeData.map((item, index) => (
+                    <Option key={index} value={item}>{item}</Option>
+                  ))
+                }
+              </Select>)
+              }
+            </Form.Item>
+            <p>父级分类目录</p>
+            <Form.Item>
+              {
+                getFieldDecorator(
+                  'superior_id',
+                  {
+                    initialValue: this.state.form.superior_id || '',
+                    rules: [{required: true, message: '请选择父级分类'}]
+                  }
+                )(<TreeSelect
+                  style={{width: '100%'}}
+                  dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                  treeData={treeData}
+                  placeholder="请选择父级目录"
+                  treeDefaultExpandAll
+                  onChange={this.onChange}
+                />)
+              }
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">添加新分类目录</Button>
+            </Form.Item>
+          </Form>
         </div>
         <div className="right">
-          <Table rowKey="id" defaultExpandAllRows={this.state.defaultExpandAllRows} columns={columns} dataSource={this.state.parentData} />
+          <Table rowKey={record => record.uid} defaultExpandAllRows={this.state.defaultExpandAllRows} columns={columns} dataSource={this.state.parentData} />
         </div>
       </div>
     );
   }
 }
-export default ProductType;
+export default Form.create()(ProductType);
