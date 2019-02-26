@@ -13,7 +13,7 @@ function baseInstance(service, params) {
   };
   console.log(form);
   return (
-    axios.get('/gateway.in', {params}).then((response) => response)
+    axios.post('/gateway.in', {params}).then((response) => response)
   );
 }
 export default {baseInstance};

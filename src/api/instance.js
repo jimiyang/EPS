@@ -3,7 +3,7 @@ import {message} from 'antd';
 import { RSA_NO_PADDING } from 'constants';
 
 const instance = axios.create({
-  baseURL: '/api',
+  baseURL: 'http://192.168.19.118:8000/eps/base/',
   timeout: 1000,
   withCredentials: true,
   headers: {'content-type': 'application/x-www-form-urlencoded'}
@@ -11,6 +11,11 @@ const instance = axios.create({
 
 //const tid = localStorage.getItem('tid');
 //axios.defaults.headers.tid = tid || ''; // axios headers token
+
+instance.interceptors.request.use(res => {
+  console.log(res);
+});
+
 instance.interceptors.response.use(
   res => {
     //if(res.data.errorCode === 'F') {
