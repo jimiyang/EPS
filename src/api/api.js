@@ -2,18 +2,23 @@ import axios from './instance.js';
 
 //通用接口
 function baseInstance(service, params) {
+  let userName = '';
+  if (service === 'eps.login') {
+    userName = params.login_name;
+  } else {
+    userName = window.localStorage.getItem('head_params').login_name;
+  }
   const form = {
     param: {
       head: {
         service,
         sign: null,
         partner_id: null,
-        login_name: 'jrpt'
+        login_name: userName
       },
       body: params
     }
   };
-  console.log(form);
   return (
     axios.post('/gateway.in', {}, {params: form}).then((response) => response)
   );
