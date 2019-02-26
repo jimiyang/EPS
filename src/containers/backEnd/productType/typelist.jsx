@@ -72,7 +72,8 @@ class ProductType extends Component {
     });
   }
   delEvent = (item) => {
-    window.api.baseInstance('goods.delcategory').then((rs) => {
+    const params = {id: item.id};
+    window.api.baseInstance('goods.delcategory', params).then((rs) => {
       console.log(rs);
     });
   }
