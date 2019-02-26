@@ -28,7 +28,7 @@ class Login extends Component {
 
   //组件销毁
   componentWillUnmount() {
-    document.addEventListener('keydown', this.onKeyDown);
+    document.removeEventListener('keydown', this.onKeyDown);
   }
 
   // 登录
