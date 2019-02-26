@@ -25,6 +25,7 @@ class ProductList extends Component {
       visible: false,
       productNameData: [], ///商品名称数据
       barCodeData: [], //条形码数据
+      menuData: ['出售中的商品', '已下架的商品'],
       search: {
         total: 3,
         defaultCurrent: 1,
@@ -36,8 +37,7 @@ class ProductList extends Component {
   }
   //数据加载，dom未初始化
   componentWillMount() {}
-  searchName = () => {
-  }
+  searchName = () => {}
   selTap = (index) => {
     this.setState({
       isActive: index
@@ -56,9 +56,7 @@ class ProductList extends Component {
   confirm = (item) => {
     message.success('下架成功！');
   }
-  cancel = () => {
-    message.error('已取消！');
-  }
+  cancel = () => {}
   renderOption(item) {
     return (
       <Option key={item.name} text={item.name}>
@@ -73,7 +71,7 @@ class ProductList extends Component {
       {name: '中国银行', code: 142},
       {name: '北京银行', code: 143}
     ];
-    const node = data.map((item, idx) => ({
+    const node = data.map((item) => ({
       name: `${item.name}/${item.code}`
     }));
     this.setState({
@@ -81,8 +79,17 @@ class ProductList extends Component {
     });
   }
   //商品条形码模糊搜索
-  handleCodeSearch = (value) => {
-    // console.log(value);
+  handleCodeSearch = (value) => {}
+  //列表查询
+  searchEvent = () => {
+    const params = {
+      id: '',
+      superior_id: '',
+      goods_category_name: '',
+      page_size: '',
+      current_page: ''
+    };
+    window.api.baseInstance('goods.getcategorylist', params).then((rs) => {});
   }
   handleOk = () => {
     this.setState({
@@ -152,7 +159,7 @@ class ProductList extends Component {
     ];
     const data = [
       {
-        key: 1,
+        uid: 1,
         goods_name: '联富通',
         goods_category_name: '软件',
         sale_price: '999999',
@@ -160,7 +167,7 @@ class ProductList extends Component {
         sell_out: '99999999'
       },
       {
-        key: 2,
+        uid: 2,
         goods_name: '联富通1',
         goods_category_name: '软件',
         sale_price: '999999',
@@ -168,7 +175,7 @@ class ProductList extends Component {
         sell_out: '5555'
       },
       {
-        key: 2,
+        uid: 3,
         goods_name: '联富通1',
         goods_category_name: '软件',
         sale_price: '999999',
@@ -190,8 +197,9 @@ class ProductList extends Component {
         </Modal>
         <div className="nav-items">
           <div className="tap-items">
-            <span className={this.state.isActive === 0 ? 'active' : ''} onClick={this.selTap.bind(this, 0)}>出售中的商品</span>|
-            <span className={this.state.isActive === 1 ? 'active' : ''} onClick={this.selTap.bind(this, 1)}>已下架的商品</span>
+            {
+              this.state.menuData.map((item, index) => <span key={index} onClick={this.selTap.bind(this, index)} className={this.state.isActive === index ? 'active' : ''}>{item}</span>)
+            }
           </div>
           <Button type="primary" onClick={this.addProduct.bind(this)}>新增商品</Button>
         </div>
@@ -202,7 +210,7 @@ class ProductList extends Component {
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               size="large"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               dataSource={this.state.productNameData.map(this.renderOption)}
               onBlur={this.handleNameSearch}
               placeholder="请输入商品名称"
@@ -217,7 +225,7 @@ class ProductList extends Component {
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               size="large"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               dataSource={this.state.barCodeData.map(this.renderOption)}
               onBlur={this.handleCodeSearch}
               placeholder="请输入商品条形码"
@@ -233,13 +241,14 @@ class ProductList extends Component {
               value={this.state.typeValue}
             />
           </li>
-          <li className="items"><Button type="primary">搜索</Button></li>
+          <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
         <Table
           columns={columns}
           dataSource={data}
           pagination={this.state.search}
           className="table-box"
+          rowKey={record => record.uid}
         />
       </div>
     );

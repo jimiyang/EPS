@@ -1,0 +1,89 @@
+#orderList {
+  .top {
+    position: relative;
+    .searchInput {
+      position: absolute;
+      right: 0;
+      top: 5px;
+    }
+    .searchInput {
+      width: 300px;
+    }
+    .status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #e4e4e4;
+      line-height: 40px;
+      margin-bottom: 20px;
+      li {
+        text-align: center;
+      }
+    }
+    .order {
+      li {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .title {
+        background: #e4e4e4;
+        line-height: 40px;
+        padding-left: 15px;
+        display: flex;
+        p {
+          color: #b1b1b1;
+          margin-right: 100px;
+        }
+      }
+      .content {
+        border: 1px solid #d7d7d7;
+        border-top: 0;
+        padding: 50px 0;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        p {
+          text-align: center;
+        }
+        .info {
+          display: flex;
+          justify-content: flex-start;
+          p {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+        img {
+          width: 80px;
+          height: 80px;
+          margin: 0 15px 0 30px
+        }
+        .operation {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          width: 120px;
+          button {
+            width: 70px;
+            height: 30px;
+            margin: 10px 25px;
+            background: #009dd2;
+            color: #fff;
+            border-radius: 5px;
+            border: 0;
+          }
+        }
+      }
+    }
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin: 50px 0;
+  }
+}

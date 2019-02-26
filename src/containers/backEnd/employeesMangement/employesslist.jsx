@@ -108,7 +108,7 @@ class EmployeesList extends Component {
             dropdownClassName="certain-category-search-dropdown"
             dropdownMatchSelectWidth={false}
             size="large"
-            style={{ width: '200px' }}
+            style={{width: '200px'}}
             dataSource={this.state.Data.map(this.renderOption)}
             onBlur={this.handleNameSearch}
             placeholder="请输入商品名称"

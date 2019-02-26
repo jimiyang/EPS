@@ -3,6 +3,17 @@ import React, {Component} from 'react';
 import './delivery.css';
 
 class OrderDetail extends Component {
+  componentWillMount() {
+    console.log(this.props.order_no);
+  }
+  loadList = () => {
+    const params = {
+      order_no: this.props.order_no
+    };
+    window.applicationCache.baseInstance('goods.goodsDetail', params).then((rs) => {
+      console.log(rs);
+    });
+  }
   render() {
     return (
       <ul className="detail-items">

@@ -6,7 +6,7 @@
 }
 .delivery-blocks .nav-items .tap-items span{
     display: inline-block;font-size:14px;padding:10px 20px;border-bottom: 2px solid transparent;
-    position: relative; top:1px;
+    position: relative; top:1px;cursor: pointer;
 }
 .delivery-blocks .nav-items span.active{border-bottom: 2px solid #1890ff;color:#1890ff;}
 .delivery-blocks ul.search-blocks{
@@ -44,15 +44,17 @@ font-size:14px;
 .delivery-blocks .order-blocks .order-detaile .items-1 span{
     display: inline-block;padding-right:20px;
 }
-.ant-checkbox-wrapper{width:50px;text-align: center;}
+.ant-checkbox-wrapper{text-align: center;}/*width:50px;*/
 .delivery-blocks .order-blocks .order-detaile .items-2{
-    border-bottom: 1px dashed #ccc;padding-bottom:10px;
+    padding-bottom:10px;
     margin-left:60px;
 }
 .delivery-blocks .order-blocks .order-detaile .items-3{
-    display: flex;justify-content: flex-start;margin-right:30px;padding-top:20px;
-    padding-left:10px;font-size:14px;
+    display: flex;justify-content: flex-start;margin-right:30px;padding-top:10px;
+    font-size:14px;border-top: 1px dashed #ccc;margin-top: 10px;
+    margin-left:28px;
 }
+.delivery-blocks .order-blocks  .arrow-ico{cursor: pointer;}
 .delivery-blocks .order-blocks .order-detaile .items-3 .ant-checkbox-wrapper{line-height:100px;}
 .delivery-blocks .order-blocks .order-detaile .items-3 h1{font-size:14px;}
 .delivery-blocks .order-blocks .order-detaile .items-3 img{
@@ -65,3 +67,12 @@ font-size:14px;
 .detail-items li label{
     display: inline-block;width:120px;text-align: right;font-size:14px;
 }
+.hide{display: none;}
+.delivery-blocks .express-items li{
+    display: flex;justify-content: flex-start;align-items: center;
+    margin-bottom:20px;
+}
+.delivery-blocks .express-items li label{
+    display: inline-block;width:100px;
+}
+.delivery-blocks .express-items li .ant-select, input{width:100%;}
