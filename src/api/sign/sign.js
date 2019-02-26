@@ -9,11 +9,11 @@ function sortObj(obj) {
     };
     arr.sort()
     var len = arr.length,
-        obj = {}
+        obj = {};
     for (var i = 0; i < len; i++) {
         obj[arr[i][0]] = arr[i][1]
     }
-    return obj
+    return obj;
 }
 //转URL参数
 function parseParam(obj, encode) {
@@ -50,9 +50,11 @@ export default (params, key) => {
     if (params.sign) {
         delete params.sign
     }
-    console.log(params,key)
+    console.log(params,"paixu",sortObj(params))
     let _params = parseParam(sortObj(params))
+    console.log("parseParam",_params)
     const sign = md5(_params + key)
+    console.log("SIGN:::",_params + key)
     const MD5 = sign.toLowerCase()
     return {sign:MD5}
 }

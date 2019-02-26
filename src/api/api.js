@@ -18,7 +18,7 @@ function baseInstance(service, params) {
     console.log(signParams);
     headParams = {
       ...headParams,
-      ...getSign(signParams, localStorage.getItem('PKEY'))
+      ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY')))
     };
   }
   const form = {
