@@ -17,7 +17,6 @@ import {changeSearchContent} from '../../../store/reduces/frontEnd';
 function IsLogin(props) {
   return props.loginstate ? <div className="header-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
 }
-
 @connect(
   (state) => ({searchContent: state.frontEnd.searchContent}),
   {changeSearchContent},
@@ -31,7 +30,6 @@ export default class App extends Component {
       searchContent: '', // 搜索的内容
       dataSource: [], // 搜索列表
     };
-    console.log(this.props);
   }
 
   componentWillMount() {
