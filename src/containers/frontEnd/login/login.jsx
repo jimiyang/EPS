@@ -49,14 +49,15 @@ class Login extends Component {
       login_name: this.state.userName,
       login_pwd: this.state.userPwd
     };
-    window.api('eps.login', params).then(rs => {
+    window.api('eps.login', params).then(res => {
+      console.log(res);
       const obj = {
         login_name: _this.state.userName,
-        partner_id: rs.partner_id,
-        sign: ''
+        partner_id: res.partner_id,
       };
-      window.localStorage.setItem('head_params', JSON.stringify(obj));
+      window.localStorage.setItem('headParams', JSON.stringify(obj));
       window.localStorage.setItem('checkLogin', '100');
+      window.localStorage.setItem('PKEY', res.partner_key);
       this.props.history.push({pathname: '/'});
     });
   }
