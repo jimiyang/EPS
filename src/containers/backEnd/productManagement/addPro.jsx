@@ -47,7 +47,7 @@ class Add extends Component {
       return false;
     }
     //console.log(this.props.location.query.id);
-    window.api.baseInstance('goods.getgoodsdetail', {goods_id: this.props.location.query.id}).then((rs) => {
+    window.api('goods.getgoodsdetail', {goods_id: this.props.location.query.id}).then((rs) => {
       console.log(rs);
     });
   }

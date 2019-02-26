@@ -12,3 +12,7 @@
     width:100px;
 }
 .typeedit-blocks .ant-row .ant-form-item-control-wrapper{width:60%;}
+.typeedit-blocks .button-blocks{
+   position: relative; left:30%;
+}
+.button-blocks  button{margin:20px 10%;}

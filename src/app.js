@@ -15,6 +15,6 @@ import common from './utils/common';
 
 window.axios = axios;
 window.common = common;
-window.api = api;
+window.api = api.baseInstance;
 
 ReactDOM.render(<Root />, document.getElementById('app'));
