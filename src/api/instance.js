@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: '192.168.19.118:8000/eps/base/',
+  baseURL: 'http://192.168.19.118:8000/eps/base/',
   timeout: 1000,
   withCredentials: true,
   headers: {
@@ -13,11 +13,14 @@ const instance = axios.create({
 });
 instance.interceptors.response.use(
   res => {
-    //if(res.data.errorCode === 'F') {
-    //message.error(res.data.returnMsg);
-    //}
-    console.log('1', res);
-    console.log(`成功：${res}`);
+    const promise = new Promise((resolve, rejects) => {
+      if (res.status === 200 && res.data.body.service_status === 'S' && res.data.head.visit_status === 'S') {
+        resolve(res.data.body);
+      } else {
+        rejects(res.data.body.service_error_message);
+      }
+    });
+    return promise;
   },
   err => {
     //const {data: {err: errnum, error}} = (err || {}).response;
