@@ -4,16 +4,7 @@ module.exports = {
   dev: {
     host: 'localhost',
     port: 8080,
-    proxyTable: {
-      '/api/': {
-        target: 'http://testnmweb.liantuobank.cn',
-        changeOrigin: true,
-        secure: false,
-        pathRewrite: {
-          '^/api/': ''
-        }
-      }
-    },
+    proxyTable: {},
     useEslint: true,
     autoOpenBrowser: false,
     errorOverlay: true,

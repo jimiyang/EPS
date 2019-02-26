@@ -90,14 +90,5 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ],
-  "proxy": {
-    "/api/": {
-      "target": "192.168.19.118:8000/eps/base/",
-      "changeOrigin": true,
-      "pathRewrite": {
-        "^/api/": ""
-      }
-    }
-  }
+  ]
 }

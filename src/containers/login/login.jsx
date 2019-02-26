@@ -8,8 +8,8 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: 'TMMD',
-      userPwd: '123@abc',
+      userName: 'jrpt',
+      userPwd: '111qqq',
       authCode: '',
       txtCode: ''
     };
@@ -34,23 +34,23 @@ class Login extends Component {
       message.error('请输入用户名或密码');
       return false;
     }
-    if (this.state.txtCode === '') {
+    /*if (this.state.txtCode === '') {
       message.error('验证码不能为空，请输入验证码');
       return false;
     } else if (this.state.txtCode !== this.state.authCode) {
       message.error('验证码输入不一致');
       return false;
-    }
+    }*/
     const params = {
       login_name: this.state.userName,
       login_pwd: this.state.userPwd
     };
-    window.api.baseInstance('service', params).then(rs => {
+    window.api.baseInstance('eps.login', params).then(rs => {
       console.log(rs);
-      if (rs.data.returnCode === 'S') {
+      /*if (rs.data.returnCode === 'S') {
         window.localStorage.setItem('checkLogin', '100');
         this.props.history.push({pathname: '/main'});
-      }
+      }*/
     });
   }
   onKeyDown = (e) => {
