@@ -1,6 +1,6 @@
 import axios from './instance';
 import getSign from './sign/sign';
-
+import aes from './aes/public';
 //通用接口
 function baseInstance(service, params) {
   const localStorage = window.localStorage;
@@ -9,15 +9,16 @@ function baseInstance(service, params) {
     headParams = params;
   } else {
     headParams = JSON.parse(localStorage.getItem('headParams'));
-    const singParams = {
+    headParams.partner_id = aes.Decrypt(headParams.partner_id);
+    const signParams = {
       service,
       ...headParams,
       ...params,
     };
-    console.log(singParams);
+    console.log(signParams);
     headParams = {
       ...headParams,
-      ...getSign(singParams, localStorage.getItem('PKEY'))
+      ...getSign(signParams, localStorage.getItem('PKEY'))
     };
   }
   const form = {
