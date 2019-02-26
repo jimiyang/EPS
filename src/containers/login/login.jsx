@@ -30,6 +30,7 @@ class Login extends Component {
     document.addEventListener('keydown', this.onKeyDown);
   }
   login() {
+    const _this = this;
     if (this.state.userName === '' || this.state.userPwd === '') {
       message.error('请输入用户名或密码');
       return false;
@@ -46,11 +47,15 @@ class Login extends Component {
       login_pwd: this.state.userPwd
     };
     window.api.baseInstance('eps.login', params).then(rs => {
-      console.log(rs);
-      /*if (rs.data.returnCode === 'S') {
-        window.localStorage.setItem('checkLogin', '100');
-        this.props.history.push({pathname: '/main'});
-      }*/
+      const obj = {
+        login_name: _this.state.userName,
+        partner_id: rs.partner_id,
+        sign: ''
+      };
+      window.localStorage.setItem('head_params', JSON.stringify(obj));
+      //console.log(JSON.parse(window.localStorage.getItem('head_params')).partner_id);
+      window.localStorage.setItem('checkLogin', '100');
+      this.props.history.push({pathname: '/main'});
     });
   }
   onKeyDown = (e) => {
