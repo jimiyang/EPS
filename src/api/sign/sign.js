@@ -1,3 +1,4 @@
+/* eslint-disable */
 //MD5
 var md5 = require('../../libs/md5/md5.min.js')
 //对象排序
