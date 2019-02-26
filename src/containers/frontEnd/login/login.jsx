@@ -49,7 +49,7 @@ class Login extends Component {
       login_name: this.state.userName,
       login_pwd: this.state.userPwd
     };
-    window.api.baseInstance('eps.login', params).then(rs => {
+    window.api('eps.login', params).then(rs => {
       const obj = {
         login_name: _this.state.userName,
         partner_id: rs.partner_id,
@@ -57,7 +57,7 @@ class Login extends Component {
       };
       window.localStorage.setItem('head_params', JSON.stringify(obj));
       window.localStorage.setItem('checkLogin', '100');
-      this.props.history.push({pathname: '/main'});
+      this.props.history.push({pathname: '/'});
     });
   }
   onKeyDown = (e) => {

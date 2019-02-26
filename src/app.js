@@ -13,6 +13,6 @@ import './assets/iconfont.js';
 //utils
 window.axios = axios;
 window.common = common;
-window.api = api;
+window.api = api.baseInstance;
 window.Decrypt = aes.Decrypt;
 ReactDOM.render(<Root />, document.getElementById('app'));
