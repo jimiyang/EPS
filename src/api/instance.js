@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://192.168.4.115:9999/eps/base/',
+  baseURL: '192.168.19.118:8000/eps/base/',
   timeout: 1000,
   withCredentials: true,
   headers: {
@@ -16,7 +16,7 @@ instance.interceptors.response.use(
     //if(res.data.errorCode === 'F') {
     //message.error(res.data.returnMsg);
     //}
-    console.log(res);
+    console.log('1', res);
     console.log(`成功：${res}`);
   },
   err => {
