@@ -1,11 +1,16 @@
 import axios from './instance';
+import getSign from './sign/sign';
+
+
 //通用接口
 function baseInstance(service, params) {
   let userName = '';
+  let _params = localStorage.getItem('USER') ? params.assign(params, localStorage.getItem('USER')) : params;
   if (service === 'eps.login') {
     userName = params.login_name;
   } else {
     userName = window.localStorage.getItem('head_params').login_name;
+    _params = getSign(_params, localStorage.getItem('USER').partner_key);
   }
   const form = {
     param: {
@@ -15,7 +20,7 @@ function baseInstance(service, params) {
         partner_id: null,
         login_name: userName
       },
-      body: params
+      body: _params
     }
   };
   return (

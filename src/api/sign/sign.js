@@ -1,6 +1,6 @@
 /* eslint-disable */
 //MD5
-var md5 = require('../../libs/md5/md5.min.js')
+var md5 = require('./md5');
 //对象排序
 function sortObj(obj) {
     var arr = []
@@ -46,14 +46,13 @@ function parseParam(obj, encode) {
     }
     return ret.join('&')
 }
-export default  (params, isSi, key) => {
+export default (params, key) => {
     if (params.sign) {
         delete params.sign
     }
-    let loginInfo = wx.getStorageSync("login")
     //SI验签
     console.log(sortObj(params))
-    let singparams = `${parseParam(sortObj(params))}&${wx.getStorageSync("siKey")}`
+    let singparams = `${parseParam(sortObj(params))}&${key}`
     console.log(singparams)
     let MD5 = md5(singparams).toUpperCase()
     let MD5_array = MD5.split('')

@@ -1,38 +1,34 @@
 import axios from 'axios';
+import {message} from 'antd';
+import { RSA_NO_PADDING } from 'constants';
 
 const instance = axios.create({
-  baseURL: 'http://192.168.19.118:8000/eps/base/',
+  baseURL: '/api',
   timeout: 1000,
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-    'Access-Control-Allow-Origin': '*',
-    'access-control-allow-methods': 'GET, POST, OPTIONS, PUT, DELETE',
-    'access-control-expose-headers': 'Authorization'
-  }
+  headers: {'content-type': 'application/x-www-form-urlencoded'}
 });
+
+//const tid = localStorage.getItem('tid');
+//axios.defaults.headers.tid = tid || ''; // axios headers token
 instance.interceptors.response.use(
   res => {
-    const promise = new Promise((resolve, reject) => {
-      if (res.status === 200 && res.data.body.service_status === 'S' && res.data.head.visit_status === 'S') {
-        resolve(res.data.body);
-      } else {
-        reject(res.data.body.service_error_message);
-      }
-    });
-    return promise;
+    //if(res.data.errorCode === 'F') {
+    //message.error(res.data.returnMsg);
+    //}
+    console.log(res.data.errorCode);
   },
   err => {
-    //const {data: {err: errnum, error}} = (err || {}).response;
-    console.log(`失败：${err}`);
-    /*if (errnum === 200 && error) {
+    const {data: {err: errnum, error}} = (err || {}).response;
+    console.log(errnum);
+    if (errnum === 200 && error) {
       message.success(error);
     } else {
       message.error(error);
-    }*/
+    }
     if (window.localStorage.getItem('checkLogin') === null) {
     //msg.error('您的登录已过期，请重新登录！');
-      //this.props.history.push({pathname: '/login'});
+      this.props.history.push({pathname: '/login'});
     }
   }
 );
