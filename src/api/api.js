@@ -1,32 +1,32 @@
 import axios from './instance';
 import getSign from './sign/sign';
 
-
 //通用接口
 function baseInstance(service, params) {
-  let headParams = '';
-  let userName = '';
-  let _params = localStorage.getItem('USER') ? params.assign(params, localStorage.getItem('USER')) : params;
+  const localStorage = window.localStorage;
+  let headParams = {};
   if (service === 'eps.login') {
-    userName = params.login_name;
+    headParams = params;
   } else {
-<<<<<<< HEAD
-    userName = window.localStorage.getItem('head_params').login_name;
-    _params = getSign(_params, localStorage.getItem('USER').partner_key);
-=======
-    headParams = JSON.parse(window.localStorage.getItem('head_params'));
-    userName = headParams.login_name;
->>>>>>> 6f8d002f2ffe6d96e4242c0bd3ab2a7a36147b89
+    headParams = JSON.parse(localStorage.getItem('headParams'));
+    const singParams = {
+      service,
+      ...headParams,
+      ...params,
+    };
+    console.log(singParams);
+    headParams = {
+      ...headParams,
+      ...getSign(singParams, localStorage.getItem('PKEY'))
+    };
   }
   const form = {
     param: {
       head: {
         service,
-        sign: headParams.sign,
-        partner_id: headParams.partner_id,
-        login_name: userName
+        ...headParams
       },
-      body: _params
+      body: params
     }
   };
   console.log(form);

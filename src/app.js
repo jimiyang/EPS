@@ -13,5 +13,4 @@ import './assets/iconfont.js';
 window.axios = axios;
 window.common = common;
 window.api = api.baseInstance;
-window.Decrypt = aes.Decrypt;
 ReactDOM.render(<Root />, document.getElementById('app'));

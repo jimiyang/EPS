@@ -34,7 +34,7 @@ const Root = () => (
           {__DEVELOPMENT__ && <DevTools />}
           <Switch>
             <Route exact path="/login" component={Login} />
-            <Router path="/" component={app} />
+            <Router path="/" component={Main} />
           </Switch>
         </div>
       </Provider>

@@ -50,16 +50,9 @@ export default (params, key) => {
     if (params.sign) {
         delete params.sign
     }
-    //SI验签
-    console.log(sortObj(params))
-    let singparams = `${parseParam(sortObj(params))}&${key}`
-    console.log(singparams)
-    let MD5 = md5(singparams).toUpperCase()
-    let MD5_array = MD5.split('')
-    let convertMD5 = chars => {
-        return String.fromCharCode(chars.charCodeAt() ^ 't'.charCodeAt())
-    }
-    params.sign = MD5_array.map(convertMD5).join('')
-    console.log(params.sign)
-    return params
+    console.log(params)
+    let _params = parseParam(sortObj(params))
+    const sign = md5(_params + key)
+    const MD5 = sign.toLowerCase()
+    return {sign:MD5}
 }

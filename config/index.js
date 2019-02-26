@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   dev: {
     host: 'localhost',
-    port: 8000,
+    port: 8080,
     proxyTable: {},
     useEslint: true,
     autoOpenBrowser: false,
