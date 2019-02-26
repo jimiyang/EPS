@@ -9,7 +9,7 @@ import 'moment/locale/zh-cn';
 import Store from '../store';
 import DevTools from '../store/DevTools';
 //登陆
-import Login from '../containers/login/login';
+import Login from '../containers/frontEnd/login/login';
 //前台
 import app from '../containers/frontEnd/app/app';
 //后台主页(入口) jimiyang
