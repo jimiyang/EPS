@@ -1,27 +1,36 @@
-import axios from './instance.js';
-
+import axios from './instance';
+import getSign from './sign/sign';
+import aes from './aes/public';
 //通用接口
 function baseInstance(service, params) {
-  let headParams = '';
-  let userName = '';
+  const localStorage = window.localStorage;
+  let headParams = {};
   if (service === 'eps.login') {
-    userName = params.login_name;
+    headParams = params;
   } else {
-    headParams = JSON.parse(window.localStorage.getItem('head_params'));
-    userName = headParams.login_name;
+    headParams = JSON.parse(localStorage.getItem('headParams'));
+    headParams.partner_id = aes.Decrypt(headParams.partner_id);
+    const signParams = {
+      service,
+      ...headParams,
+      ...params,
+    };
+    //console.log(signParams);
+    headParams = {
+      ...headParams,
+      ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY')))
+    };
   }
   const form = {
     param: {
       head: {
         service,
-        sign: headParams.sign,
-        partner_id: headParams.partner_id,
-        login_name: userName
+        ...headParams
       },
       body: params
     }
   };
-  console.log(form);
+  //console.log(form);
   return (
     axios.post('/gateway.in', {}, {params: form}).then((response) => response)
   );

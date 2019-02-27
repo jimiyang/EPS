@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-
-import {Layout, Menu, message} from 'antd';
-
+import {Layout, Menu, message, Button, Radio, Icon} from 'antd';
 import {
   BrowserRouter as Router,
   Route,
@@ -18,6 +16,7 @@ import TypeList from '../productType/typelist';
 
 import AddPro from '../productManagement/addPro';
 
+
 //const SubMenu = Menu.SubMenu;
 const {SubMenu} = Menu;
 const {
@@ -28,6 +27,14 @@ class Main extends Component {
   componentWillMount() {
     //验证是否需要登录
     //window.common.loginOut(this, message);
+  }
+  addCat() {
+    const params = {
+      goods_category_name: '菜单111'
+    };
+    window.api('goods.addcategory', params).then(res => {
+      console.log(res);
+    });
   }
   render() {
     return (

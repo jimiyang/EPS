@@ -5,13 +5,15 @@ import {
   Select,
   TreeSelect,
   Form,
-  Button
+  Button,
+  message
 } from 'antd';
 
 import './style.css';
 
 const Option = Select.Option;
 const {TextArea} = Input;
+const TreeNode = TreeSelect.TreeNode;
 class TypeEdit extends Component {
   constructor(props) {
     super(props);
@@ -20,21 +22,50 @@ class TypeEdit extends Component {
         id: '',
         goods_category_name: '',
         superior_id: ''
-      }
+      },
+      parent_id: 0,
+      treeData: []
     };
   }
+  //react 父组件传值给子组件，子组件定义一个变量来接收props值，所传的值在父组件中更改赋值，子组件中如何同步更新
+  componentWillReceiveProps(props) {
+    this.getTypeById(props.selfId);
+  }
   componentWillMount() {
-    const form = Object.assign({}, this.state.form, {id: this.props.id});
-    this.setState({
-      form
+    this.loadTreeList();
+    this.getTypeById(this.props.selfId);
+  }
+  getTypeById = (sId) => {
+    window.api('goods.getcategorylist', {id: sId}).then(rs => {
+      this.setState({
+        form: rs.goods_category_list[0],
+        parent_id: rs.goods_category_list[0].superior_id,
+      });
+    }).catch(error => {
+      message.error(error);
+    });
+  }
+  loadTreeList = () => {
+    window.api('goods.getcategorylist', {page_size: 100, current_page: 1}).then((rs) => {
+      const productTypeData = rs.goods_category_list;
+      if (productTypeData.length > 0) {
+        this.setState({
+          treeData: productTypeData
+        });
+      }
+    }).catch(error => {
+      message.error(error);
     });
   }
   modifyEvent = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        //console.log('Received values of form: ', values);
-        console.log(this.state.form);
+        window.api('goods.modcategory', this.state.form).then((rs) => {
+          message.success(rs.service_error_message);
+        }).catch(error => {
+          message.error(error);
+        });
       }
     });
   }
@@ -47,30 +78,12 @@ class TypeEdit extends Component {
   selParentEvent = (value) => {
     const form = Object.assign({}, this.state.form, {superior_id: value});
     this.setState({
-      form
+      form,
+      parent_id: value
     });
   }
   render() {
     const {getFieldDecorator} = this.props.form;
-    const treeData = [{
-      title: '我的分类',
-      value: '0-0',
-      key: '0-0',
-      children: [{
-        title: '首款小精灵',
-        value: '0-0-1',
-        key: '0-0-1',
-      }, {
-        title: '硬件',
-        value: '0-0-2',
-        key: '0-0-2',
-      }],
-    }, {
-      title: '软件',
-      value: '0-1',
-      key: '0-1',
-    }
-    ];
     return (
       <div className="typeedit-blocks">
         <Form onSubmit={this.modifyEvent} className="form" name="form">
@@ -89,25 +102,36 @@ class TypeEdit extends Component {
           <Form.Item
             label="父级目录"
           >
-            {getFieldDecorator(
-              'superior_id',
-              {
-                initialValue: this.state.form.superior_id || '',
-                rules: [{required: true, message: '请选择父级分类'}]
-              }
-            )(<TreeSelect
+            <TreeSelect
               style={{width: '100%'}}
               dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
-              treeData={treeData}
               placeholder="请选择父级目录"
               treeDefaultExpandAll
               onChange={this.selParentEvent}
-            />)
-            }
+              value={this.state.parent_id}
+            >
+              <TreeNode value={0} title="我的分类" key="0">
+                {
+                  this.state.treeData.map((item, index) => (
+                    (item.superior_id === 0) ? (
+                      <TreeNode value={item.id} title={item.goods_category_name} key={item.id}>
+                        {
+                          this.state.treeData.map((childData, i) => (
+                            (item.id === childData.superior_id) ? (
+                              <TreeNode value={childData.id} title={childData.goods_category_name} key={childData.id} />
+                            ) : null
+                          ))
+                        }
+                      </TreeNode>
+                    ) : null
+                  ))
+                }
+              </TreeNode>
+            </TreeSelect>
           </Form.Item>
           <Form.Item>
             <div className="button-blocks">
-              <Button type="primary" htmlType="submit">保存</Button>
+              <Button type="primary" htmlType="submit" onClick={this.props.onClick}>保存</Button>
               <Button onClick={this.props.onClick}>取消</Button>
             </div>
           </Form.Item>

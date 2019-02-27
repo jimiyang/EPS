@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 
 import {
   Input,
-  Select,
   Button,
   Table,
   Modal,
@@ -16,72 +15,86 @@ import './style.css';
 
 import TypeEdit from './typeedit';
 
-const Option = Select.Option;
+const TreeNode = TreeSelect.TreeNode;
 class ProductType extends Component {
   constructor(props) {
     super(props);
     this.state = {
       formParams: {
-        goods_category_name: '',
-        superior_id: ''
+        goods_category_name: ''
       },
-      selfId: '',
+      search: {
+        page_size: 100,
+        current_page: 1
+      },
+      parent_id: '', //类别父级id
+      selfId: '', //类别自身id
       visible: false,
       defaultExpandAllRows: true, //是否默认展开树形结构
-      parentData: [{
-        uid: '1',
-        goods_category_name: '父级1',
-        superior_id: '00',
-        children: [
-          {
-            uid: '01',
-            superior_id: '父级1',
-            goods_category_name: '子级1',
-          }
-        ]
-      }, {
-        uid: '2',
-        superior_id: '00',
-        goods_category_name: '父级2',
-        children: [
-          {
-            uid: '02',
-            superior_id: '父级2',
-            goods_category_name: '子级2',
-          }
-        ]
-      }
-      ]
+      productTypeData: [],
+      treeData: []
     };
   }
   componentWillMount() {
     this.loadList();
   }
+  getChildData = (data, pid) => {
+    const children = [];
+    data.map((item) => {
+      if (item.superior_id === pid) {
+        children.push({
+          goods_category_name: item.goods_category_name,
+          id: item.id,
+          superior_id: item.superior_id
+        });
+      }
+    });
+    return children;
+  }
   //商品类型查询接口
   loadList = () => {
-    const params = {
-      service: 'goods.getcategorylist'
-    };
-    window.api('goods.getcategorylist').then((rs) => {
-      console.log(rs);
+    window.api('goods.getcategorylist', this.state.search).then((rs) => {
+      const productTypeData = rs.goods_category_list;
+      if (productTypeData.length > 0) {
+        const arr = [];
+        productTypeData.map(item => {
+          if (item.superior_id === 0) {
+            arr.push({
+              goods_category_name: item.goods_category_name,
+              id: item.id,
+              superior_id: item.superior_id,
+              children: this.getChildData(productTypeData, item.id)
+            });
+          }
+        });
+        this.setState({
+          productTypeData: arr,
+          treeData: productTypeData
+        });
+      }
+    }).catch(error => {
+      message.error(error);
     });
   }
-  editEvent = (item) => {
+  editEvent = (id) => {
     this.setState({
       visible: true,
-      selfId: item.id
+      selfId: id
     });
   }
-  delEvent = (item) => {
-    const params = {id: item.id};
-    window.api('goods.delcategory', params).then((rs) => {
+  delEvent = (id) => {
+    window.api('goods.delcategory', {id}).then((rs) => {
       message.success(rs.service_error_message);
+      this.loadList();
+    }).catch((error) => {
+      message.error(error);
     });
   }
   cancelEvent = () => {
     this.setState({
       visible: false
     });
+    this.loadList();
   }
   goodsNameEvent = (e) => {
     const formParams = Object.assign({}, this.state.formParams, {goods_category_name: e.target.value});
@@ -90,9 +103,8 @@ class ProductType extends Component {
     });
   }
   selParentEvent = (value) => {
-    const formParams = Object.assign({}, this.state.formParams, {superior_id: value});
     this.setState({
-      formParams
+      parent_id: value
     });
   }
   //新增商品类型
@@ -103,14 +115,19 @@ class ProductType extends Component {
         this.setState({
           formParams: values
         });
+        if (this.state.parent_id !== '') {
+          Object.assign(this.state.formParams, {superior_id: this.state.parent_id});
+        }
         window.api('goods.addcategory', this.state.formParams).then((rs) => {
-          console.log(rs);
+          message.success(rs.service_error_message);
+          this.loadList();
+        }).catch(error => {
+          message.error(error);
         });
       }
     });
   }
   resetEvent = () => {
-    console.log('ddd');
     this.props.form.resetFields();
   }
   render() {
@@ -119,41 +136,18 @@ class ProductType extends Component {
       dataIndex: 'goods_category_name',
       key: 'goods_category_name'
     }, {
-      title: '父级名称',
-      dataIndex: 'superior_id',
-      key: 'superior_id'
-    }, {
       title: '操作',
       dataIndex: '',
       key: 'operation',
       render: (record) => (
         <div className="opearte-blocks">
-          <span className="ml10" onClick={() => this.editEvent(record)}>编辑</span>
-          <Popconfirm title="是否要删除此分类?" onConfirm={() => this.delEvent(record)} onCancel={this.cancelEvent} okText="确定" cancelText="取消">
+          <span className="ml10" onClick={() => this.editEvent(record.id)}>编辑</span>
+          <Popconfirm title="是否要删除此分类?" onConfirm={() => this.delEvent(record.id)} onCancel={this.cancelEvent} okText="确定" cancelText="取消">
             <span className="ml10">删除</span>
           </Popconfirm>
         </div>
       )
     }];
-    const treeData = [{
-      title: '我的分类',
-      value: '0-0',
-      key: '0-0',
-      children: [{
-        title: '首款小精灵',
-        value: '0-0-1',
-        key: '0-0-1',
-      }, {
-        title: '硬件',
-        value: '0-0-2',
-        key: '0-0-2',
-      }],
-    }, {
-      title: '软件',
-      value: '0-1',
-      key: '0-1',
-    }
-    ];
     const {getFieldDecorator} = this.props.form;
     return (
       <div className="type-blocks">
@@ -165,7 +159,7 @@ class ProductType extends Component {
           visible={this.state.visible}
           footer={null}
         >
-          <TypeEdit id={this.state.selfId} onClick={this.cancelEvent.bind(this)} />
+          <TypeEdit selfId={this.state.selfId} onClick={this.cancelEvent.bind(this)} />
         </Modal>
         <div className="left">
           <Form onSubmit={this.addTypeEvent} className="form" name="form">
@@ -183,31 +177,41 @@ class ProductType extends Component {
             </Form.Item>
             <p>父级分类目录</p>
             <Form.Item>
-              {
-                getFieldDecorator(
-                  'superior_id',
+              <TreeSelect
+                style={{width: '100%'}}
+                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                placeholder="请选择父级目录"
+                treeDefaultExpandAll
+                onChange={this.selParentEvent}
+                value={this.state.parent_id}
+              >
+                <TreeNode value={0} title="我的分类" key="01">
                   {
-                    initialValue: this.state.formParams.superior_id || '',
-                    rules: [{required: true, message: '请选择父级分类'}]
+                    this.state.treeData.map((item, index) => (
+                      (item.superior_id === 0) ? (
+                        <TreeNode value={item.id} title={item.goods_category_name} key={item.id}>
+                          {
+                            this.state.treeData.map((childData, i) => (
+                              (item.id === childData.superior_id) ? (
+                                <TreeNode value={childData.id} title={childData.goods_category_name} key={childData.id} />
+                              ) : null
+                            ))
+                          }
+                        </TreeNode>
+                      ) : null
+                    ))
                   }
-                )(<TreeSelect
-                  style={{width: '100%'}}
-                  dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
-                  treeData={treeData}
-                  placeholder="请选择父级目录"
-                  treeDefaultExpandAll
-                  onChange={this.selParentEvent}
-                />)
-              }
+                </TreeNode>
+              </TreeSelect>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">添加新分类目录</Button>
+              <Button type="primary" htmlType="submit">添加</Button>
               <Button onClick={this.resetEvent}>取消</Button>
             </Form.Item>
           </Form>
         </div>
         <div className="right">
-          <Table rowKey={record => record.uid} defaultExpandAllRows={this.state.defaultExpandAllRows} columns={columns} dataSource={this.state.parentData} />
+          <Table rowKey={record => record.id} defaultExpandAllRows={this.state.defaultExpandAllRows} columns={columns} dataSource={this.state.productTypeData} />
         </div>
       </div>
     );

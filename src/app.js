@@ -1,20 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from './api/instance';
-import api from './api/api.js';//公共接口（唯一）
-
+import api from './api/api.js';
 import Root from './router';
-
+import common from './utils/common';
 // css
-import './style/index.styl';
+import './style/reset.css';
 // iconfont
 import './assets/iconfont.css';
 import './assets/iconfont.js';
 //utils
-import common from './utils/common';
-
 window.axios = axios;
 window.common = common;
 window.api = api.baseInstance;
-
 ReactDOM.render(<Root />, document.getElementById('app'));

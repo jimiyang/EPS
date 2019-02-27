@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {message} from 'antd';
 
 const instance = axios.create({
   baseURL: 'http://192.168.19.118:8000/eps/base/',

@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-
 import {message, Input, Icon} from 'antd';
-
 import './login.css';
 
 class Login extends Component {
@@ -14,52 +12,56 @@ class Login extends Component {
       txtCode: ''
     };
   }
+
   //组件刚经历constructor,初始完数据,未渲染,dom还未渲染
   componentWillMount() {
     this.setState({
       authCode: window.common.createCode()
     });
   }
+
   //组件渲染完成
   componentDidMount() {
     //注册keydown事件
     document.addEventListener('keydown', this.onKeyDown);
   }
+
   //组件销毁
   componentWillUnmount() {
-    document.addEventListener('keydown', this.onKeyDown);
+    document.removeEventListener('keydown', this.onKeyDown);
   }
+
+  // 登录
   login() {
     const _this = this;
     if (this.state.userName === '' || this.state.userPwd === '') {
       message.error('请输入用户名或密码');
       return false;
     }
-    /*if (this.state.txtCode === '') {
+    if (this.state.txtCode === '') {
       message.error('验证码不能为空，请输入验证码');
       return false;
     } else if (this.state.txtCode !== this.state.authCode) {
       message.error('验证码输入不一致');
       return false;
-    }*/
+    }
     const params = {
       login_name: this.state.userName,
       login_pwd: this.state.userPwd
     };
-    window.api('eps.login', params).then(rs => {
+    window.api('eps.login', params).then(res => {
+      console.log(res);
       const obj = {
         login_name: _this.state.userName,
-        partner_id: rs.partner_id,
-        sign: ''
+        partner_id: res.partner_id,
       };
-      window.localStorage.setItem('head_params', JSON.stringify(obj));
-      //console.log(JSON.parse(window.localStorage.getItem('head_params')).partner_id);
+      window.localStorage.setItem('headParams', JSON.stringify(obj));
       window.localStorage.setItem('checkLogin', '100');
-      this.props.history.push({pathname: '/main'});
+      window.localStorage.setItem('PKEY', res.partner_key);
+      this.props.history.push({pathname: '/'});
     });
   }
   onKeyDown = (e) => {
-    //console.log(e.keyCode);
     if (e.keyCode === 13) {
       this.login();
     }
