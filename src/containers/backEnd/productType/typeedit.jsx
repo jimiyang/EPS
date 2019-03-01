@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 
 import {
   Input,
-  Select,
-  TreeSelect,
   Form,
   Button,
   message
@@ -11,9 +9,8 @@ import {
 
 import './style.css';
 
-const Option = Select.Option;
-const {TextArea} = Input;
-const TreeNode = TreeSelect.TreeNode;
+import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
+
 class TypeEdit extends Component {
   constructor(props) {
     super(props);
@@ -23,8 +20,7 @@ class TypeEdit extends Component {
         goods_category_name: '',
         superior_id: ''
       },
-      parent_id: 0,
-      treeData: []
+      parent_id: 0
     };
   }
   //react 父组件传值给子组件，子组件定义一个变量来接收props值，所传的值在父组件中更改赋值，子组件中如何同步更新
@@ -32,7 +28,6 @@ class TypeEdit extends Component {
     this.getTypeById(props.selfId);
   }
   componentWillMount() {
-    this.loadTreeList();
     this.getTypeById(this.props.selfId);
   }
   getTypeById = (sId) => {
@@ -41,18 +36,6 @@ class TypeEdit extends Component {
         form: rs.goods_category_list[0],
         parent_id: rs.goods_category_list[0].superior_id,
       });
-    }).catch(error => {
-      message.error(error);
-    });
-  }
-  loadTreeList = () => {
-    window.api('goods.getcategorylist', {page_size: 100, current_page: 1}).then((rs) => {
-      const productTypeData = rs.goods_category_list;
-      if (productTypeData.length > 0) {
-        this.setState({
-          treeData: productTypeData
-        });
-      }
     }).catch(error => {
       message.error(error);
     });
@@ -102,32 +85,7 @@ class TypeEdit extends Component {
           <Form.Item
             label="父级目录"
           >
-            <TreeSelect
-              style={{width: '100%'}}
-              dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
-              placeholder="请选择父级目录"
-              treeDefaultExpandAll
-              onChange={this.selParentEvent}
-              value={this.state.parent_id}
-            >
-              <TreeNode value={0} title="我的分类" key="0">
-                {
-                  this.state.treeData.map((item, index) => (
-                    (item.superior_id === 0) ? (
-                      <TreeNode value={item.id} title={item.goods_category_name} key={item.id}>
-                        {
-                          this.state.treeData.map((childData, i) => (
-                            (item.id === childData.superior_id) ? (
-                              <TreeNode value={childData.id} title={childData.goods_category_name} key={childData.id} />
-                            ) : null
-                          ))
-                        }
-                      </TreeNode>
-                    ) : null
-                  ))
-                }
-              </TreeNode>
-            </TreeSelect>
+            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} />
           </Form.Item>
           <Form.Item>
             <div className="button-blocks">

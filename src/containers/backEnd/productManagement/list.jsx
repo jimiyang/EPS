@@ -36,7 +36,14 @@ class ProductList extends Component {
     };
   }
   //数据加载，dom未初始化
-  componentWillMount() {}
+  componentWillMount() {
+    this.loadList();
+  }
+  loadList = () => {
+    window.api('goods.getgoodslist', {}).then(rs => {
+      console.log(rs);
+    });
+  }
   searchName = () => {}
   selTap = (index) => {
     this.setState({

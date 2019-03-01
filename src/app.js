@@ -13,4 +13,5 @@ import './assets/iconfont.js';
 window.axios = axios;
 window.common = common;
 window.api = api.baseInstance;
+window.uploadFile = api.uploadFile;
 ReactDOM.render(<Root />, document.getElementById('app'));

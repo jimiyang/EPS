@@ -7,8 +7,7 @@ import {
   Button,
   Upload,
   Icon,
-  message,
-  Cascader
+  message
 } from 'antd';
 
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
@@ -18,6 +17,8 @@ import 'react-quill/dist/quill.snow.css'; // ES6
 import './list.css';
 
 import api from '../../../api/api.js';
+
+import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 const RadioGroup = Radio.Group;
 class Add extends Component {
@@ -29,15 +30,16 @@ class Add extends Component {
       goods_bar_no: '',
       form: {
         is_post: 0,
-        goodDetaile: '',
+        goods_details: '',
         goods_category_id: '',
-        goods_category_name: 'wwwww',
-      }
+      },
+      goods_picture: ''
     };
     //this.handleChange = this.handleChange.bind(this);
   }
   componentWillMount() {
     this.initForm();
+    console.log(this.state.goods_picture);
   }
   componentDidMount() {
     const textbox = this.refs.textarea;
@@ -47,6 +49,7 @@ class Add extends Component {
       return false;
     }
     //console.log(this.props.location.query.id);
+    console.log(window.api);
     window.api('goods.getgoodsdetail', {goods_id: this.props.location.query.id}).then((rs) => {
       console.log(rs);
     });
@@ -55,29 +58,35 @@ class Add extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        //console.log('Received values of form: ', values);
-        //console.log(this.state.form.goodDetaile);
+        const form = Object.assign(this.state.form, values);
+        console.log(form);
         this.setState({
-          form: {
-            is_post: 0
-          }
+          form
         });
+        if (!this.props.location.query) {
+          console.log('add');
+          window.api('goods.addgoods', form, {goods_picture: this.state.goods_picture}).then((rs) => {
+            console.log(rs);
+          });
+        } else {
+          console.log('edit');
+          window.api('goods.modgoods', form).then((rs) => {
+            console.log(rs);
+          });
+        }
       }
     });
-    if (!this.props.location.query) {
-      window.api.baseInstance('goods.addgoods', this.state.form).then((rs) => {
-        console.log(rs);
-      });
-    } else {
-      window.api.baseInstance('goods.modgoods', this.state.form).then((rs) => {
-        console.log(rs);
-      });
-    }
+  }
+  uploadFile = (e) => {
+    e.preventDefault();
+    const file = e.target.files[0];
+    const reader = new FileReader();
   }
   getBase64 = (img, callback) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result));
     reader.readAsDataURL(img);
+    console.log(reader);
   }
   beforeUpload = (file) => {
     const isJPG = file.type === 'image/jpeg';
@@ -90,44 +99,55 @@ class Add extends Component {
     }
     return isJPG && isLt2M;
   }
-  uploadImgEvent = (info) => {
-    if (info.file.status === 'uploading') {
-      this.setState({loading: true});
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      this.getBase64(info.file.originFileObj, imageUrl => this.setState({
-        imageUrl,
-        loading: false,
-      }));
-    }
+  uploadImgEvent = (e) => {
+    e.preventDefault();
+    const info = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(info);
+    reader.onload = function (ev) {
+      const params = {
+        filePath: 'goods_pic',
+        fileName: info.name,
+        uploadPic: this.result
+      };
+      console.log(params);
+      window.uploadFile(params).then(rs => {
+        console.log(rs);
+      });
+    };
   }
   handleChange = (value) => {
+    const form = Object.assign(this.state.form, {goods_details: value});
     this.setState({
-      form: {
-        goodDetaile: value
-      }
+      form
     });
   }
   //生成条形码
   getbarno = () => {
-    const params = {
-      service: 'goods.getbarno',
-      sign: 'ewqrewq',
-      partner_id: '22',
-      login_name: 'TMMD'
-    };
-    //console.log(JSON.stringify(params));
-    api.baseInstance(params).then((rs) => {});
-    this.setState({
-      goods_bar_no: '3838737373373'
+    api.baseInstance('goods.getbarno', {}).then((rs) => {
+      this.setState({
+        goods_bar_no: rs.barNo
+      });
+    }).catch(error => {
+      message.error(error);
     });
   }
   displayRender(label) {
     return label[label.length - 1];
   }
-  onChange = (value) => {}
+  selParentEvent = (value) => {
+    const form = Object.assign(this.state.form, {goods_category_id: value});
+    console.log(form);
+    this.setState({
+      form
+    });
+  }
+  selIspostEvent = (value) => {
+    const form = Object.assign(this.state.form, {is_post: value});
+    this.setState({
+      form
+    });
+  }
   render() {
     const {getFieldDecorator} = this.props.form;
     const imageUrl = this.state.imageUrl;
@@ -137,24 +157,6 @@ class Add extends Component {
         <div className="ant-upload-text">请上传2M以内,JPG/JPEG/PNG格式</div>
       </div>
     );
-    const data = [
-      {
-        value: '1-1',
-        label: '父级1',
-        children: [{
-          value: '1-01',
-          label: '子级1',
-        }]
-      },
-      {
-        value: '1-2',
-        label: '父级2',
-        children: [{
-          value: '1-02',
-          label: '子级2',
-        }],
-      }
-    ];
     return (
       <div className="add-blocks">
         <Form onSubmit={this.addtionProEvent} className="form" name="form">
@@ -188,17 +190,14 @@ class Add extends Component {
             label="商品类型"
           >
             {getFieldDecorator(
-              'goods_category_name',
+              'goods_category_id',
               {
-                rules: [{required: true, message: '请选择商品类型！'}]
+                initialValue: this.state.form.goods_category_id || '',
+                rules: [
+                  {required: true, message: '请输入商品类型'}
+                ]
               }
-            )(<Cascader
-              placeholder="请选择商品类型"
-              options={data}
-              expandTrigger="hover"
-              displayRender={this.displayRender}
-              onChange={this.onChange.bind(this)}
-            />)
+            )(<TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.form.goods_category_id} />)
             }
           </Form.Item>
           <Form.Item
@@ -232,7 +231,7 @@ class Add extends Component {
           <Form.Item
             label="是否需要发货"
           >
-            <RadioGroup onChange={this.onChange} value={this.state.form.is_post}>
+            <RadioGroup onChange={this.selIspostEvent} value={this.state.form.is_post}>
               <Radio value={0}>是</Radio>
               <Radio value={1}>否</Radio>
             </RadioGroup>
@@ -240,17 +239,18 @@ class Add extends Component {
           <Form.Item
             label="商品图片"
           >
-            <Upload
-              name="avatar"
-              listType="picture-card"
-              className="avatar-uploader"
-              showUploadList={false}
-              action="//jsonplaceholder.typicode.com/posts/"
-              beforeUpload={this.beforeUpload}
-              onChange={this.uploadImgEvent}
-            >
-              {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
-            </Upload>
+            <div className="col-md-6">
+              <input type="file" accept="image/jpg,image/jpeg,image/png" onChange={this.uploadImgEvent} ref="file" name="file" className="valid coverfile" />
+              <div className="ant-upload ant-upload-select ant-upload-select-picture-card upload-v-img adImgUrl">
+                <span className="rc-upload coverbutton" role="button">
+                  <i className="anticon anticon-plus">+</i>
+                  <div className="ant-upload-text">上传广告图</div>
+                </span>
+              </div>
+              <div className="ant-upload-list-item-info v-img-box ad_p_img">
+                <i className="icon-close anticon-delete voucherImgIcon" />
+              </div>
+            </div>
           </Form.Item>
           <Form.Item
             label="商品详情"
@@ -260,7 +260,7 @@ class Add extends Component {
               placeholder="请输入商品描述详情。。。。。。"
               theme="snow"
               style={{width: 700, height: 300}}
-              value={this.state.form.goodDetaile}
+              value={this.state.form.goods_details}
               onChange={this.handleChange}
               modules={{
                 toolbar: [

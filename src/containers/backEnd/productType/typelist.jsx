@@ -15,7 +15,8 @@ import './style.css';
 
 import TypeEdit from './typeedit';
 
-const TreeNode = TreeSelect.TreeNode;
+import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
+
 class ProductType extends Component {
   constructor(props) {
     super(props);
@@ -31,8 +32,7 @@ class ProductType extends Component {
       selfId: '', //类别自身id
       visible: false,
       defaultExpandAllRows: true, //是否默认展开树形结构
-      productTypeData: [],
-      treeData: []
+      productTypeData: []
     };
   }
   componentWillMount() {
@@ -68,8 +68,7 @@ class ProductType extends Component {
           }
         });
         this.setState({
-          productTypeData: arr,
-          treeData: productTypeData
+          productTypeData: arr
         });
       }
     }).catch(error => {
@@ -177,32 +176,7 @@ class ProductType extends Component {
             </Form.Item>
             <p>父级分类目录</p>
             <Form.Item>
-              <TreeSelect
-                style={{width: '100%'}}
-                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
-                placeholder="请选择父级目录"
-                treeDefaultExpandAll
-                onChange={this.selParentEvent}
-                value={this.state.parent_id}
-              >
-                <TreeNode value={0} title="我的分类" key="01">
-                  {
-                    this.state.treeData.map((item, index) => (
-                      (item.superior_id === 0) ? (
-                        <TreeNode value={item.id} title={item.goods_category_name} key={item.id}>
-                          {
-                            this.state.treeData.map((childData, i) => (
-                              (item.id === childData.superior_id) ? (
-                                <TreeNode value={childData.id} title={childData.goods_category_name} key={childData.id} />
-                              ) : null
-                            ))
-                          }
-                        </TreeNode>
-                      ) : null
-                    ))
-                  }
-                </TreeNode>
-              </TreeSelect>
+              <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">添加</Button>

@@ -16,7 +16,6 @@ import TypeList from '../productType/typelist';
 
 import AddPro from '../productManagement/addPro';
 
-
 //const SubMenu = Menu.SubMenu;
 const {SubMenu} = Menu;
 const {
