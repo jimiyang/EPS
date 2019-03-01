@@ -2,7 +2,7 @@ import axios from './instance';
 import getSign from './sign/sign';
 import aes from './aes/public';
 //通用接口
-function baseInstance(service, params, uploadParams = null, headers = null) {
+function baseInstance(service, params, goods_pic = null, headers = null) {
   const localStorage = window.localStorage;
   let headParams = {};
   if (service === 'eps.login') {
@@ -27,7 +27,7 @@ function baseInstance(service, params, uploadParams = null, headers = null) {
       ...headParams
     },
     body: params,
-    uploadParams
+    goods_pic
   };
   console.log(form);
   return (

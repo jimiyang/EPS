@@ -95,7 +95,6 @@ class Add extends Component {
     //console.log(this.state.formData);
     if (flag === true) {
       const headers = {
-        //'Content-Type': 'multipart/form-data',
         'Content-Type': 'multipart/form-data'
       };
       api.baseInstance('eps.upload', null, this.state.formData, headers).then(rs => {
@@ -149,7 +148,7 @@ class Add extends Component {
     const imageUrl = this.state.imageUrl;
     return (
       <div className="add-blocks">
-        <Form onSubmit={this.addtionProEvent} className="form" name="form">
+        <Form onSubmit={this.addtionProEvent} className="form" name="form" id="form">
           <Form.Item
             label="商品名称"
           >
