@@ -18,6 +18,18 @@ const utils = {
       msg.error('登录已超时，请重新登录！');
       obj.props.history.push({pathname: '/login'});
     }
+  },
+  beforeUpload(file, msg) { //上传图片之前判断图片大小
+    const isJPG = file.type === 'image/jpeg';
+    console.log(file.type);
+    if (!isJPG) {
+      msg.error('You can only upload JPG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      msg.error('请上传小于2MB的图片!');
+    }
+    return isJPG && isLt2M;
   }
 };
 export default utils;

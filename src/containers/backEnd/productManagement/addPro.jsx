@@ -77,44 +77,31 @@ class Add extends Component {
       }
     });
   }
-  uploadFile = (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
-    const reader = new FileReader();
-  }
   getBase64 = (img, callback) => {
     const reader = new FileReader();
     reader.addEventListener('load', () => callback(reader.result));
     reader.readAsDataURL(img);
     console.log(reader);
   }
-  beforeUpload = (file) => {
-    const isJPG = file.type === 'image/jpeg';
-    if (!isJPG) {
-      message.error('You can only upload JPG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
-    }
-    return isJPG && isLt2M;
-  }
   uploadImgEvent = (e) => {
     e.preventDefault();
     const info = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(info);
-    reader.onload = function (ev) {
-      const params = {
-        filePath: 'goods_pic',
-        fileName: info.name,
-        uploadPic: this.result
+    const flag = window.common.beforeUpload(info, message); //上传之前判断图片大小
+    if (flag === false) {
+      reader.onload = function (ev) {
+        const params = {
+          filePath: 'goods_pic',
+          fileName: info.name,
+          uploadPic: this.result
+        };
+        /*console.log(params);
+        window.uploadFile(params).then(rs => {
+          console.log(rs);
+        });*/
       };
-      console.log(params);
-      window.uploadFile(params).then(rs => {
-        console.log(rs);
-      });
-    };
+    }
   }
   handleChange = (value) => {
     const form = Object.assign(this.state.form, {goods_details: value});
@@ -151,12 +138,6 @@ class Add extends Component {
   render() {
     const {getFieldDecorator} = this.props.form;
     const imageUrl = this.state.imageUrl;
-    const uploadButton = (
-      <div>
-        <Icon type={this.state.loading ? 'loading' : 'plus'} />
-        <div className="ant-upload-text">请上传2M以内,JPG/JPEG/PNG格式</div>
-      </div>
-    );
     return (
       <div className="add-blocks">
         <Form onSubmit={this.addtionProEvent} className="form" name="form">
@@ -197,7 +178,7 @@ class Add extends Component {
                   {required: true, message: '请输入商品类型'}
                 ]
               }
-            )(<TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.form.goods_category_id} />)
+            )(<input type="text" />)
             }
           </Form.Item>
           <Form.Item
@@ -240,7 +221,7 @@ class Add extends Component {
             label="商品图片"
           >
             <div className="col-md-6">
-              <input type="file" accept="image/jpg,image/jpeg,image/png" onChange={this.uploadImgEvent} ref="file" name="file" className="valid coverfile" />
+              <input type="file" accept="image/jpg,image/jpeg,image/png,image/bmp" onChange={this.uploadImgEvent} ref="file" name="file" className="valid coverfile" />
               <div className="ant-upload ant-upload-select ant-upload-select-picture-card upload-v-img adImgUrl">
                 <span className="rc-upload coverbutton" role="button">
                   <i className="anticon anticon-plus">+</i>
