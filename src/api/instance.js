@@ -5,7 +5,6 @@ const instance = axios.create({
   timeout: 1000,
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
     'access-control-allow-methods': 'GET, POST, OPTIONS, PUT, DELETE',
     'access-control-expose-headers': 'Authorization'

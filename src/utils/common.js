@@ -20,10 +20,15 @@ const utils = {
     }
   },
   beforeUpload(file, msg) { //上传图片之前判断图片大小
-    const isJPG = file.type === 'image/jpeg';
-    console.log(file.type);
+    const typeArr = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmg'];
+    let isJPG = 'image/jpeg';
+    typeArr.map(item => {
+      if (item === file.type) {
+        isJPG = item;
+      }
+    });
     if (!isJPG) {
-      msg.error('You can only upload JPG file!');
+      msg.error(`请上传${isJPG}格式图片！`);
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {

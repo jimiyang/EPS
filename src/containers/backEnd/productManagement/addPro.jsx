@@ -25,21 +25,23 @@ class Add extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
       disabled: true,
       goods_bar_no: '',
       form: {
         is_post: 0,
         goods_details: '',
         goods_category_id: '',
+        goods_pic: ''
       },
-      goods_picture: ''
+      formData: ''
     };
     //this.handleChange = this.handleChange.bind(this);
   }
   componentWillMount() {
     this.initForm();
-    console.log(this.state.goods_picture);
+    this.setState({
+      formData: new FormData()
+    });
   }
   componentDidMount() {
     const textbox = this.refs.textarea;
@@ -59,13 +61,13 @@ class Add extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const form = Object.assign(this.state.form, values);
-        console.log(form);
+        console.log(values);
         this.setState({
           form
         });
         if (!this.props.location.query) {
           console.log('add');
-          window.api('goods.addgoods', form, {goods_picture: this.state.goods_picture}).then((rs) => {
+          window.api('goods.addgoods', form).then((rs) => {
             console.log(rs);
           });
         } else {
@@ -89,18 +91,25 @@ class Add extends Component {
     const reader = new FileReader();
     reader.readAsDataURL(info);
     const flag = window.common.beforeUpload(info, message); //上传之前判断图片大小
-    if (flag === false) {
-      reader.onload = function (ev) {
+    this.state.formData.append('upload', info);
+    //console.log(this.state.formData);
+    if (flag === true) {
+      const headers = {
+        //'Content-Type': 'multipart/form-data',
+        'Content-Type': 'multipart/form-data'
+      };
+      api.baseInstance('eps.upload', null, this.state.formData, headers).then(rs => {
+        console.log(rs);
+      }).catch(error => {
+        message.error(error);
+      });
+      /*reader.onload = function (ev) {
         const params = {
           filePath: 'goods_pic',
           fileName: info.name,
           uploadPic: this.result
         };
-        /*console.log(params);
-        window.uploadFile(params).then(rs => {
-          console.log(rs);
-        });*/
-      };
+      };*/
     }
   }
   handleChange = (value) => {
@@ -178,7 +187,7 @@ class Add extends Component {
                   {required: true, message: '请输入商品类型'}
                 ]
               }
-            )(<input type="text" />)
+            )(<TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.form.goods_category_id} />)
             }
           </Form.Item>
           <Form.Item
