@@ -25,8 +25,10 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        background: #fff;
+        margin-bottom: 20px;
       }
-      .title {
+      .name {
         background: #e4e4e4;
         line-height: 40px;
         padding-left: 15px;
@@ -36,11 +38,27 @@
           margin-right: 100px;
         }
       }
+      .title {
+        background: #e4e4e4;
+        color: #fff;
+        padding-left: 20px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        line-height: 30px;
+        position: relative;
+        cursor: pointer;
+        .isChecked {
+          background: red;
+          border-radius: 50%;
+          width: 15px;
+          height: 15px;
+          position: absolute;
+          left: 20px;
+        }
+      }
       .content {
-        border: 1px solid #d7d7d7;
-        border-top: 0;
         padding: 50px 0;
-        margin-bottom: 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;

@@ -15,23 +15,20 @@ function baseInstance(service, params) {
       ...headParams,
       ...params,
     };
-    console.log(signParams);
     headParams = {
       ...headParams,
       ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY')))
     };
   }
   const form = {
-    param: {
-      head: {
-        service,
-        ...headParams
-      },
-      body: params
-    }
+    head: {
+      service,
+      ...headParams
+    },
+    body: params
   };
   return (
-    axios.post('/gateway.in', {}, {params: form}).then((response) => response)
+    axios.post('/gateway.in', form).then((response) => response)
   );
 }
 export default {baseInstance};

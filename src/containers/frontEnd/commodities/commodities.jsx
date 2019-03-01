@@ -1,90 +1,78 @@
 import React, {Component} from 'react';
-import bg from '../../../assets/bg.jpg';
+import {connect} from 'react-redux';
 import './commodities.less';
 
 export default class Commodities extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hardware: [
-        {img: bg, title: '小精灵POS机', price: '￥999.00'},
-        {img: bg, title: '语音播报器', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-      ],
-      software: [
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'}
-      ],
-      hot: [
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'},
-        {img: bg, title: 'POS机', price: '￥999.00'}
-      ]
+      part: [], // 一级类的列表
+      partList: [], // 类的商品列表
     };
   }
+
   componentWillMount() {
+    this.getCategoryList();
   }
-  componentDidMount() {
+
+  // 获取产品类型列表
+  getCategoryList = () => {
+    const params = {
+      page_size: 100,
+      current_page: 1,
+      superior_id: 0,
+    };
+    window.api('goods.getcategorylist', params).then(res => {
+      const part = res.goods_category_list;
+      this.setState({part});
+      part.forEach((item, index) => {
+        this.getCommoditiesList(item.goods_category_name, index);
+      });
+    });
   }
+
+  // 获取产品列表
+  getCommoditiesList(category, index) {
+    const params = {
+      page_size: 8,
+      current_page: 1,
+      goods_category_name: category,
+    };
+    window.api('goods.getgoodslist', params).then(res => {
+      const partList = this.state.partList;
+      partList[index] = res;
+      this.setState({partList});
+    });
+  }
+
   // 跳转到详情页
-  toDetail = () => {
-    this.props.history.push('/commoditiesDetail');
+  toDetail = (id) => {
+    this.props.history.push('/commoditiesDetail', {id});
   }
+
   render() {
-    const {hardware, software, hot} = this.state;
+    const {part, partList} = this.state;
     return (
       <div className="sku">
-        <section className="sku-block">
-          <h3 className="sku-cat-title">热门</h3>
-          <ul className="sku-list">
-            {hot.map(($0, $1) => (
-              <li key={$1} onClick={this.toDetail}>
-                <img src={$0.img} />
-                <div className="sku-cont">
-                  <h2>{$0.title}</h2>
-                  <p className="price">{$0.price}</p>
-                </div>
-              </li>))}
-          </ul>
-        </section>
-        <section className="sku-block">
-          <h3 className="sku-cat-title">硬件</h3>
-          <ul className="sku-list">
-            {hardware.map(($0, $1) => (
-              <li key={$1} onClick={this.toDetail}>
-                <img src={$0.img} />
-                <div className="sku-cont">
-                  <h2>{$0.title}</h2>
-                  <p className="price">{$0.price}</p>
-                </div>
-              </li>))}
-          </ul>
-        </section>
-        <section className="sku-block">
-          <h3 className="sku-cat-title">软件</h3>
-          <ul className="sku-list">
-            {software.map(($0, $1) => (
-              <li key={$1} onClick={this.toDetail}>
-                <img src={$0.img} />
-                <div className="sku-cont">
-                  <h2>{$0.title}</h2>
-                  <p className="price">{$0.price}</p>
-                </div>
-              </li>))}
-          </ul>
-        </section>
+        {
+          partList.map((item, index) => (
+            <section className="sku-block" key={index} hidden={item.goods_list.length === 0}>
+              <h3 className="sku-cat-title">{part[index].goods_category_name}</h3>
+              <ul className="sku-list">
+                {
+                  item.goods_list.map(($0, $1) => (
+                    <li key={$1} onClick={this.toDetail.bind(this, $0.id)}>
+                      <img src={$0.goods_picture} />
+                      <div className="sku-cont">
+                        <h2>{$0.goods_name}</h2>
+                        <p className="price">{$0.cost_price}</p>
+                      </div>
+                    </li>))
+                }
+              </ul>
+            </section>
+          ))
+        }
       </div>
     );
   }

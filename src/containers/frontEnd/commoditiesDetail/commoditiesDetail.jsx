@@ -1,28 +1,17 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
 import {InputNumber} from 'antd';
 import './commoditiesDetail.less';
-import {getCommoditiesDetail} from '../../../store/reduces/frontEnd';
-
-@connect(
-  (state) => ({commoditiesDetail: state.frontEnd.commoditiesDetail}),
-  {getCommoditiesDetail},
-)
 
 class CommoditiesDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
       count: 1, // 购买的商品数量
-      detail: {
-        title: '收款小精灵新零售平台（一年有效期）商圈版',
-        price: '999.00',
-        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1551075127056&di=e44b795bc442b404220dae36166470a3&imgtype=0&src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2Fc54fe11edf3254a5aaa8139ac353667ad9361860.jpg',
-        address: '北京',
-      }, // 商品详情
+      detail: {}, // 商品详情
     };
   }
   componentWillMount() {
+    this.getDetail(this.props.location.state.id);
   }
   componentDidMount() {
   }
@@ -30,17 +19,26 @@ class CommoditiesDetail extends Component {
   toOrder = () => {
     const {detail} = this.state;
     const commoditiesDetail = {
-      img: detail.img,
+      img: detail.goods_picture,
       count: this.state.count,
-      price: detail.price,
-      title: detail.title,
+      price: detail.sale_price,
+      name: detail.goods_name,
+      barNo: detail.goods_bar_no,
     };
-    this.props.getCommoditiesDetail(commoditiesDetail);
-    this.props.history.push('/generateOrder');
+    this.props.history.push('/generateOrder', {info: commoditiesDetail});
   }
+
   // 改变购买数量
   changeCount = (value) => {
     this.setState({count: value});
+  }
+
+  // 获取商品信息
+  getDetail = (id) => {
+    const params = {id};
+    window.api('goods.getgoodsdetail', params).then(res => {
+      this.setState({detail: res});
+    });
   }
   render() {
     const detail = this.state.detail;
@@ -48,19 +46,19 @@ class CommoditiesDetail extends Component {
       <div id="commoditiesDetail">
         <section className="sale">
           <div className="poster">
-            <img src={detail.img} />
+            <img src={detail.goods_picture} />
           </div>
           <div className="info">
-            <h3>{detail.title}</h3>
+            <h3>{detail.goods_name}</h3>
             <div className="price">
               <p>价格：</p>
-              <p>￥{detail.price}</p>
+              <p>￥{detail.sale_price}</p>
             </div>
-            <div className="address">
+            {/* <div className="address">
               <p>发货地：</p>
               <p>{detail.address}</p>
               <p>24小时发货</p>
-            </div>
+            </div> */}
             <div className="count">
               <p>数量：</p>
               <div>
@@ -72,7 +70,7 @@ class CommoditiesDetail extends Component {
         </section>
         <section className="detail">
           <div className="title">商品详情</div>
-          <div className="content">content</div>
+          <div className="content">{detail.goods_details}</div>
         </section>
       </div>
     );

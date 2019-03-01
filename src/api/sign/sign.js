@@ -39,7 +39,6 @@ function parseParam(obj, encode) {
                 queryValues.push(toQueryPair(key, value))
             }
             ret = ret.concat(queryValues)
-            console.log(ret)
         } else { //字符串
             ret.push(toQueryPair(key, values))
         }
@@ -50,11 +49,9 @@ export default (params, key) => {
     if (params.sign) {
         delete params.sign
     }
-    console.log(params,"paixu",sortObj(params))
     let _params = parseParam(sortObj(params))
-    console.log("parseParam",_params)
     const sign = md5(_params + key)
-    console.log("SIGN:::",_params + key)
+    console.log(_params + key);
     const MD5 = sign.toLowerCase()
     return {sign:MD5}
 }

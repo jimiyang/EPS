@@ -1,9 +1,9 @@
 const CHANGE_SEARCH_CONTENT = 'frontEnd/CHANGE_SEARCH_CONTENT';
-const GET_COMMODITIES_DETAIL = 'frontEnd/GET_COMMODITIES_DETAIL';
+const GET_COMMODITIES_TYPE = 'frontEnd/GET_COMMODITIES_TYPE';
 
 const initialState = {
   searchContent: '', // 搜索内容
-  commoditiesDetail: {}, // 购买数量
+  id: null, // 选中的商品类型
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -11,33 +11,19 @@ export default function reducer(state = initialState, action = {}) {
     case CHANGE_SEARCH_CONTENT:
       return {
         ...state,
-        searchContent: action.payload,
-      };
-    case GET_COMMODITIES_DETAIL:
-      return {
-        ...state,
-        commoditiesDetail: action.payload,
+        searchContent: action.payload.searchContent,
+        id: action.payload.id,
       };
     default:
       return state;
   }
 }
 
-export function changeSearchContent(searchContent) {
+export function changeSearchContent(content) {
   return (dispatch) => {
     dispatch({
       type: CHANGE_SEARCH_CONTENT,
-      payload: searchContent,
+      payload: content,
     });
   };
 }
-
-export function getCommoditiesDetail(commoditiesDetail) {
-  return (dispatch) => {
-    dispatch({
-      type: GET_COMMODITIES_DETAIL,
-      payload: commoditiesDetail,
-    });
-  };
-}
-

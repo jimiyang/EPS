@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
+import moment from 'moment';
 import {connect} from 'react-redux';
 import {Form, Input, Cascader, Button} from 'antd';
-import area from '../../../utils/area';
+import {adData} from '../../../utils/area';
 import './generateOrder.less';
 
-@connect((state) => ({commoditiesDetail: state.frontEnd.commoditiesDetail}))
 
 class GenerateOrder extends Component {
   constructor(props) {
@@ -17,11 +17,7 @@ class GenerateOrder extends Component {
 
   componentWillMount() {
     const consignee = JSON.parse(window.localStorage.getItem('orderInfo'));
-    this.setState({info: this.props.commoditiesDetail, consignee});
-  }
-
-  // 跳转到收银台
-  toCashier = () => {
+    this.setState({info: this.props.location.state.info, consignee});
   }
 
   // 提交表单
@@ -29,8 +25,36 @@ class GenerateOrder extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        let random = '';
+        while (random.length < 10) {
+          random += `${Math.floor(Math.random() * 10)}`;
+        }
+        const orderNo = `${moment().format('YYYYMMDDHHmmssSSS')}${random}`;
+        const price = (this.state.info.count * Number(this.state.info.price)).toFixed(2);
+        const goods = JSON.stringify([{
+          goods_no: this.state.info.barNo,
+          goods_qty: this.state.info.count,
+          total_amt: price
+        }]);
+        const params = {
+          order_no: orderNo,
+          total_amt: price,
+          real_amt: price,
+          province: values.residence[0],
+          city: values.residence[1],
+          area: values.residence[2],
+          address: values.address,
+          mobile: values.mobile,
+          receiver: values.consignee,
+          post_code: values.postalCode,
+          goods,
+        };
+        console.log(params);
+        values.postalCode ? params.post_code = values.postalCode : null;
         window.localStorage.setItem('orderInfo', JSON.stringify(values));
-        this.props.history.push('/cashier');
+        window.api('order.createorder', params).then(res => {
+          this.props.history.push('/cashier');
+        });
       }
     });
   }
@@ -43,7 +67,7 @@ class GenerateOrder extends Component {
         <section className="top">
           <div className="title">确认订单信息</div>
           <div className="content">
-            <ul className="header">
+            <ul className="head">
               <li>商品名</li>
               <li>单价</li>
               <li>数量</li>
@@ -52,7 +76,7 @@ class GenerateOrder extends Component {
             <ul className="commodities">
               <li>
                 <img src={info.img} />
-                <p>{info.title}</p>
+                <p>{info.name}</p>
               </li>
               <li>￥{info.price}</li>
               <li>{info.count}</li>
@@ -70,10 +94,10 @@ class GenerateOrder extends Component {
                 {getFieldDecorator(
                   'residence',
                   {
-                    initialValue: consignee.residence || '',
+                    initialValue: consignee ? consignee.residence : '',
                     rules: [{type: 'array', required: true, message: '请选择所在地区'}],
                   }
-                )(<Cascader options={area.node} placeholder="请选择所在地区" />)
+                )(<Cascader options={adData} placeholder="请选择所在地区" />)
                 }
               </Form.Item>
               <Form.Item
@@ -82,7 +106,7 @@ class GenerateOrder extends Component {
                 {getFieldDecorator(
                   'consignee',
                   {
-                    initialValue: consignee.consignee || '',
+                    initialValue: consignee ? consignee.consignee : '',
                     rules: [{required: true, message: '请输入收货人'}]
                   }
                 )(<Input placeholder="请输入收货人" />)
@@ -94,7 +118,7 @@ class GenerateOrder extends Component {
                 {getFieldDecorator(
                   'address',
                   {
-                    initialValue: consignee.address || '',
+                    initialValue: consignee ? consignee.address : '',
                     rules: [{required: true, message: '请输入详细地址'}]
                   }
                 )(<Input placeholder="请输入详细地址" />)
@@ -104,9 +128,9 @@ class GenerateOrder extends Component {
                 label="手机号码"
               >
                 {getFieldDecorator(
-                  'phoneNumber',
+                  'mobile',
                   {
-                    initialValue: consignee.phoneNumber || '',
+                    initialValue: consignee ? consignee.mobile : '',
                     rules: [
                       {required: true, message: '请输入手机号码'},
                       {pattern: /^1\d{10}$/, message: '请输入正确的手机号码'}
@@ -121,7 +145,7 @@ class GenerateOrder extends Component {
                 {getFieldDecorator(
                   'postalCode',
                   {
-                    initialValue: consignee.postalCode || '',
+                    initialValue: consignee ? consignee.postalCode : '',
                     rules: [
                       {required: false},
                       {pattern: /^[0-9]{6}$/, message: '邮政编码格式有误'}

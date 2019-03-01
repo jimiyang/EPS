@@ -18,7 +18,7 @@ function IsLogin(props) {
   return props.loginstate ? <div className="header-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
 }
 @connect(
-  (state) => ({searchContent: state.frontEnd.searchContent}),
+  (state) => ({searchContent: state.frontEnd.searchContent, commoditiesType: state.frontEnd.commoditiesType}),
   {changeSearchContent},
 )
 export default class App extends Component {
@@ -29,6 +29,7 @@ export default class App extends Component {
       canSearch: false, // 是否能够搜索
       searchContent: '', // 搜索的内容
       dataSource: [], // 搜索列表
+      commoditiesType: [], // 商品类型列表
     };
   }
 
@@ -40,12 +41,27 @@ export default class App extends Component {
     } else {
       alert('浏览器不支持localStorage');
     }
+    this.getCategoryList();
   }
 
   componentWillReceiveProps(props) {
     if (props.searchContent === '') {
       this.setState({searchContent: props.searchContent});
     }
+  }
+
+  // 获取产品类型列表
+  getCategoryList = () => {
+    const params = {
+      page_size: 100,
+      current_page: 1,
+      superior_id: 0,
+    };
+    window.api('goods.getcategorylist', params).then(res => {
+      const commoditiesType = res.goods_category_list;
+      this.setState({commoditiesType});
+      window.localStorage.setItem('commoditiesType', JSON.stringify(commoditiesType));
+    });
   }
 
   // 跳转到首页
@@ -63,7 +79,7 @@ export default class App extends Component {
   }
 
   // 跳转到搜索页
-  toSearchDetail = () => {
+  toSearchDetail = (id) => {
     const {
       searchContent, dataSource, canSearch
     } = this.state;
@@ -78,8 +94,8 @@ export default class App extends Component {
         }
         window.localStorage.setItem('dataSource', JSON.stringify(list));
       }
-      this.props.changeSearchContent(searchContent);
     }
+    this.props.changeSearchContent({searchContent, id});
   }
 
   // 登出
@@ -114,12 +130,13 @@ export default class App extends Component {
             <h1 className="header-logo"><Icon type="code-sandbox" />联拓富商城 </h1>
             <div className="header-cont">
               <div className="header-menu">
-                <div className="nav">
-                  <div>首页</div>
-                  <div>商品分类1</div>
-                  <div>商品分类2</div>
-                  <div>我的订单</div>
-                </div>
+                <ul className="nav">
+                  {
+                    this.state.commoditiesType.map((item, index) => (
+                      <li key={index} onClick={this.toSearchDetail.bind(this, item.id)}>{item.goods_category_name}</li>
+                    ))
+                  }
+                </ul>
               </div>
               <div className="search" style={{width: 300}}>
                 <AutoComplete
@@ -130,7 +147,7 @@ export default class App extends Component {
                   onChange={this.getSearchContent}
                   placeholder="搜索商品"
                   style={{width: '100%'}}
-                ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail}><Icon type="search" /></Button>)} />
+                ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail.bind(this, null)}><Icon type="search" /></Button>)} />
                 </AutoComplete>
               </div>
             </div>

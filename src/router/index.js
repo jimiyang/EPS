@@ -11,7 +11,7 @@ import DevTools from '../store/DevTools';
 //登陆
 import Login from '../containers/frontEnd/login/login';
 //前台
-import app from '../containers/frontEnd/app/app';
+import App from '../containers/frontEnd/app/app';
 //后台主页(入口) jimiyang
 import Main from '../containers/backEnd/main/main';
 
@@ -34,7 +34,7 @@ const Root = () => (
           {__DEVELOPMENT__ && <DevTools />}
           <Switch>
             <Route exact path="/login" component={Login} />
-            <Router path="/" component={Main} />
+            <Router path="/" component={App} />
           </Switch>
         </div>
       </Provider>
