@@ -16,6 +16,7 @@
     text-align: center;margin-right:20px;display: flex;justify-content: flex-start;
     align-items: center;
 }
+.delivery-blocks .search-blocks li.items input{height:40px;line-height:40px;}
 .delivery-blocks .search-blocks li label{display:inline-block;width:120px;}
 .delivery-blocks .search-blocks li input{text-align: left;}
 .delivery-blocks .search-blocks li .search-list{position: relative;}
@@ -28,6 +29,9 @@
     left: 0;
     right: 0;
     border: 1px solid #000;
+}
+.delivery-blocks .order-blocks li{
+    margin-bottom:10px;
 }
 .delivery-blocks .order-blocks .order-title{
 background:#f6f7f8;padding:10px;
@@ -54,9 +58,12 @@ font-size:14px;
     font-size:14px;border-top: 1px dashed #ccc;margin-top: 10px;
     margin-left:28px;
 }
+.delivery-blocks .order-blocks{margin-top:30px;margin-bottom:30px;}
 .delivery-blocks .order-blocks  .arrow-ico{cursor: pointer;}
 .delivery-blocks .order-blocks .order-detaile .items-3 .ant-checkbox-wrapper{line-height:100px;}
-.delivery-blocks .order-blocks .order-detaile .items-3 h1{font-size:14px;}
+.delivery-blocks .order-blocks .order-detaile .items-3 .title{padding-top:10px;}
+.delivery-blocks .order-blocks .order-detaile .items-3 h1{font-size:16px; padding-bottom:20px;}
+.delivery-blocks .order-blocks .order-detaile .items-3 p{padding-bottom:20px;}
 .delivery-blocks .order-blocks .order-detaile .items-3 img{
     width:100px;height:100px;margin:0 10px;
 }

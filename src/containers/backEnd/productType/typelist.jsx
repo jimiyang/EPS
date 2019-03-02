@@ -111,12 +111,11 @@ class ProductType extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        const pid = this.state.parent_id === '' ? 0 : this.state.parent_id;
         this.setState({
           formParams: values
         });
-        if (this.state.parent_id !== '') {
-          Object.assign(this.state.formParams, {superior_id: this.state.parent_id});
-        }
+        Object.assign(this.state.formParams, {superior_id: pid});
         window.api('goods.addcategory', this.state.formParams).then((rs) => {
           message.success(rs.service_error_message);
           this.loadList();

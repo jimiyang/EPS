@@ -2,7 +2,7 @@ import axios from './instance';
 import getSign from './sign/sign';
 import aes from './aes/public';
 //通用接口
-function baseInstance(service, params, goods_pic = null, headers = null) {
+function baseInstance(service, params) {
   const localStorage = window.localStorage;
   let headParams = {};
   if (service === 'eps.login') {
@@ -21,17 +21,17 @@ function baseInstance(service, params, goods_pic = null, headers = null) {
       ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY')))
     };
   }
+  //Object.assign(params, goods_pic);
   const form = {
     head: {
       service,
       ...headParams
     },
-    body: params,
-    goods_pic
+    body: params
   };
   console.log(form);
   return (
-    axios.post('/gateway.in', form, headers).then((response) => response)
+    axios.post('/gateway.in', form).then((response) => response)
   );
 }
 function uploadFile(params) {

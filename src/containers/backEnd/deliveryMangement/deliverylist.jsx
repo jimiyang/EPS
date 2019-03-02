@@ -20,6 +20,7 @@ import './delivery.css';
 import OrderDetaile from './orderDetaile';
 
 import SendDelivery from './sendDelivery';
+import { SourceNode } from '../../../../../../Library/Caches/typescript/3.2/node_modules/source-map/source-map';
 
 moment.locale('zh-cn');
 const {Option} = AutoComplete;
@@ -28,32 +29,26 @@ class DeliveryList extends Component {
     super(props);
     this.state = {
       isActive: 0,
-      index: 0,
+      index: '',
       agentNumberData: [],
       orderNumberData: [],
       detailVisible: false,
       expressVisible: false,
-      menuData: ['全部订单', '待发货的订单', '已发货的订单', '已完成的订单', '待付款的订单', '已取消的订单'],
+      menuData: ['全部订单', '待付款订单', '待发货订单', '待收货订单', '已完成订单', '已取消订单'],
       checkedList: [],
       publicNumberChecked: [],
       defaultValue: '请选择快递',
       orderNumber: '',
-      detaileData: ['我是代理商1', '我是代理商2', '我是代理商3'],
-      order_no: '',
+      orderListData: [],
+      orderDetailData: [],
+      orderNo: '',
+      goodsIdData: '',
+      total: 0,
       search: {
-        order_no: '',
         status: 0,
-        page_size: 3,
-        current_page: 1,
-        end_time: '',
-        agent_no: '',
-        next: '',
-        previous: ''
+        page_size: 5
       }
     };
-  }
-  componentWillMount() {
-    console.log(this.state.search);
   }
   renderOption(item) {
     return (
@@ -61,6 +56,24 @@ class DeliveryList extends Component {
         {item.name}
       </Option>
     );
+  }
+  componentWillMount() {
+    console.log(this.state.orderNo);
+    console.log(this.state.search);
+    console.log(this.state.goodsIdData);
+    this.loadList();
+  }
+  loadList = () => {
+    console.log(this.state.search);
+    window.api('order.orderList', this.state.search).then(rs => {
+      console.log(rs.orders);
+      if (rs.orders.length > 0) {
+        this.setState({
+          orderListData: rs.orders,
+          total: rs.orders.length
+        });
+      }
+    });
   }
   selTap = (index) => {
     this.setState({
@@ -70,7 +83,7 @@ class DeliveryList extends Component {
   orderDetailEvent = (value) => {
     this.setState({
       detailVisible: true,
-      order_no: value
+      orderNo: value
     });
   }
   sendDeliveryEvent = () => {
@@ -84,9 +97,21 @@ class DeliveryList extends Component {
       detailVisible: false
     });
   }
-  openEvent = (idx) => {
+  openEvent = (idx, number) => {
     this.setState({
       index: idx
+    });
+    let str = '';
+    window.api('goods.goodsDetail', {order_no: number}).then(rs => {
+      if (rs.goods_detail.length > 0) {
+        this.state.orderDetailData.map(item => {
+          str += `${str}${item.goods_id},`;
+        });
+        this.setState({
+          orderDetailData: rs.goods_detail,
+          goodsIdData: str.substr(0, str.length - 1)
+        });
+      }
     });
   }
   onCheckAllChange = (e) => {
@@ -105,8 +130,9 @@ class DeliveryList extends Component {
       checkedList
     });
   }
-  onChange = (e) => {
-    const index = e.target.value;
+  onChange = (e, id) => {
+    const index = e.target.value[0];
+    console.log(e.target.value[1]);
     const checkedList = this.state.checkedList;
     if (e.target.checked === true) {
       checkedList[index] = true;
@@ -136,7 +162,7 @@ class DeliveryList extends Component {
       express_no: this.state.orderNumber,
       ids: []
     };
-    window.api.baseInstance('order.send', params).then((rs) => {
+    window.api('order.send', params).then((rs) => {
       console.log(rs);
     });
   }
@@ -145,7 +171,7 @@ class DeliveryList extends Component {
       order_no: '',
       status: ''
     };
-    window.api.baseInstance('order.orderList', params).then(rs => {
+    window.api('order.orderList', params).then(rs => {
       console.log(rs);
     });
   }
@@ -225,10 +251,10 @@ class DeliveryList extends Component {
         <div className="order-blocks">
           <ul>
             {
-              this.state.detaileData.map((item, index) => (
+              this.state.orderListData.map((item, index) => (
                 <li key={index}>
                   <div className="order-title">
-                    <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
+                    <div className="arrow-ico" onClick={this.openEvent.bind(this, index, item.order_no)}>
                       <Icon type={this.state.index === index ? 'up' : 'down'} />
                     </div>
                     <Checkbox
@@ -236,37 +262,43 @@ class DeliveryList extends Component {
                       checked={this.state.publicNumberChecked[index]}
                       value={[index]}
                     />
-                    <span>待发货</span>
-                    <span>{item}</span>
-                    <span>订单号：0928213248</span>
-                    <span>2018-12-21 06:12:22</span>
-                    <Button type="primary" onClick={this.orderDetailEvent.bind(this, item)}>订单详情</Button>
-                    <Button type="primary" onClick={this.sendDeliveryEvent.bind(this, item)}>发货</Button>
+                    <span>{this.state.menuData[item.status]}</span>
+                    <span>{item.agent_name}</span>
+                    <span>订单号：{item.order_no}</span>
+                    <span>{item.gmt_created}</span>
+                    <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
+                    <Button type="primary" onClick={this.sendDeliveryEvent.bind(this, item.order_no)}>发货</Button>
                   </div>
                   <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} >
-                    <div className="items-1">
-                      <span>下单账号：dddddd</span>
-                      <span>数量：11111111</span>
-                      <span>合计：<em className="red">09999999</em></span>
-                    </div>
-                    <div className="items-2">收货地址：开快点快点快点快点快点快点快点快点打开的开口道</div>
-                    <div className="items-3">
-                      <Checkbox value={index} onChange={this.onChange} checked={this.state.checkedList[index]} />
-                      <img src={require('../../../assets/bg.jpg')} />
-                      <div>
-                        <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>
-                        <p>¥344324321</p>
-                        <p>商品类型：哈哈哈哈哈</p>
-                      </div>
-                    </div>
+                    {
+                      this.state.orderDetailData.map((detail, idx) => (
+                        <div key={idx}>
+                          <div className="items-1">
+                            <span>下单账号：{item.payer_account}</span>
+                            <span>数量：{detail.goods_qty}</span>
+                            <span>合计：<em className="red">{detail.total_amt}</em></span>
+                          </div>
+                          <div className="items-2">收货地址：{item.province}</div>
+                          <div className="items-3">
+                            <Checkbox value={[index, detail.goods_id]} onChange={this.onChange} checked={this.state.checkedList[index]} />
+                            <img src={detail.goods_pic} />
+                            <div className="title">
+                              <h1>商品名称：{detail.goods_name}</h1>
+                              <p>商品售价：¥{detail.goods_sale_price}</p>
+                              <p>商品类型：{detail.goods_category_name}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    }
                   </div>
                 </li>
               ))
             }
           </ul>
-          <div className="g-tc pagination">
-            <Pagination showSizeChanger defaultCurrent={1} total={100} />
-          </div>
+        </div>
+        <div className="g-tc pagination">
+          <Pagination showSizeChanger defaultCurrent={1} total={this.state.total} defaultPageSize={this.state.search.pageSize} />
         </div>
       </div>
     );

@@ -5,8 +5,6 @@ import {
   Input,
   Radio,
   Button,
-  Upload,
-  Icon,
   message
 } from 'antd';
 
@@ -26,22 +24,17 @@ class Add extends Component {
     super(props);
     this.state = {
       disabled: true,
-      goods_bar_no: '',
       form: {
+        goods_bar_no: '',
         is_post: 0,
         goods_details: '',
         goods_category_id: '',
-        goods_pic: ''
-      },
-      formData: ''
+        goods_pic: 'http://static.liantuobank.com/project/lianfutong/images/imgdemo3.jpg'
+      }
     };
-    //this.handleChange = this.handleChange.bind(this);
   }
   componentWillMount() {
     this.initForm();
-    this.setState({
-      formData: new FormData()
-    });
   }
   componentDidMount() {
     const textbox = this.refs.textarea;
@@ -50,10 +43,24 @@ class Add extends Component {
     if (!this.props.location.query) {
       return false;
     }
-    //console.log(this.props.location.query.id);
-    console.log(window.api);
-    window.api('goods.getgoodsdetail', {goods_id: this.props.location.query.id}).then((rs) => {
+    window.api('goods.getgoodsdetail', {id: this.props.location.query.id}).then((rs) => {
+      const pid = rs.goods_category_id === '' ? 0 : rs.goods_category_id;
       console.log(rs);
+      console.log(pid);
+      const params = {
+        goods_name: rs.goods_name,
+        goods_bar_no: rs.goods_bar_no,
+        goods_category_id: pid,
+        cost_price: rs.cost_price,
+        sale_price: rs.sale_price,
+        is_post: rs.is_post,
+        goods_details: rs.goods_details,
+        id: rs.id
+      };
+      const form = Object.assign(this.state.form, params);
+      this.setState({
+        form
+      });
     });
   }
   addtionProEvent = (e) => {
@@ -61,29 +68,25 @@ class Add extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const form = Object.assign(this.state.form, values);
-        console.log(values);
         this.setState({
           form
         });
+        console.log(form);
         if (!this.props.location.query) {
-          console.log('add');
           window.api('goods.addgoods', form).then((rs) => {
-            console.log(rs);
+            message.success(rs.service_error_message);
+          }).catch(error => {
+            message.error(error);
           });
         } else {
-          console.log('edit');
           window.api('goods.modgoods', form).then((rs) => {
-            console.log(rs);
+            message.success(rs.service_error_message);
+          }).catch(error => {
+            message.error(error);
           });
         }
       }
     });
-  }
-  getBase64 = (img, callback) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-    console.log(reader);
   }
   uploadImgEvent = (e) => {
     e.preventDefault();
@@ -91,24 +94,18 @@ class Add extends Component {
     const reader = new FileReader();
     reader.readAsDataURL(info);
     const flag = window.common.beforeUpload(info, message); //上传之前判断图片大小
-    this.state.formData.append('upload', info);
-    //console.log(this.state.formData);
     if (flag === true) {
-      const headers = {
-        'Content-Type': 'multipart/form-data'
-      };
-      api.baseInstance('eps.upload', null, this.state.formData, headers).then(rs => {
-        console.log(rs);
-      }).catch(error => {
-        message.error(error);
-      });
-      /*reader.onload = function (ev) {
+      reader.onload = function (ev) {
         const params = {
-          filePath: 'goods_pic',
-          fileName: info.name,
-          uploadPic: this.result
+          pic_name: info.name,
+          goods_pic: this.result
         };
-      };*/
+        api.baseInstance('eps.upload', params).then(rs => {
+          console.log(rs);
+        }).catch(error => {
+          message.error(error);
+        });
+      };
     }
   }
   handleChange = (value) => {
@@ -120,8 +117,9 @@ class Add extends Component {
   //生成条形码
   getbarno = () => {
     api.baseInstance('goods.getbarno', {}).then((rs) => {
+      const form = Object.assign(this.state.form, {goods_bar_no: rs.barNo});
       this.setState({
-        goods_bar_no: rs.barNo
+        form
       });
     }).catch(error => {
       message.error(error);
@@ -131,21 +129,20 @@ class Add extends Component {
     return label[label.length - 1];
   }
   selParentEvent = (value) => {
+    console.log(value);
     const form = Object.assign(this.state.form, {goods_category_id: value});
-    console.log(form);
     this.setState({
       form
     });
   }
-  selIspostEvent = (value) => {
-    const form = Object.assign(this.state.form, {is_post: value});
+  selIspostEvent = (e) => {
+    const form = Object.assign(this.state.form, {is_post: e.target.value});
     this.setState({
       form
     });
   }
   render() {
     const {getFieldDecorator} = this.props.form;
-    const imageUrl = this.state.imageUrl;
     return (
       <div className="add-blocks">
         <Form onSubmit={this.addtionProEvent} className="form" name="form" id="form">
@@ -155,6 +152,7 @@ class Add extends Component {
             {getFieldDecorator(
               'goods_name',
               {
+                initialValue: this.state.form.goods_name || '',
                 rules: [{required: true, message: '请输入商品名称！'}]
               }
             )(<Input placeholder="请输入商品名称" />)
@@ -167,7 +165,7 @@ class Add extends Component {
               {getFieldDecorator(
                 'goods_bar_no',
                 {
-                  initialValue: this.state.goods_bar_no || '',
+                  initialValue: this.state.form.goods_bar_no || '',
                   rules: [{required: true, message: '请输入商品条形码！'}],
                 }
               )(<Input placeholder="请生成商品条形码" disabled={this.state.disabled} />)
@@ -195,6 +193,7 @@ class Add extends Component {
             {getFieldDecorator(
               'cost_price',
               {
+                initialValue: this.state.form.cost_price || '',
                 rules: [
                   {required: true, message: '请输入商品原价！'},
                   {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
@@ -209,6 +208,7 @@ class Add extends Component {
             {getFieldDecorator(
               'sale_price',
               {
+                initialValue: this.state.form.sale_price || '',
                 rules: [
                   {required: true, message: '请输入商品售价！'},
                   {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}

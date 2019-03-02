@@ -60,7 +60,7 @@ class TreeMenu extends Component {
           onChange={this.selParentEvent}
           value={this.state.parent_id}
         >
-          <TreeNode value={0} title="我的分类" key="0">
+          <TreeNode value="" title="请选择分类" key="0">
             {
               this.state.treeData.map((item) => (
                 (item.superior_id === 0) ? (

@@ -32,9 +32,10 @@ class TypeEdit extends Component {
   }
   getTypeById = (sId) => {
     window.api('goods.getcategorylist', {id: sId}).then(rs => {
+      const pid = rs.goods_category_list[0].superior_id === 0 ? '' : rs.goods_category_list[0].superior_id;
       this.setState({
         form: rs.goods_category_list[0],
-        parent_id: rs.goods_category_list[0].superior_id,
+        parent_id: pid,
       });
     }).catch(error => {
       message.error(error);
@@ -59,7 +60,9 @@ class TypeEdit extends Component {
     });
   }
   selParentEvent = (value) => {
-    const form = Object.assign({}, this.state.form, {superior_id: value});
+    const pid = value === '' ? 0 : value;
+    const form = Object.assign({}, this.state.form, {superior_id: pid});
+    console.log(pid);
     this.setState({
       form,
       parent_id: value
