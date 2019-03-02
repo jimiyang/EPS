@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 import {Route} from 'react-router-dom';
 import {AutoComplete, Icon, Input, Button} from 'antd';
 // 路由
-import commodities from '../commodities/commodities';
+import goods from '../goods/goods';
 import searchDetail from '../searchDetail/searchDetail';
-import commoditiesDetail from '../commoditiesDetail/commoditiesDetail';
+import goodsDetail from '../goodsDetail/goodsDetail';
 import generateOrder from '../generateOrder/generateOrder';
 import cashier from '../cashier/cashier';
 import successfulPayment from '../successfulPayment/successfulPayment';
@@ -18,7 +18,7 @@ function IsLogin(props) {
   return props.loginstate ? <div className="header-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
 }
 @connect(
-  (state) => ({searchContent: state.frontEnd.searchContent, commoditiesType: state.frontEnd.commoditiesType}),
+  (state) => ({searchContent: state.frontEnd.searchContent, goodsType: state.frontEnd.goodsType}),
   {changeSearchContent},
 )
 export default class App extends Component {
@@ -29,7 +29,7 @@ export default class App extends Component {
       canSearch: false, // 是否能够搜索
       searchContent: '', // 搜索的内容
       dataSource: [], // 搜索列表
-      commoditiesType: [], // 商品类型列表
+      goodsType: [], // 商品类型列表
     };
   }
 
@@ -58,9 +58,9 @@ export default class App extends Component {
       superior_id: 0,
     };
     window.api('goods.getcategorylist', params).then(res => {
-      const commoditiesType = res.goods_category_list;
-      this.setState({commoditiesType});
-      window.localStorage.setItem('commoditiesType', JSON.stringify(commoditiesType));
+      const goodsType = res.goods_category_list;
+      this.setState({goodsType});
+      window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
     });
   }
 
@@ -132,7 +132,7 @@ export default class App extends Component {
               <div className="header-menu">
                 <ul className="nav">
                   {
-                    this.state.commoditiesType.map((item, index) => (
+                    this.state.goodsType.map((item, index) => (
                       <li key={index} onClick={this.toSearchDetail.bind(this, item.id)}>{item.goods_category_name}</li>
                     ))
                   }
@@ -154,9 +154,9 @@ export default class App extends Component {
           </div>
         </header>
         <section className="container">
-          <Route exact path="/" component={commodities} />
+          <Route exact path="/" component={goods} />
           <Route path="/searchDetail" component={searchDetail} />
-          <Route path="/commoditiesDetail" component={commoditiesDetail} />
+          <Route path="/goodsDetail" component={goodsDetail} />
           <Route path="/generateOrder" component={generateOrder} />
           <Route path="/cashier" component={cashier} />
           <Route path="/successfulPayment" component={successfulPayment} />

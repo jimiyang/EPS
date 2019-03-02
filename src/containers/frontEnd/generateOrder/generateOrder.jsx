@@ -32,7 +32,7 @@ class GenerateOrder extends Component {
         const orderNo = `${moment().format('YYYYMMDDHHmmssSSS')}${random}`;
         const price = (this.state.info.count * Number(this.state.info.price)).toFixed(2);
         const goods = JSON.stringify([{
-          goods_no: this.state.info.barNo,
+          goods_id: this.state.info.id,
           goods_qty: this.state.info.count,
           total_amt: price
         }]);
@@ -49,11 +49,17 @@ class GenerateOrder extends Component {
           post_code: values.postalCode,
           goods,
         };
-        console.log(params);
         values.postalCode ? params.post_code = values.postalCode : null;
         window.localStorage.setItem('orderInfo', JSON.stringify(values));
         window.api('order.createorder', params).then(res => {
-          this.props.history.push('/cashier');
+          const info = {
+            order_no: res.order_no,
+            real_amt: res.real_amt,
+            total_amt: res.total_amt,
+            address: res.address,
+            goods_name: this.state.info.name
+          };
+          this.props.history.push('/cashier', {info});
         });
       }
     });
@@ -73,7 +79,7 @@ class GenerateOrder extends Component {
               <li>数量</li>
               <li>合计</li>
             </ul>
-            <ul className="commodities">
+            <ul className="goods">
               <li>
                 <img src={info.img} />
                 <p>{info.name}</p>

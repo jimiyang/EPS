@@ -8,14 +8,26 @@
     border: 1px solid #d7d7d7;
     background: #fff;
     .order {
-      width: 270px;
+      width: 350px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       border-right: 1px solid #d7d7d7;
-      p:first-of-type {
-        margin-bottom: 30px;
+      p {
+        margin: 5px 0;
+      }
+      button {
+        width: 64px;
+        height: 25px;
+        color: red;
+        background: #fff;
+        border: 1px solid red;
+        border-radius: 5px;
+        cursor: pointer;
+        &:focus {
+          outline: none;
+        }
       }
     }
     .progress {
@@ -123,5 +135,8 @@
     p {
       padding: 20px 40px;
     }
+  }
+  .ant-steps-horizontal:not(.ant-steps-label-vertical) .ant-steps-item-description {
+    max-width: 100px;
   }
 }

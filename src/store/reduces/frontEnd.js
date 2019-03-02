@@ -1,5 +1,5 @@
 const CHANGE_SEARCH_CONTENT = 'frontEnd/CHANGE_SEARCH_CONTENT';
-const GET_COMMODITIES_TYPE = 'frontEnd/GET_COMMODITIES_TYPE';
+const GET_GOODS_TYPE = 'frontEnd/GET_GOODS_TYPE';
 
 const initialState = {
   searchContent: '', // 搜索内容

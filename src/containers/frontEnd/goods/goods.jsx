@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import './commodities.less';
+import './goods.less';
 
-export default class Commodities extends Component {
+export default class Goods extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,13 +26,13 @@ export default class Commodities extends Component {
       const part = res.goods_category_list;
       this.setState({part});
       part.forEach((item, index) => {
-        this.getCommoditiesList(item.goods_category_name, index);
+        this.getGoodsList(item.goods_category_name, index);
       });
     });
   }
 
   // 获取产品列表
-  getCommoditiesList(category, index) {
+  getGoodsList(category, index) {
     const params = {
       page_size: 8,
       current_page: 1,
@@ -47,7 +47,7 @@ export default class Commodities extends Component {
 
   // 跳转到详情页
   toDetail = (id) => {
-    this.props.history.push('/commoditiesDetail', {id});
+    this.props.history.push('/goodsDetail', {id});
   }
 
   render() {
@@ -65,7 +65,7 @@ export default class Commodities extends Component {
                       <img src={$0.goods_picture} />
                       <div className="sku-cont">
                         <h2>{$0.goods_name}</h2>
-                        <p className="price">{$0.cost_price}</p>
+                        <p className="price">{($0.sale_price).toFixed(2)}</p>
                       </div>
                     </li>))
                 }

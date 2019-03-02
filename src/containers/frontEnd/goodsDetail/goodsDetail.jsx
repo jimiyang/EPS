@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {InputNumber} from 'antd';
-import './commoditiesDetail.less';
+import './goodsDetail.less';
 
-class CommoditiesDetail extends Component {
+class GoodsDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,14 +18,14 @@ class CommoditiesDetail extends Component {
   // 跳转到生成订单页
   toOrder = () => {
     const {detail} = this.state;
-    const commoditiesDetail = {
+    const goodsDetail = {
       img: detail.goods_picture,
       count: this.state.count,
       price: detail.sale_price,
       name: detail.goods_name,
-      barNo: detail.goods_bar_no,
+      id: detail.id,
     };
-    this.props.history.push('/generateOrder', {info: commoditiesDetail});
+    this.props.history.push('/generateOrder', {info: goodsDetail});
   }
 
   // 改变购买数量
@@ -43,7 +43,7 @@ class CommoditiesDetail extends Component {
   render() {
     const detail = this.state.detail;
     return (
-      <div id="commoditiesDetail">
+      <div id="goodsDetail">
         <section className="sale">
           <div className="poster">
             <img src={detail.goods_picture} />
@@ -70,11 +70,11 @@ class CommoditiesDetail extends Component {
         </section>
         <section className="detail">
           <div className="title">商品详情</div>
-          <div className="content">{detail.goods_details}</div>
+          <div className="content" dangerouslySetInnerHTML={{__html: detail.goods_details}} />
         </section>
       </div>
     );
   }
 }
 
-export default CommoditiesDetail;
+export default GoodsDetail;

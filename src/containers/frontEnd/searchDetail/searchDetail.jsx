@@ -76,7 +76,7 @@ class SearchDetail extends Component {
 
   // 跳转到详情页
   toDetail = (id) => {
-    this.props.history.push('/commoditiesDetail', {id});
+    this.props.history.push('/goodsDetail', {id});
   }
 
   // 翻页

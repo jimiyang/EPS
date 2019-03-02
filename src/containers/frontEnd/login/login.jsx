@@ -6,7 +6,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: 'jrpt',
+      userName: 'dlsy_test128', // dlsy_test128 ptdls1 jrpt
       userPwd: '111qqq',
       authCode: '',
       txtCode: ''
