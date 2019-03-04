@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import moment from 'moment';
-import {connect} from 'react-redux';
 import {Form, Input, Cascader, Button} from 'antd';
 import {adData} from '../../../utils/area';
 import './generateOrder.less';
@@ -68,7 +67,6 @@ class GenerateOrder extends Component {
     const {info, consignee} = this.state;
     const {getFieldDecorator} = this.props.form;
     return (
-
       <div id="generateOrder">
         <section className="top">
           <div className="title">确认订单信息</div>

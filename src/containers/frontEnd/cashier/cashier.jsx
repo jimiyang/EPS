@@ -55,7 +55,7 @@ class Cashier extends Component {
     const params = {
       order_no: detail.order_no,
       pay_mode: index,
-      pay_account_no: 'hsaiodfakslfjao'
+      pay_account_no: 'CA31000000003247'
     };
     window.api('trade.innerpay', params).then(res => {
       message.success('支付成功');

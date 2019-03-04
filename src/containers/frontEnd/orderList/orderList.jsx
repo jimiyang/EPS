@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Tabs, Input, Pagination} from 'antd';
+import {Tabs, Input, message} from 'antd';
 import './orderList.less';
 
 const TabPane = Tabs.TabPane;
@@ -40,10 +40,17 @@ class OrderList extends Component {
     status: 0, //0：全部订单，1：等待付款，2：等待发货，3：等待收货，4：已完成，5：已取消（默认0）
     loadMore: true, // 是否能加载更多
     loadText: '加载更多',
+    timer: null, // 定时器
+    time: null, // 倒计时
   }
 
   componentWillMount() {
     this.getOrderList('first', 0);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.timer);
+    this.setState({timer: null});
   }
 
   // 跳转到订单详情
@@ -103,19 +110,74 @@ class OrderList extends Component {
 
   // 获取商品详情
   getGoodsDetail = (orderNo, index) => {
+    clearInterval(this.state.timer);
+    this.setState({timer: null, time: '00时00分00秒'});
     if (index !== this.state.isChecked) {
       const params = {
         order_no: orderNo,
       };
       window.api('goods.goodsDetail', params).then(res => {
-        this.setState({isChecked: index, detail: res.goods_detail[0]});
+        const detail = res.goods_detail[0];
+        const create = (new Date(detail.gmt_created)).getTime();
+        const deadline = create + 24 * 60 * 60 * 1000;
+        const timer = setInterval(() => {
+          const alltime = deadline - (new Date()).getTime();
+          const hours = parseInt(alltime / (60 * 60 * 1000), 10);
+          const time1 = alltime - hours * 60 * 60 * 1000;
+          const minutes = parseInt(time1 / (1000 * 60), 10);
+          const time2 = time1 - minutes * 60 * 1000;
+          const seconds = parseInt(time2 / 1000, 10);
+          const time = `${hours < 10 ? `0${hours}` : hours}时${minutes < 10 ? `0${minutes}` : minutes}分${seconds < 10 ? `0${seconds}` : seconds}秒`;
+          this.setState({time});
+        }, 1000);
+        this.setState({isChecked: index, detail, timer});
       });
     }
   }
 
+  // 付款
+  pay = () => {
+    const {detail, list, isChecked} = this.state;
+    const info = {
+      order_no: detail.order_no,
+      real_amt: detail.real_amt,
+      total_amt: detail.total_amt,
+      address: list[isChecked].address,
+      goods_name: detail.goods_name
+    };
+    this.props.history.push('/cashier', {info});
+  }
+
+  // 取消订单
+  cancelOrder = () => {
+    const params = {
+      order_no: this.state.detail.order_no
+    };
+    window.api('order.cancelOrder', params).then(res => {
+      this.state.list[this.state.isChecked].status = 4;
+      this.state.detail.status = 4;
+    });
+  }
+
+  // 确认收货
+  confirmReceipt = () => {
+    const {detail, list, isChecked} = this.state;
+    const params = {
+      order_no: detail.order_no,
+      ids: `${detail.id}`,
+    };
+    window.api('order.confirmReceived', params).then(res => {
+      list[isChecked].status = 3;
+      detail.status = 3;
+      message.success('确认收货，已完成订单！');
+    }).catch((err) => {
+      message.error(err);
+    });
+  }
+
   render() {
     const {
-      detail, isChecked, tabs, list, loadMore, loadText, status
+      detail, isChecked, tabs, list, loadMore, loadText, status, time
     } = this.state;
     return (
       <div id="orderList">
@@ -167,8 +229,8 @@ class OrderList extends Component {
                               <p style={{marginTop: '30px', cursor: 'pointer'}} onClick={this.toOrderDetail.bind(this, detail.order_no)}>订单详情</p>
                             </div>
                             <div className="operation">
-                              {detail.status === 3 ? <button>确认收货</button> : null}
-                              {detail.status === 1 ? <div><p style={{color: '#ddd'}}>{detail.remain}</p><button>付款</button><p>取消订单</p></div> : null}
+                              {detail.status === 2 ? <button onClick={this.confirmReceipt}>确认收货</button> : null}
+                              {detail.status === 0 ? <div><p style={{color: '#ddd'}}>{time}</p><button onClick={this.pay}>付款</button><p onClick={this.cancelOrder}>取消订单</p></div> : null}
                             </div>
                           </div>
                         </li>
@@ -187,11 +249,12 @@ class OrderList extends Component {
             onSearch={this.toOrderDetail}
           />
         </section>
-        <section className="pagination">
+        <section className="pagination" hidden={list.length === 0}>
           {
             loadMore ? <button onClick={this.getOrderList.bind(this, 'next', status, null)}>{loadText}</button> : <button>{loadText}</button>
           }
         </section>
+        <section className="default" hidden={list.length > 0}>查询不到订单</section>
       </div>
     );
   }

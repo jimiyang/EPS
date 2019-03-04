@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Route} from 'react-router-dom';
-import {AutoComplete, Icon, Input, Button} from 'antd';
+import {message, AutoComplete, Icon, Input, Button} from 'antd';
 // 路由
 import goods from '../goods/goods';
 import searchDetail from '../searchDetail/searchDetail';
@@ -30,6 +30,7 @@ export default class App extends Component {
       searchContent: '', // 搜索的内容
       dataSource: [], // 搜索列表
       goodsType: [], // 商品类型列表
+      isChecked: null, // 被选中的分类
     };
   }
 
@@ -61,6 +62,11 @@ export default class App extends Component {
       const goodsType = res.goods_category_list;
       this.setState({goodsType});
       window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
+    }).catch(err => {
+      if (err === '用户信息失效，请重新登录') {
+        message.error(err);
+        this.props.history.push('/login');
+      }
     });
   }
 
@@ -79,7 +85,7 @@ export default class App extends Component {
   }
 
   // 跳转到搜索页
-  toSearchDetail = (id) => {
+  toSearchDetail = (id, isChecked) => {
     const {
       searchContent, dataSource, canSearch
     } = this.state;
@@ -95,6 +101,7 @@ export default class App extends Component {
         window.localStorage.setItem('dataSource', JSON.stringify(list));
       }
     }
+    this.setState({isChecked});
     this.props.changeSearchContent({searchContent, id});
   }
 
@@ -109,7 +116,7 @@ export default class App extends Component {
   }
 
   render() {
-    const {dataSource, loginstate} = this.state;
+    const {dataSource, loginstate, isChecked} = this.state;
     return (
       <div className="page">
         <div className="header-bar">
@@ -133,7 +140,7 @@ export default class App extends Component {
                 <ul className="nav">
                   {
                     this.state.goodsType.map((item, index) => (
-                      <li key={index} onClick={this.toSearchDetail.bind(this, item.id)}>{item.goods_category_name}</li>
+                      <li className={index === this.state.isChecked ? 'isChecked' : null} key={index} onClick={this.toSearchDetail.bind(this, item.id, index)}>{item.goods_category_name}</li>
                     ))
                   }
                 </ul>

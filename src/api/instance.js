@@ -5,29 +5,14 @@ const instance = axios.create({
   timeout: 1000,
   withCredentials: true,
 });
-instance.interceptors.response.use(
-  res => {
-    const promise = new Promise((resolve, reject) => {
-      if (res.status === 200 && res.data.body.service_status === 'S' && res.data.head.visit_status === 'S') {
-        resolve(res.data.body);
-      } else {
-        reject(res.data.body.service_error_message);
-      }
-    });
-    return promise;
-  },
-  err => {
-    //const {data: {err: errnum, error}} = (err || {}).response;
-    console.log(`失败：${err}`);
-    /*if (errnum === 200 && error) {
-      message.success(error);
+instance.interceptors.response.use(res => {
+  const promise = new Promise((resolve, reject) => {
+    if (res.status === 200 && res.data.body.service_status === 'S' && res.data.head.visit_status === 'S') {
+      resolve(res.data.body);
     } else {
-      message.error(error);
-    }*/
-    if (window.localStorage.getItem('checkLogin') === null) {
-    //msg.error('您的登录已过期，请重新登录！');
-      //this.props.history.push({pathname: '/login'});
+      reject(res.data.body.service_error_message);
     }
-  }
-);
+  });
+  return promise;
+});
 export default instance;
