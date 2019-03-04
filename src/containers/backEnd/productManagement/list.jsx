@@ -121,13 +121,13 @@ class ProductList extends Component {
   searchEvent = () => {
     const params = this.state.search;
     if (this.state.goods_name !== '') {
-      Object.assign(params, {goods_name: this.state.goods_name});
+      Object.assign(params, this.state.search, {goods_name: this.state.goods_name});
     }
     if (this.state.goods_bar_no !== '') {
-      Object.assign(params, {goods_bar_no: this.state.goods_bar_no});
+      Object.assign(params, this.state.search, {goods_bar_no: this.state.goods_bar_no});
     }
     if (this.state.goods_category_id !== '') {
-      Object.assign(params, {goods_category_id: this.state.goods_category_id});
+      Object.assign(params, this.state.search, {goods_category_id: this.state.goods_category_id});
     }
     console.log(params);
     window.api('goods.getgoodslist', params).then((rs) => {

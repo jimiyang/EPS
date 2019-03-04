@@ -6,9 +6,8 @@ import {
   AutoComplete,
   Button,
   DatePicker,
-  Checkbox,
-  Pagination,
-  Modal
+  Modal,
+  message
 } from 'antd';
 
 import 'moment/locale/zh-cn';
@@ -20,75 +19,79 @@ import './delivery.css';
 import OrderDetaile from './orderDetaile';
 
 import SendDelivery from './sendDelivery';
-import { SourceNode } from '../../../../../../Library/Caches/typescript/3.2/node_modules/source-map/source-map';
 
 moment.locale('zh-cn');
-const {Option} = AutoComplete;
 class DeliveryList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isActive: 0,
       index: '',
-      agentNumberData: [],
-      orderNumberData: [],
       detailVisible: false,
       expressVisible: false,
       menuData: ['全部订单', '待付款订单', '待发货订单', '待收货订单', '已完成订单', '已取消订单'],
-      checkedList: [],
-      publicNumberChecked: [],
-      defaultValue: '请选择快递',
-      orderNumber: '',
+      expressName: '请选择快递',
+      expressNo: '',
+      ids: '',
       orderListData: [],
       orderDetailData: [],
-      orderNo: '',
-      goodsIdData: '',
-      total: 0,
       search: {
         status: 0,
         page_size: 5
-      }
+      },
+      orderNumber: '',
+      agentNo: '',
+      orderNo: '',
+      startTime: '',
+      endTime: '',
+      firstOrdernum: '', //分页上一页所用的订单号
+      lastOrdernum: ''//分页下一页所用的订单编号
     };
   }
-  renderOption(item) {
-    return (
-      <Option key={item.name} text={item.name}>
-        {item.name}
-      </Option>
-    );
-  }
   componentWillMount() {
-    console.log(this.state.orderNo);
-    console.log(this.state.search);
-    console.log(this.state.goodsIdData);
-    this.loadList();
+    this.loadList(this.state.search);
+    console.log(this.state.startTime);
+    console.log(this.state.endTime);
   }
-  loadList = () => {
-    console.log(this.state.search);
-    window.api('order.orderList', this.state.search).then(rs => {
-      console.log(rs.orders);
+  loadList = (params) => {
+    let firstOrdernum = '';
+    let lastOrdernum = '';
+    window.api('order.orderList', params).then(rs => {
       if (rs.orders.length > 0) {
-        this.setState({
-          orderListData: rs.orders,
-          total: rs.orders.length
-        });
+        lastOrdernum = rs.orders[rs.orders.length - 1].order_no;
+        firstOrdernum = rs.orders[0].order_no;
+      } else {
+        message.error('没有可查询数据！');
       }
+      this.setState({
+        orderListData: rs.orders,
+        firstOrdernum,
+        lastOrdernum
+      });
+    }).catch(error => {
+      message.error(error);
     });
   }
   selTap = (index) => {
+    const params = Object.assign(this.state.search, {status: index});
     this.setState({
-      isActive: index
+      isActive: index,
+      search: params
     });
+    console.log(this.state.search);
+    this.loadList(this.state.search);
   }
   orderDetailEvent = (value) => {
     this.setState({
       detailVisible: true,
-      orderNo: value
+      orderNumber: value
     });
   }
-  sendDeliveryEvent = () => {
+  sendDeliveryEvent = (number, id) => {
     this.setState({
-      expressVisible: true
+      expressVisible: true,
+      orderNumber: number,
+      ids: id
     });
   }
   closeEvent = () => {
@@ -108,72 +111,89 @@ class DeliveryList extends Component {
           str += `${str}${item.goods_id},`;
         });
         this.setState({
-          orderDetailData: rs.goods_detail,
-          goodsIdData: str.substr(0, str.length - 1)
+          orderDetailData: rs.goods_detail
         });
       }
-    });
-  }
-  onCheckAllChange = (e) => {
-    const index = e.target.value[0];
-    const publicNumberChecked = this.state.publicNumberChecked;
-    const checkedList = this.state.checkedList;
-    if (e.target.checked === true) {
-      publicNumberChecked[index] = true;
-      checkedList[index] = true;
-    } else {
-      publicNumberChecked[index] = false;
-      checkedList[index] = false;
-    }
-    this.setState({
-      publicNumberChecked,
-      checkedList
-    });
-  }
-  onChange = (e, id) => {
-    const index = e.target.value[0];
-    console.log(e.target.value[1]);
-    const checkedList = this.state.checkedList;
-    if (e.target.checked === true) {
-      checkedList[index] = true;
-    } else {
-      checkedList[index] = false;
-    }
-    this.setState({
-      checkedList
+    }).catch(error => {
+      message.error(error);
     });
   }
   selExpressNameEvent = (value) => {
     this.setState({
-      defaultValue: value
+      expressName: value
     });
   }
   orderNumberEvent = (value) => {
     this.setState({
-      orderNumber: value
+      expressNo: value
     });
   }
   sendEvent = (value) => {
-    console.log(`快递名称：${this.state.defaultValue}`);
-    console.log(`快递单号：${this.state.orderNumber}`);
     const params = {
-      order_no: value,
-      express_name: this.state.defaultValue,
-      express_no: this.state.orderNumber,
-      ids: []
+      order_no: this.state.orderNumber,
+      express_name: this.state.expressName,
+      express_no: this.state.expressNo,
+      ids: this.state.ids
     };
     window.api('order.send', params).then((rs) => {
-      console.log(rs);
+      message.success(rs.service_error_message);
+    }).catch(error => {
+      message.error(error);
+    });
+  }
+  agentEvent = (e) => {
+    this.setState({
+      agentNo: e.target.value
+    });
+  }
+  orderNumEvent = (e) => {
+    this.setState({
+      orderNo: e.target.value
+    });
+  }
+  startTimeEvent = (date, dateString) => {
+    this.setState({
+      startTime: dateString
+    });
+  }
+  entTimeEvent = (date, dateString) => {
+    this.setState({
+      endTime: dateString
     });
   }
   searchEvent = () => {
+    const params = {};
+    if (this.state.agentNo !== '') {
+      Object.assign(params, this.state.search, {agent_no: this.state.agentNo});
+    }
+    if (this.state.orderNo !== '') {
+      Object.assign(params, this.state.search, {order_no: this.state.orderNo});
+    }
+    if (this.state.startTime !== '') {
+      Object.assign(params, this.state.search, {start_time: this.state.startTime});
+    }
+    if (this.state.endTime !== '') {
+      Object.assign(params, this.state.search, {endTime: this.state.endTime});
+    }
+    console.log(params);
+    this.loadList(params);
+  }
+  //上一页
+  preEvent = () => {
     const params = {
-      order_no: '',
-      status: ''
+      ...this.state.search,
+      previous: this.state.firstOrdernum
     };
-    window.api('order.orderList', params).then(rs => {
-      console.log(rs);
-    });
+    this.loadList(params);
+  }
+  //下一页
+  nextEvent = () => {
+    const params = {
+      ...this.state.search,
+      next: this.state.lastOrdernum
+    };
+    console.log(params);
+    this.loadList(params);
   }
   render() {
     return (
@@ -187,7 +207,7 @@ class DeliveryList extends Component {
             <Button type="primary" onClick={this.closeEvent.bind(this)}>确定</Button>
           }
         >
-          <OrderDetaile order_no={this.state.order_no} />
+          <OrderDetaile order_no={this.state.orderNumber} />
         </Modal>
         <Modal
           title="填写快递信息"
@@ -200,6 +220,8 @@ class DeliveryList extends Component {
           <SendDelivery
             selExpressNameEvent={this.selExpressNameEvent.bind(this)}
             orderNumberEvent={this.orderNumberEvent}
+            id={this.state.id}
+            order_no={this.state.orderNumber}
           />
         </Modal>
         <div className="nav-items">
@@ -210,41 +232,17 @@ class DeliveryList extends Component {
           </div>
         </div>
         <ul className="search-blocks">
-          <li className="items"><label>代理商编号/名称：</label>
-            <AutoComplete
-              className="certain-category-search"
-              dropdownClassName="certain-category-search-dropdown"
-              dropdownMatchSelectWidth={false}
-              size="large"
-              style={{width: '100%'}}
-              dataSource={this.state.agentNumberData.map(this.renderOption)}
-              onBlur={this.handleNameSearch}
-              placeholder="请输入商品名称"
-              optionLabelProp="value"
-            >
-              <Input suffix={<Icon type="search" className="certain-category-icon" />} />
-            </AutoComplete>
+          <li className="items"><label>代理商编号：</label>
+            <Input onChange={this.agentEvent} />
           </li>
           <li className="items"><label>订单号：</label>
-            <AutoComplete
-              className="certain-category-search"
-              dropdownClassName="certain-category-search-dropdown"
-              dropdownMatchSelectWidth={false}
-              size="large"
-              style={{width: '100%'}}
-              dataSource={this.state.orderNumberData.map(this.renderOption)}
-              onBlur={this.handleCodeSearch}
-              placeholder="请输入商品条形码"
-              optionLabelProp="value"
-            >
-              <Input suffix={<Icon type="search" className="certain-category-icon" />} />
-            </AutoComplete>
+            <Input onChange={this.orderNumEvent} />
           </li>
           <li className="items"><label>开始日期：</label>
-            <DatePicker />
+            <DatePicker onChange={this.startTimeEvent} />
           </li>
           <li className="items"><label>结束日期：</label>
-            <DatePicker />
+            <DatePicker onChange={this.entTimeEvent} />
           </li>
           <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
@@ -257,30 +255,16 @@ class DeliveryList extends Component {
                     <div className="arrow-ico" onClick={this.openEvent.bind(this, index, item.order_no)}>
                       <Icon type={this.state.index === index ? 'up' : 'down'} />
                     </div>
-                    <Checkbox
-                      onChange={this.onCheckAllChange}
-                      checked={this.state.publicNumberChecked[index]}
-                      value={[index]}
-                    />
                     <span>{this.state.menuData[item.status]}</span>
                     <span>{item.agent_name}</span>
                     <span>订单号：{item.order_no}</span>
                     <span>{item.gmt_created}</span>
-                    <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
-                    <Button type="primary" onClick={this.sendDeliveryEvent.bind(this, item.order_no)}>发货</Button>
                   </div>
-                  <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} >
-                    {
-                      this.state.orderDetailData.map((detail, idx) => (
-                        <div key={idx}>
-                          <div className="items-1">
-                            <span>下单账号：{item.payer_account}</span>
-                            <span>数量：{detail.goods_qty}</span>
-                            <span>合计：<em className="red">{detail.total_amt}</em></span>
-                          </div>
-                          <div className="items-2">收货地址：{item.province}</div>
-                          <div className="items-3">
-                            <Checkbox value={[index, detail.goods_id]} onChange={this.onChange} checked={this.state.checkedList[index]} />
+                  {
+                    this.state.orderDetailData.map((detail, idx) => (
+                      <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} key={idx}>
+                        <div className="items-3">
+                          <div className="left">
                             <img src={detail.goods_pic} />
                             <div className="title">
                               <h1>商品名称：{detail.goods_name}</h1>
@@ -288,17 +272,28 @@ class DeliveryList extends Component {
                               <p>商品类型：{detail.goods_category_name}</p>
                             </div>
                           </div>
+                          <div className="button-items">
+                            <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
+                            <Button type="primary" onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id)}>发货</Button>
+                          </div>
                         </div>
-                      ))
-                    }
-                  </div>
+                        <div className="items-1">
+                          <p><label>下单账号：</label>{item.payer_account}</p>
+                          <p><label>数量：</label>{detail.goods_qty}</p>
+                          <p><label>合计：</label><em className="red">{detail.total_amt}</em></p>
+                          <p><label>收货地址：</label>{item.province}</p>
+                        </div>
+                      </div>
+                    ))
+                  }
                 </li>
               ))
             }
           </ul>
         </div>
-        <div className="g-tc pagination">
-          <Pagination showSizeChanger defaultCurrent={1} total={this.state.total} defaultPageSize={this.state.search.pageSize} />
+        <div className="pagetion">
+          <span onClick={this.preEvent.bind(this)}>上一页</span>
+          <span onClick={this.nextEvent.bind(this)}>下一页</span>
         </div>
       </div>
     );

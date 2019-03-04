@@ -44,13 +44,12 @@ class Add extends Component {
       return false;
     }
     window.api('goods.getgoodsdetail', {id: this.props.location.query.id}).then((rs) => {
-      const pid = rs.goods_category_id === '' ? 0 : rs.goods_category_id;
+      //const pid = rs.goods_category_id === '' ? 0 : rs.goods_category_id;
       console.log(rs);
-      console.log(pid);
-      const params = {
+      /*const params = {
         goods_name: rs.goods_name,
         goods_bar_no: rs.goods_bar_no,
-        goods_category_id: pid,
+        goods_category_id: 0,
         cost_price: rs.cost_price,
         sale_price: rs.sale_price,
         is_post: rs.is_post,
@@ -60,7 +59,9 @@ class Add extends Component {
       const form = Object.assign(this.state.form, params);
       this.setState({
         form
-      });
+      });*/
+    }).catch(error => {
+      message.error(error);
     });
   }
   addtionProEvent = (e) => {
