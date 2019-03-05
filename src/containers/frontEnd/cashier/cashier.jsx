@@ -34,7 +34,8 @@ class Cashier extends Component {
       login_name: JSON.parse(window.localStorage.getItem('headParams')).login_name
     };
     window.api('Info.getaccountlist', params).then(res => {
-      this.setState({payInfo: res});
+      res.account[0].available_balance = (Number(res.account[0].available_balance)).toFixed(2);
+      this.setState({payInfo: res.account[0]});
     });
   }
 
@@ -51,11 +52,11 @@ class Cashier extends Component {
       ModalText: '正在支付，请稍候',
       confirmLoading: true,
     });
-    const {detail, index} = this.state;
+    const {detail, index, payInfo} = this.state;
     const params = {
       order_no: detail.order_no,
       pay_mode: index,
-      pay_account_no: 'CA31000000003247'
+      pay_account_no: payInfo.account_no
     };
     window.api('trade.innerpay', params).then(res => {
       message.success('支付成功');
@@ -119,7 +120,7 @@ class Cashier extends Component {
                       <img src={bg} />
                       <p className="name">{item}</p>
                     </div>
-                    <p className="remainder">账户余额: ￥{(payInfo.remainder).toFixed(2)}</p>
+                    <p className="remainder">账户余额: ￥{payInfo.available_balance}</p>
                     <p className={this.state.index === index ? null : 'notChecked'}>支付<span className="price">{detail.real_amt}</span>元</p>
                   </li>
                 ))
