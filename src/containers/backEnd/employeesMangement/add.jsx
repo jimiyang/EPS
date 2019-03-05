@@ -1,17 +1,19 @@
 import React, {Component} from 'react';
 
 import {
-  AutoComplete,
-  Icon,
   Input,
   Button,
-  Form
+  Form,
+  message
 } from 'antd';
 
 import './style.css';
 
-const {Option} = AutoComplete;
 class Addition extends Component {
+  componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
+  }
   render() {
     const {getFieldDecorator} = this.props.form;
     return (

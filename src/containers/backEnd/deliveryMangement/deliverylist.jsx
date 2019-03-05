@@ -3,7 +3,6 @@ import React, {Component} from 'react';
 import {
   Icon,
   Input,
-  AutoComplete,
   Button,
   DatePicker,
   Modal,
@@ -31,6 +30,7 @@ class DeliveryList extends Component {
       detailVisible: false,
       expressVisible: false,
       menuData: ['全部订单', '待付款订单', '待发货订单', '待收货订单', '已完成订单', '已取消订单'],
+      statusData: ['待付款订单', '待发货订单', '待收货订单', '已完成订单', '已取消订单'],
       expressName: '请选择快递',
       expressNo: '',
       ids: '',
@@ -50,6 +50,8 @@ class DeliveryList extends Component {
     };
   }
   componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
     this.loadList(this.state.search);
   }
   loadList = (params) => {
@@ -81,7 +83,6 @@ class DeliveryList extends Component {
       isActive: index,
       search: params
     });
-    console.log(this.state.search);
     this.loadList(this.state.search);
   }
   orderDetailEvent = (value) => {
@@ -251,7 +252,10 @@ class DeliveryList extends Component {
           <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
         <div className="order-blocks">
-          <div className={this.state.isHide === true ? 'hide' : null}>没有数据!</div>
+          <div className={`no-data ${this.state.isHide === true ? 'hide' : null}`}>
+            <img src={require('../../../assets/backEnd/nodata-ico.png')} />
+            <p>没有数据!</p>
+          </div>
           <ul>
             {
               this.state.orderListData.map((item, index) => (
@@ -260,8 +264,8 @@ class DeliveryList extends Component {
                     <div className="arrow-ico" onClick={this.openEvent.bind(this, index, item.order_no)}>
                       <Icon type={this.state.index === index ? 'up' : 'down'} />
                     </div>
-                    <span>{this.state.menuData[item.status]}</span>
-                    <span>{item.agent_name}</span>
+                    <span>{this.state.statusData[item.status]}</span>
+                    <span className="agentName">{item.agent_name}</span>
                     <span>订单号：{item.order_no}</span>
                     <span>{item.gmt_created}</span>
                   </div>
@@ -278,8 +282,8 @@ class DeliveryList extends Component {
                             </div>
                           </div>
                           <div className="button-items">
-                            <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
-                            <Button type="primary" onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id)}>发货</Button>
+                            <Button type="primary" className="bt" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
+                            <Button type="primary" className="" onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id)}>发货</Button>
                           </div>
                         </div>
                         <div className="items-1">

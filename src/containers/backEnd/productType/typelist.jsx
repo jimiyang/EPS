@@ -37,6 +37,8 @@ class ProductType extends Component {
   }
   componentWillMount() {
     this.loadList();
+    //验证是否需要登录
+    window.common.loginOut(this, message);
   }
   getChildData = (data, pid) => {
     const children = [];

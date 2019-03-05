@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 
+import {message} from 'antd';
+
 import './delivery.css';
 
 class OrderDetail extends Component {
@@ -28,6 +30,8 @@ class OrderDetail extends Component {
     };
   }
   componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
     this.loadList(this.props.order_no);
   }
   componentWillReceiveProps(props) {

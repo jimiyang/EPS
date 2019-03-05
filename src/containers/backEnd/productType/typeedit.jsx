@@ -29,6 +29,8 @@ class TypeEdit extends Component {
   }
   componentWillMount() {
     this.getTypeById(this.props.selfId);
+    //验证是否需要登录
+    window.common.loginOut(this, message);
   }
   getTypeById = (sId) => {
     window.api('goods.getcategorylist', {id: sId}).then(rs => {

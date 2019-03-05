@@ -1,8 +1,14 @@
 import React, {Component} from 'react';
 
+import {message} from 'antd';
+
 import './style.css';
 
 class Detaile extends Component {
+  componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
+  }
   render() {
     return (
       <div className="employess-blocks">

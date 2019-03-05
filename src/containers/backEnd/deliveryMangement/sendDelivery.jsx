@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 
 import {
   Input,
-  Select
+  Select,
+  message
 } from 'antd';
 
 import './delivery.css';
@@ -17,6 +18,10 @@ class sendDelivery extends Component {
       expressData: Data.expressData,
       defaultValue: '请选择快递'
     };
+  }
+  componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
   }
   selExpressNameEvent = (value) => {
     this.props.selExpressNameEvent(value);
