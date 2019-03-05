@@ -30,9 +30,22 @@
     right: 0;
     border: 1px solid #000;
 }
+.delivery-blocks .order-blocks .no-data{
+    text-align: center;
+    border-bottom: 1px solid #e8e8e8;
+    padding: 50px 0;
+    border-top: 1px solid #e8e8e8;
+}
+.delivery-blocks .order-blocks .no-data p{
+    padding-top: 10px;
+    color: rgba(0, 0, 0, 0.45);
+    font-weight: normal;
+    font-size: 14px;
+}
 .delivery-blocks .order-blocks li{
     margin-bottom:10px;
 }
+
 .delivery-blocks .order-blocks .order-title{
 background:#f6f7f8;padding:10px;
 display: flex;justify-content: space-between;align-items: center;
@@ -40,6 +53,9 @@ font-size:14px;
 }
 .delivery-blocks .order-blocks .order-title .blocks{
     width:25%;
+}
+.delivery-blocks .order-blocks .order-title .agentName{
+    width:200px;display: inline-block;text-align: left;
 }
 .delivery-blocks .order-blocks .order-detaile{
     font-size:14px;
@@ -59,9 +75,9 @@ font-size:14px;
     margin-left:20px;
 }
 .delivery-blocks .order-blocks .order-detaile .items-3{
-    display: flex; margin-right:30px;padding-top:10px;
+    display: flex; margin-right:20px;
     font-size:14px;margin-top: 10px;
-    margin-left:28px;justify-content: space-between;
+    margin-left:20px;justify-content: space-between;
     align-items:flex-start;
 }
 .delivery-blocks .order-blocks  .item-3 button{margin-right:20px;}
@@ -70,16 +86,18 @@ font-size:14px;
 .delivery-blocks .order-blocks .order-detaile .items-3 .left{
     display: flex;
 }
-.delivery-blocks .order-blocks .item-3 .button-items{
-    width:50%;border:1px solid #000;
+.delivery-blocks .order-blocks .button-items{
+   width:40%;text-align: right;
 }
-
+.delivery-blocks .order-blocks .items-3 .button-items .bt{
+    margin-right:30px;
+}
 .delivery-blocks .order-detaile .items-3 .ant-checkbox-wrapper{line-height:100px;}
 .delivery-blocks .order-detaile .items-3 .title{padding-top:10px;}
 .delivery-blocks .order-detaile .items-3 h1{font-size:16px; padding-bottom:20px;}
 .delivery-blocks .order-detaile .items-3 p{padding-bottom:20px;}
 .delivery-blocks .order-detaile .items-3 img{
-    width:100px;height:100px;margin:0 10px;
+    width:100px;height:100px;margin-right:20px;
 }
 .detail-items li{
     display: flex;justify-content: flex-start;line-height:2;
@@ -98,10 +116,10 @@ font-size:14px;
 }
 .delivery-blocks .express-items li .ant-select, input{width:100%;}
 .pagetion{
-    text-align:center;
+    text-align:center;font-size:12px;color:#666;
 }
 .pagetion span{
     border:1px solid #1890ff;border-radius: 4px;
-    padding:8px 20px;display: inline-block;margin:0 20px;
+    padding:5px 10px;display: inline-block;margin:0 20px;
     cursor: pointer;
 }

@@ -5,9 +5,7 @@ import {
   Input,
   Radio,
   Button,
-  message,
-  Upload,
-  Icon
+  message
 } from 'antd';
 
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
@@ -20,47 +18,26 @@ import api from '../../../api/api.js';
 
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
-import getSign from '../../../api/sign/sign';
-
-import aes from '../../../api/aes/public';
-
 const RadioGroup = Radio.Group;
 class Add extends Component {
   constructor(props) {
     super(props);
     this.state = {
       disabled: true,
+      isShow: true,
       form: {
         goods_bar_no: '',
         is_post: 0,
         goods_details: '',
         goods_category_id: '',
-        goods_pic: 'http://static.liantuobank.com/project/lianfutong/images/imgdemo3.jpg'
-      },
-      loading: false,
-      action: ''
+        goods_pic: require('../../../assets/backEnd/autoImg.jpg')//默认图片
+      }
     };
   }
   componentWillMount() {
     this.initForm();
-    const headParams = JSON.parse(localStorage.getItem('headParams'));
-    const params = {
-      service: 'goods.addgoods',
-      ...headParams
-    };
-    const form = {
-      head: {
-        service: 'goods.addgoods',
-        ...headParams,
-        ...getSign(params, aes.Decrypt(localStorage.getItem('PKEY')))
-      }
-    };
-    console.log(form);
-    const action = 'http://192.168.19.118:8000/eps/base/getway.in';
-    this.setState({
-      action
-    });
-    console.log(this.state.action);
+    //验证是否需要登录
+    window.common.loginOut(this, message);
   }
   componentDidMount() {
     const textbox = this.refs.textarea;
@@ -70,22 +47,22 @@ class Add extends Component {
       return false;
     }
     window.api('goods.getgoodsdetail', {id: this.props.location.query.id}).then((rs) => {
-      //const pid = rs.goods_category_id === '' ? 0 : rs.goods_category_id;
-      console.log(rs);
-      /*const params = {
+      const pid = rs.goods_category_id === '' ? 0 : rs.goods_category_id;
+      const params = {
         goods_name: rs.goods_name,
         goods_bar_no: rs.goods_bar_no,
-        goods_category_id: 0,
+        goods_category_id: pid,
         cost_price: rs.cost_price,
         sale_price: rs.sale_price,
         is_post: rs.is_post,
         goods_details: rs.goods_details,
-        id: rs.id
+        id: rs.id,
+        goods_pic: rs.goods_picture
       };
       const form = Object.assign(this.state.form, params);
       this.setState({
         form
-      });*/
+      });
     }).catch(error => {
       message.error(error);
     });
@@ -98,7 +75,6 @@ class Add extends Component {
         this.setState({
           form
         });
-        console.log(form);
         if (!this.props.location.query) {
           window.api('goods.addgoods', form).then((rs) => {
             message.success(rs.service_error_message);
@@ -106,7 +82,9 @@ class Add extends Component {
             message.error(error);
           });
         } else {
+          console.log(form);
           window.api('goods.modgoods', form).then((rs) => {
+            console.log(rs);
             message.success(rs.service_error_message);
           }).catch(error => {
             message.error(error);
@@ -121,6 +99,7 @@ class Add extends Component {
     const reader = new FileReader();
     reader.readAsDataURL(info);
     const flag = window.common.beforeUpload(info, message); //上传之前判断图片大小
+    const _this = this;
     if (flag === true) {
       reader.onload = function (ev) {
         const params = {
@@ -128,7 +107,11 @@ class Add extends Component {
           goods_pic: this.result
         };
         api.baseInstance('eps.upload', params).then(rs => {
-          console.log(rs);
+          const form = Object.assign(_this.state.form, {goods_pic: rs.pic_path});
+          _this.setState({
+            form,
+            isShow: false
+          });
         }).catch(error => {
           message.error(error);
         });
@@ -168,45 +151,8 @@ class Add extends Component {
       form
     });
   }
-  getBase64(img, callback) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-  }
-  beforeUpload(file) {
-    const isJPG = file.type === 'image/jpeg';
-    if (!isJPG) {
-      message.error('You can only upload JPG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
-    }
-    return isJPG && isLt2M;
-  }
-  UploadEvent = (info) => {
-    if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      this.getBase64(info.file.originFileObj, imageUrl => this.setState({
-        imageUrl,
-        loading: false,
-      }));
-    }
-    //window.api('goods.addgoods')
-  }
   render() {
     const {getFieldDecorator} = this.props.form;
-    const uploadButton = (
-      <div>
-        <Icon type={this.state.loading ? 'loading' : 'plus'} />
-        <div className="ant-upload-text">Upload</div>
-      </div>
-    );
-    const imageUrl = this.state.imageUrl;
     return (
       <div className="add-blocks">
         <Form onSubmit={this.addtionProEvent} className="form" name="form" id="form">
@@ -292,23 +238,13 @@ class Add extends Component {
           <Form.Item
             label="商品图片"
           >
-            <Upload
-              name="avatar"
-              listType="picture-card"
-              className="avatar-uploader"
-              showUploadList={false}
-              action={this.state.action}
-              beforeUpload={this.beforeUpload}
-              onChange={this.UploadEvent}
-            >
-              {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
-            </Upload>
             <div className="col-md-6">
               <input type="file" accept="image/jpg,image/jpeg,image/png,image/bmp" onChange={this.uploadImgEvent} ref="file" name="file" className="valid coverfile" />
+              <img src={this.state.form.goods_pic} className={`show-pic ${this.state.isShow === true ? 'hide' : null}`} />
               <div className="ant-upload ant-upload-select ant-upload-select-picture-card upload-v-img adImgUrl">
                 <span className="rc-upload coverbutton" role="button">
                   <i className="anticon anticon-plus">+</i>
-                  <div className="ant-upload-text">上传广告图</div>
+                  <div className="ant-upload-text">上传商品图</div>
                 </span>
               </div>
               <div className="ant-upload-list-item-info v-img-box ad_p_img">

@@ -1,13 +1,16 @@
 import React, {Component} from 'react';
 
-import {Tree} from 'antd';
+import {Tree, message} from 'antd';
 
 import './list.css';
 
 const {TreeNode} = Tree;
 const DirectoryTree = Tree.DirectoryTree;
 class TreeMenu extends Component {
-  componentWillMount() {}
+  componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
+  }
   render() {
     return (
       <div className="tree-blocks">

@@ -6,7 +6,8 @@ import {
   Input,
   Button,
   Table,
-  Modal
+  Modal,
+  message
 } from 'antd';
 
 import Detail from './detaile';
@@ -21,6 +22,10 @@ class EmployeesList extends Component {
       Data: [],
       visible: false
     };
+  }
+  componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
   }
   renderOption(item) {
     return (

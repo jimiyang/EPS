@@ -7,8 +7,7 @@ import {
   Button,
   Table,
   Popconfirm,
-  message,
-  Modal
+  message
 } from 'antd';
 
 import './list.css';
@@ -38,6 +37,8 @@ class ProductList extends Component {
   }
   //数据加载，dom未初始化
   componentWillMount() {
+    //验证是否需要登录
+    window.common.loginOut(this, message);
     this.loadList();
   }
   renderOption(item) {
