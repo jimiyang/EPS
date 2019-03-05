@@ -13,7 +13,7 @@ import {
 
 import './list.css';
 
-import Tree from './treeMenu';//树形结构商品类型
+import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 const {Option} = AutoComplete;
 class ProductList extends Component {
@@ -21,42 +21,25 @@ class ProductList extends Component {
     super(props);
     this.state = {
       isActive: 0,
-      typeTitle: '',
-      visible: false,
       productNameData: [], ///商品名称数据
-      barCodeData: [], //条形码数据
       menuData: ['出售中的商品', '已下架的商品'],
+      statusTxt: '下架',
+      statusCon: '是否确定要下架此产品？',
       search: {
-        total: 3,
-        defaultCurrent: 1,
-        pageSize: 2,
-        showSizeChanger: true,
-        typeValue: ''
-      }
+        current_page: 1,
+        page_size: 200,
+        status: 0
+      },
+      goodsList: [],
+      goods_name: '',
+      goods_bar_no: '',
+      goods_category_id: ''
     };
   }
   //数据加载，dom未初始化
-  componentWillMount() {}
-  searchName = () => {}
-  selTap = (index) => {
-    this.setState({
-      isActive: index
-    });
+  componentWillMount() {
+    this.loadList();
   }
-  selType = () => {
-    this.setState({
-      visible: true
-    });
-  }
-  //编辑
-  edit = (item) => {
-    this.props.history.push({pathname: '/addPro', query: {id: item.goods_bar_no}});
-  }
-  //下架
-  confirm = (item) => {
-    message.success('下架成功！');
-  }
-  cancel = () => {}
   renderOption(item) {
     return (
       <Option key={item.name} text={item.name}>
@@ -64,51 +47,97 @@ class ProductList extends Component {
       </Option>
     );
   }
+  loadList = () => {
+    window.api('goods.getgoodslist', this.state.search).then(rs => {
+      this.setState({
+        goodsList: rs.goods_list
+      });
+    }).catch(error => {
+      message.error(error);
+    });
+  }
+  selTap = (index) => {
+    const form = Object.assign(this.state.search, {status: index});
+    const statusTxt = index !== 0 ? '出售' : '下架';
+    const statusCon = index !== 0 ? '是否确定要出售此产品？' : '是否确定要下架此产品？';
+    this.setState({
+      isActive: index,
+      search: form,
+      statusTxt,
+      statusCon
+    });
+    this.loadList();
+  }
+  //编辑
+  edit = (item) => {
+    this.props.history.push({pathname: '/addGoods', query: {id: item.id}});
+  }
+  //是否下架或重新出售
+  confirm = (item) => {
+    const status = item.status === 0 ? 1 : 0;
+    const params = {
+      id: item.id,
+      status
+    };
+    window.api('goods.modgoods', params).then(rs => {
+      message.success(rs.service_error_message);
+      this.loadList();
+    }).catch(error => {
+      message.error(error);
+    });
+  }
   //商品名称模糊搜索
   handleNameSearch = (value) => {
-    const data = [
-      {name: '上海银行', code: 141},
-      {name: '中国银行', code: 142},
-      {name: '北京银行', code: 143}
-    ];
-    const node = data.map((item) => ({
-      name: `${item.name}/${item.code}`
-    }));
-    this.setState({
-      productNameData: value ? node : [],
+    const form = Object.assign(this.state.search, {goods_name: value});
+    window.api('goods.getgoodslist', form).then(rs => {
+      const node = rs.goods_list.map((item) => ({
+        name: `${item.goods_name}`
+      }));
+      this.setState({
+        productNameData: value ? node : []
+      });
+    }).catch(error => {
+      message.error(error);
     });
   }
-  //商品条形码模糊搜索
-  handleCodeSearch = (value) => {}
+  selGoodsNameEvent = (value) => {
+    this.setState({
+      goods_name: value
+    });
+  }
+  changeBarEvent = (e) => {
+    this.setState({
+      goods_bar_no: e.target.value
+    });
+    console.log(e.target.value);
+  }
+  selParentEvent = (value) => {
+    console.log(value);
+    this.setState({
+      goods_category_id: value
+    });
+  }
   //列表查询
   searchEvent = () => {
-    const params = {
-      id: '',
-      superior_id: '',
-      goods_category_name: '',
-      page_size: '',
-      current_page: ''
-    };
-    window.api.baseInstance('goods.getcategorylist', params).then((rs) => {});
-  }
-  handleOk = () => {
-    this.setState({
-      typeValue: this.state.typeTitle,
-      visible: false
-    });
-  }
-  handleCancel = () => {
-    this.setState({
-      visible: false
-    });
-  }
-  changeHandler = (key, e) => {
-    this.setState({
-      typeTitle: e.node.props.title
+    const params = this.state.search;
+    if (this.state.goods_name !== '') {
+      Object.assign(params, this.state.search, {goods_name: this.state.goods_name});
+    }
+    if (this.state.goods_bar_no !== '') {
+      Object.assign(params, this.state.search, {goods_bar_no: this.state.goods_bar_no});
+    }
+    if (this.state.goods_category_id !== '') {
+      Object.assign(params, this.state.search, {goods_category_id: this.state.goods_category_id});
+    }
+    console.log(params);
+    window.api('goods.getgoodslist', params).then((rs) => {
+      this.setState({
+        goodsList: rs.goods_list
+      });
     });
   }
   addProduct = () => {
-    this.props.history.push({pathname: '/addPro'});
+    this.props.history.push({pathname: '/addGoods'});
   }
   render() {
     const columns = [
@@ -133,7 +162,15 @@ class ProductList extends Component {
         dataIndex: 'goods_bar_no'
       },
       {
-        title: '已卖出数量',
+        title: '商品状态',
+        key: 'status',
+        dataIndex: 'status',
+        render: (status) => (
+          <span>{status === 1 ? '已下架' : '出售中'}</span>
+        ),
+      },
+      {
+        title: '已售数量',
         key: 'sell_out',
         dataIndex: 'sell_out'
       },
@@ -145,56 +182,19 @@ class ProductList extends Component {
           <div className="opearte-blocks">
             <span className="ml10" onClick={() => this.edit(record)}>编辑</span>
             <Popconfirm
-              title="是否确定下架此产品?"
+              title={this.state.statusCon}
               onConfirm={() => this.confirm(record)}
-              onCancel={() => this.cancel()}
               okText="是"
               cancelText="否"
             >
-              <span className="ml10">下架</span>
+              <span className="ml10">{this.state.statusTxt}</span>
             </Popconfirm>
           </div>
         )
       }
     ];
-    const data = [
-      {
-        uid: 1,
-        goods_name: '联富通',
-        goods_category_name: '软件',
-        sale_price: '999999',
-        goods_bar_no: '2004903625979',
-        sell_out: '99999999'
-      },
-      {
-        uid: 2,
-        goods_name: '联富通1',
-        goods_category_name: '软件',
-        sale_price: '999999',
-        goods_bar_no: '2004903625979',
-        sell_out: '5555'
-      },
-      {
-        uid: 3,
-        goods_name: '联富通1',
-        goods_category_name: '软件',
-        sale_price: '999999',
-        goods_bar_no: '2004903625979',
-        sell_out: '5555'
-      }
-    ];
     return (
       <div className="product-blocks">
-        <Modal
-          title="请选择商品类型"
-          okText="确定"
-          cancelText="取消"
-          visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          <Tree onSelect={this.changeHandler} />
-        </Modal>
         <div className="nav-items">
           <div className="tap-items">
             {
@@ -214,41 +214,26 @@ class ProductList extends Component {
               dataSource={this.state.productNameData.map(this.renderOption)}
               onBlur={this.handleNameSearch}
               placeholder="请输入商品名称"
-              optionLabelProp="value"
+              optionLabelProp="text"
+              onSelect={this.selGoodsNameEvent}
             >
               <Input suffix={<Icon type="search" className="certain-category-icon" />} />
             </AutoComplete>
           </li>
           <li className="items"><label>商品条形码：</label>
-            <AutoComplete
-              className="certain-category-search"
-              dropdownClassName="certain-category-search-dropdown"
-              dropdownMatchSelectWidth={false}
-              size="large"
-              style={{width: '100%'}}
-              dataSource={this.state.barCodeData.map(this.renderOption)}
-              onBlur={this.handleCodeSearch}
-              placeholder="请输入商品条形码"
-              optionLabelProp="value"
-            >
-              <Input suffix={<Icon type="search" className="certain-category-icon" />} />
-            </AutoComplete>
+            <Input value={this.state.goods_bar_no} onChange={this.changeBarEvent} placeholder="请输入商品条形码" />
           </li>
           <li className="items"><label>商品类型：</label>
-            <Input
-              placeholder="请选择商品类型"
-              onClick={this.selType.bind(this)}
-              value={this.state.typeValue}
-            />
+            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.goods_category_id} />
           </li>
           <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={this.state.goodsList}
           pagination={this.state.search}
           className="table-box"
-          rowKey={record => record.uid}
+          rowKey={record => record.id}
         />
       </div>
     );

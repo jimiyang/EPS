@@ -58,6 +58,8 @@ class Login extends Component {
       window.localStorage.setItem('checkLogin', '100');
       window.localStorage.setItem('PKEY', res.partner_key);
       this.props.history.push({pathname: '/'});
+    }).catch(error => {
+      message.error(error);
     });
   }
   onKeyDown = (e) => {

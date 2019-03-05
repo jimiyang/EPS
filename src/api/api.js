@@ -20,6 +20,7 @@ function baseInstance(service, params) {
       ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY')))
     };
   }
+  //Object.assign(params, goods_pic);
   const form = {
     head: {
       service,
@@ -27,8 +28,14 @@ function baseInstance(service, params) {
     },
     body: params
   };
+  console.log(form);
   return (
     axios.post('/gateway.in', form).then((response) => response)
   );
 }
-export default {baseInstance};
+function uploadFile(params) {
+  return (
+    axios.post('http://192.168.19.91:8000/public_upload/servlet/FileUpload', {}, {params}).then((response) => response)
+  );
+}
+export default {baseInstance, uploadFile};

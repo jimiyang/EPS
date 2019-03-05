@@ -18,7 +18,6 @@ class sendDelivery extends Component {
       defaultValue: '请选择快递'
     };
   }
-  componentWillMount() {}
   selExpressNameEvent = (value) => {
     this.props.selExpressNameEvent(value);
   }

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Layout, Menu, message, Button, Radio, Icon} from 'antd';
+import {Layout, Menu, Upload, message} from 'antd';
 import {
   BrowserRouter as Router,
   Route,
@@ -14,27 +14,15 @@ import DeliveryList from '../deliveryMangement/deliverylist';
 
 import TypeList from '../productType/typelist';
 
-import AddPro from '../productManagement/addPro';
+import addGoods from '../productManagement/addGoods';
 
-
-//const SubMenu = Menu.SubMenu;
-const {SubMenu} = Menu;
 const {
   Header, Sider, Content,
 } = Layout;
-
 class Main extends Component {
   componentWillMount() {
     //验证是否需要登录
     //window.common.loginOut(this, message);
-  }
-  addCat() {
-    const params = {
-      goods_category_name: '菜单111'
-    };
-    window.api('goods.addcategory', params).then(res => {
-      console.log(res);
-    });
   }
   render() {
     return (
@@ -54,13 +42,10 @@ class Main extends Component {
             </Menu>
           </Sider>
           <Content className="main-content">
-            <Button type="primary" onClick={this.addCat}>
-              Forward<Icon type="right" />
-            </Button>
             <Route path="/list" component={List} />
             <Route path="/deliverylist" component={DeliveryList} />
             <Route path="/typelist" component={TypeList} />
-            <Route path="/addPro" component={AddPro} />
+            <Route path="/addGoods" component={addGoods} />
           </Content>
         </Layout>
       </Layout>
