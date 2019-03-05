@@ -5,7 +5,9 @@ import {
   Input,
   Radio,
   Button,
-  message
+  message,
+  Upload,
+  Icon
 } from 'antd';
 
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
@@ -17,6 +19,10 @@ import './list.css';
 import api from '../../../api/api.js';
 
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
+
+import getSign from '../../../api/sign/sign';
+
+import aes from '../../../api/aes/public';
 
 const RadioGroup = Radio.Group;
 class Add extends Component {
@@ -30,11 +36,31 @@ class Add extends Component {
         goods_details: '',
         goods_category_id: '',
         goods_pic: 'http://static.liantuobank.com/project/lianfutong/images/imgdemo3.jpg'
-      }
+      },
+      loading: false,
+      action: ''
     };
   }
   componentWillMount() {
     this.initForm();
+    const headParams = JSON.parse(localStorage.getItem('headParams'));
+    const params = {
+      service: 'goods.addgoods',
+      ...headParams
+    };
+    const form = {
+      head: {
+        service: 'goods.addgoods',
+        ...headParams,
+        ...getSign(params, aes.Decrypt(localStorage.getItem('PKEY')))
+      }
+    };
+    console.log(form);
+    const action = 'http://192.168.19.118:8000/eps/base/getway.in';
+    this.setState({
+      action
+    });
+    console.log(this.state.action);
   }
   componentDidMount() {
     const textbox = this.refs.textarea;
@@ -142,8 +168,45 @@ class Add extends Component {
       form
     });
   }
+  getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+  beforeUpload(file) {
+    const isJPG = file.type === 'image/jpeg';
+    if (!isJPG) {
+      message.error('You can only upload JPG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+    }
+    return isJPG && isLt2M;
+  }
+  UploadEvent = (info) => {
+    if (info.file.status === 'uploading') {
+      this.setState({ loading: true });
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      this.getBase64(info.file.originFileObj, imageUrl => this.setState({
+        imageUrl,
+        loading: false,
+      }));
+    }
+    //window.api('goods.addgoods')
+  }
   render() {
     const {getFieldDecorator} = this.props.form;
+    const uploadButton = (
+      <div>
+        <Icon type={this.state.loading ? 'loading' : 'plus'} />
+        <div className="ant-upload-text">Upload</div>
+      </div>
+    );
+    const imageUrl = this.state.imageUrl;
     return (
       <div className="add-blocks">
         <Form onSubmit={this.addtionProEvent} className="form" name="form" id="form">
@@ -229,6 +292,17 @@ class Add extends Component {
           <Form.Item
             label="商品图片"
           >
+            <Upload
+              name="avatar"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList={false}
+              action={this.state.action}
+              beforeUpload={this.beforeUpload}
+              onChange={this.UploadEvent}
+            >
+              {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
+            </Upload>
             <div className="col-md-6">
               <input type="file" accept="image/jpg,image/jpeg,image/png,image/bmp" onChange={this.uploadImgEvent} ref="file" name="file" className="valid coverfile" />
               <div className="ant-upload ant-upload-select ant-upload-select-picture-card upload-v-img adImgUrl">

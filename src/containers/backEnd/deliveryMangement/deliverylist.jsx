@@ -27,6 +27,7 @@ class DeliveryList extends Component {
     this.state = {
       isActive: 0,
       index: '',
+      isHide: false,
       detailVisible: false,
       expressVisible: false,
       menuData: ['全部订单', '待付款订单', '待发货订单', '待收货订单', '已完成订单', '已取消订单'],
@@ -50,8 +51,6 @@ class DeliveryList extends Component {
   }
   componentWillMount() {
     this.loadList(this.state.search);
-    console.log(this.state.startTime);
-    console.log(this.state.endTime);
   }
   loadList = (params) => {
     let firstOrdernum = '';
@@ -60,13 +59,17 @@ class DeliveryList extends Component {
       if (rs.orders.length > 0) {
         lastOrdernum = rs.orders[rs.orders.length - 1].order_no;
         firstOrdernum = rs.orders[0].order_no;
+        this.setState({
+          isHide: false
+        });
       } else {
         message.error('没有可查询数据！');
       }
       this.setState({
         orderListData: rs.orders,
         firstOrdernum,
-        lastOrdernum
+        lastOrdernum,
+        isHide: true
       });
     }).catch(error => {
       message.error(error);
@@ -128,7 +131,7 @@ class DeliveryList extends Component {
       expressNo: value
     });
   }
-  sendEvent = (value) => {
+  sendEvent = () => {
     const params = {
       order_no: this.state.orderNumber,
       express_name: this.state.expressName,
@@ -140,6 +143,7 @@ class DeliveryList extends Component {
     }).catch(error => {
       message.error(error);
     });
+    //this.loadList(this.state.search);
   }
   agentEvent = (e) => {
     this.setState({
@@ -247,6 +251,7 @@ class DeliveryList extends Component {
           <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
         <div className="order-blocks">
+          <div className={this.state.isHide === true ? 'hide' : null}>没有数据!</div>
           <ul>
             {
               this.state.orderListData.map((item, index) => (

@@ -70,7 +70,7 @@ class ProductList extends Component {
   }
   //编辑
   edit = (item) => {
-    this.props.history.push({pathname: '/addPro', query: {id: item.id}});
+    this.props.history.push({pathname: '/addGoods', query: {id: item.id}});
   }
   //是否下架或重新出售
   confirm = (item) => {
@@ -137,7 +137,7 @@ class ProductList extends Component {
     });
   }
   addProduct = () => {
-    this.props.history.push({pathname: '/addPro'});
+    this.props.history.push({pathname: '/addGoods'});
   }
   render() {
     const columns = [
