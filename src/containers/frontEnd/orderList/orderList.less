@@ -15,7 +15,6 @@
       align-items: center;
       background: #e4e4e4;
       line-height: 40px;
-      margin-bottom: 20px;
       li {
         text-align: center;
       }
@@ -26,7 +25,10 @@
         flex-direction: column;
         justify-content: center;
         background: #fff;
-        margin-bottom: 20px;
+        
+        &>div{
+          font-size:13px;
+        }
       }
       .name {
         background: #e4e4e4;
@@ -39,11 +41,10 @@
         }
       }
       .title {
-        background: #e4e4e4;
-        color: #fff;
-        padding: 0 50px;
+        padding: 13px 20px 13px 50px;
         display: flex;
         justify-content: space-between;
+        border-bottom:1px solid #eee;
         align-items: center;
         line-height: 30px;
         position: relative;
@@ -68,16 +69,18 @@
         .info {
           display: flex;
           justify-content: flex-start;
+          align-items:center;
           p {
             max-width: 300px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-size:14px;
           }
         }
         img {
-          width: 80px;
-          height: 80px;
+          width: 60px;
+          height: 60px;
           margin: 0 15px 0 30px
         }
         .operation {
@@ -109,6 +112,7 @@
     font-size: 28px;
   }
   .pagination {
+    margin-top:30px;
     button {
       width: 100%;
       background: #009dd2;

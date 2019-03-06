@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Steps, message} from 'antd';
+import {Steps, message, Icon} from 'antd';
 import './orderDetail.less';
 
 const Step = Steps.Step;
@@ -165,7 +165,7 @@ class OrderDetail extends Component {
         </header>
         <section>
           <div>
-            <h3>收货人信息</h3>
+            <h3><Icon type="home" />收货人信息</h3>
             <div>
               <i>收货人：</i>
               <span>{order.receiver}</span>
@@ -180,7 +180,7 @@ class OrderDetail extends Component {
             </div>
           </div>
           {order.status === 1 || order.status === 2 || order.status === 3 ? (<div>
-            <h3>收货人信息</h3>
+            <h3><Icon type="file-text" />订单信息</h3>
             <div>
               <i>交易流水号：</i>
               <span>{order.order_no}</span>

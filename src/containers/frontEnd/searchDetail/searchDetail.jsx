@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Pagination} from 'antd';
+import {Pagination, Icon} from 'antd';
 import {connect} from 'react-redux';
 import './searchDetail.less';
 import {changeSearchContent} from '../../../store/reduces/frontEnd';
@@ -96,8 +96,10 @@ class SearchDetail extends Component {
             </li>
             <li onClick={this.changeSort.bind(this, 2)}>
               <p className={this.state.sortIndex > 1 ? 'isChecked' : null}>价格</p>
-              <span className={this.state.sortIndex === 2 ? 'choose1 smallToBig' : 'smallToBig'} />
-              <span className={this.state.sortIndex === 3 ? 'choose2 bigToSmall' : 'bigToSmall'} />
+              <div>
+                <div className={this.state.sortIndex === 2 ? 'choose1 smallToBig' : 'smallToBig'}><Icon type="caret-up" /></div>
+                <div className={this.state.sortIndex === 3 ? 'choose2 bigToSmall' : 'bigToSmall'}><Icon type="caret-down" /></div>
+              </div>
             </li>
           </ul>
         </section>
@@ -113,7 +115,7 @@ class SearchDetail extends Component {
                   </li>
                 ))
               }
-            </ul>) : <p className="default">查询不到相关产品</p>
+            </ul>) : <div className="default"><Icon type="inbox" /><span>查询不到相关产品</span></div>
           }
         </section>
         <section className="pagination" hidden={list.length === 0}>
