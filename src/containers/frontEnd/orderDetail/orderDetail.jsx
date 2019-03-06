@@ -167,47 +167,47 @@ class OrderDetail extends Component {
           <div>
             <h3>收货人信息</h3>
             <div>
-              <p>收货人：</p>
+              <i>收货人：</i>
               <span>{order.receiver}</span>
             </div>
-            <div style={{height: '40px'}}>
-              <p>地址：</p>
+            <div>
+              <i>地址：</i>
               <span className="address">{order.address}</span>
             </div>
             <div>
-              <p>手机号码：</p>
+              <i>手机号码：</i>
               <span>{order.mobile}</span>
             </div>
           </div>
           {order.status === 1 || order.status === 2 || order.status === 3 ? (<div>
             <h3>收货人信息</h3>
             <div>
-              <p>交易流水号：</p>
+              <i>交易流水号：</i>
               <span>{order.order_no}</span>
             </div>
             <div>
-              <p>付款方式：</p>
+              <i>付款方式：</i>
               {
                 order.pay_type === 0 ? <span>返佣账户</span> : <span>充值账户</span>
               }
             </div>
             <div>
-              <p>付款时间：</p>
+              <i>付款时间：</i>
               <span>{order.gmt_cashed}</span>
             </div>
             <div>
-              <p>商品总额：</p>
+              <i>商品总额：</i>
               <span>￥{order.total_amt}</span>
             </div>
           </div>) : null}
           {order.status === 2 || order.status === 3 ? (<div>
             <h3>配送信息</h3>
             <div>
-              <p>快递名称：</p>
+              <i>快递名称：</i>
               <span>{goods.express_name}</span>
             </div>
             <div>
-              <p>快递单号：</p>
+              <i>快递单号：</i>
               <span>{goods.express_no}</span>
             </div>
           </div>) : null}
@@ -236,7 +236,7 @@ class OrderDetail extends Component {
           <div className="content2">
             <div className="money">
               <p>商品总额：￥{goods.total_amt}</p>
-              <p style={{color: 'red'}}>应付总额：￥{goods.real_amt}</p>
+              <p style={{color: 'red'}}>应付总额：<span><em>￥</em>{goods.real_amt}</span></p>
             </div>
           </div>
         </footer>

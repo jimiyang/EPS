@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {message, Input, Icon} from 'antd';
-import './login.css';
+import './login.less';
 
 class Login extends Component {
   constructor(props) {
@@ -89,6 +89,7 @@ class Login extends Component {
   render() {
     return (
       <div className="login-blocks">
+      <h2>联富通商城</h2>
         <ul className="user-info">
           <li>
             <Input

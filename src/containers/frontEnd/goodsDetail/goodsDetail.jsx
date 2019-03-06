@@ -51,8 +51,7 @@ class GoodsDetail extends Component {
           <div className="info">
             <h3>{detail.goods_name}</h3>
             <div className="price">
-              <p>价格：</p>
-              <p>￥{detail.sale_price}</p>
+              <p><em>￥</em>{detail.sale_price}</p>
             </div>
             {/* <div className="address">
               <p>发货地：</p>
