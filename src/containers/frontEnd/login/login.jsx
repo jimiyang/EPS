@@ -89,10 +89,6 @@ class Login extends Component {
   render() {
     return (
       <div className="login-blocks">
-        <div className="type">
-          <a href="#" className="active">密码登录</a>
-          <a href="#">扫码登录</a>
-        </div>
         <ul className="user-info">
           <li>
             <Input
