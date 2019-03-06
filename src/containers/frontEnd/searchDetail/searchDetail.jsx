@@ -89,7 +89,7 @@ class SearchDetail extends Component {
     const {list, pageNumber, total} = this.state;
     return (
       <div id="searchDetail">
-        <section className="sort">
+        <section className="container sort">
           <ul>
             <li onClick={this.changeSort.bind(this, 1)}>
               <p className={this.state.sortIndex === 1 ? 'isChecked' : null}>综合</p>
