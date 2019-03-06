@@ -24,7 +24,7 @@ instance.interceptors.response.use(
         resolve(res.data.body);
       } else {
         if (res.data.body.service_error_code === 'EPS000000801') {
-          history.replace({pathname: '/login'});
+          history.replaceState(null, '/login');
         }
         reject(res.data.body.service_error_message);
       }
@@ -33,7 +33,6 @@ instance.interceptors.response.use(
   },
   err => {
     //const {data: {err: errnum, error}} = (err || {}).response;
-    console.log(`失败：${err}`);
     /*if (errnum === 200 && error) {
       message.success(error);
     } else {

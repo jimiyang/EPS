@@ -39,17 +39,17 @@ class ProductList extends Component {
   componentWillMount() {
     //验证是否需要登录
     window.common.loginOut(this, message);
-    this.loadList();
+    this.loadList(this.state.search);
   }
-  renderOption(item) {
+  renderOption(item, index) {
     return (
-      <Option key={item.name} text={item.name}>
+      <Option key={index} text={item.name}>
         {item.name}
       </Option>
     );
   }
-  loadList = () => {
-    window.api('goods.getgoodslist', this.state.search).then(rs => {
+  loadList = (params) => {
+    window.api('goods.getgoodslist', params).then(rs => {
       this.setState({
         goodsList: rs.goods_list
       });
@@ -67,7 +67,7 @@ class ProductList extends Component {
       statusTxt,
       statusCon
     });
-    this.loadList();
+    this.loadList(form);
   }
   //编辑
   edit = (item) => {
@@ -82,7 +82,7 @@ class ProductList extends Component {
     };
     window.api('goods.modgoods', params).then(rs => {
       message.success(rs.service_error_message);
-      this.loadList();
+      this.loadList(this.state.search);
     }).catch(error => {
       message.error(error);
     });
@@ -107,20 +107,19 @@ class ProductList extends Component {
     });
   }
   changeBarEvent = (e) => {
+    console.log(e.target.value);
     this.setState({
       goods_bar_no: e.target.value
     });
-    console.log(e.target.value);
   }
   selParentEvent = (value) => {
-    console.log(value);
     this.setState({
       goods_category_id: value
     });
   }
   //列表查询
   searchEvent = () => {
-    const params = this.state.search;
+    const params = {};
     if (this.state.goods_name !== '') {
       Object.assign(params, this.state.search, {goods_name: this.state.goods_name});
     }
@@ -130,12 +129,10 @@ class ProductList extends Component {
     if (this.state.goods_category_id !== '') {
       Object.assign(params, this.state.search, {goods_category_id: this.state.goods_category_id});
     }
-    console.log(params);
-    window.api('goods.getgoodslist', params).then((rs) => {
-      this.setState({
-        goodsList: rs.goods_list
-      });
-    });
+    if (Object.keys(params).length === 0) {
+      Object.assign(params, this.state.search);
+    }
+    this.loadList(params);
   }
   addProduct = () => {
     this.props.history.push({pathname: '/addGoods'});

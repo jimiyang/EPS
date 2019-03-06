@@ -15,13 +15,11 @@ function baseInstance(service, params) {
       ...headParams,
       ...params,
     };
-    //console.log(signParams);
     headParams = {
       ...headParams,
       ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY')))
     };
   }
-  //Object.assign(params, goods_pic);
   const form = {
     head: {
       service,
@@ -29,7 +27,6 @@ function baseInstance(service, params) {
     },
     body: params
   };
-  //console.log(form);
   return (
     axios.post('/gateway.in', form).then((response) => response)
   );

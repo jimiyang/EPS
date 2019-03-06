@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 import {message, Input, Icon} from 'antd';
+
+import {Router, hashHistory, Route} from 'react-router';
+
 import './login.css';
 
 class Login extends Component {
@@ -50,7 +53,6 @@ class Login extends Component {
       login_pwd: this.state.userPwd
     };
     window.api('eps.login', params).then(res => {
-      console.log(res);
       const obj = {
         login_name: _this.state.userName,
         partner_id: res.partner_id,
@@ -58,7 +60,12 @@ class Login extends Component {
       window.localStorage.setItem('headParams', JSON.stringify(obj));
       window.localStorage.setItem('checkLogin', '100');
       window.localStorage.setItem('PKEY', res.partner_key);
-      this.props.history.push({pathname: '/'});
+      window.localStorage.setItem('type', res.identity);
+      if (res.identity === 0) {
+        this.props.history.push({pathname: '/'});
+      } else {
+        this.props.history.push({pathname: '/index'});
+      }
     }).catch(error => {
       message.error(error);
     });

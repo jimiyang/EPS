@@ -25,6 +25,7 @@ module.exports = {
     hints: process.env.NODE_ENV === 'production' ? 'warning' : false
   },
   module: {
+    noParse: [/ali-oss/],
     rules: [
       {
         test: /(\.jsx|\.js)$/,

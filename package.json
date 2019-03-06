@@ -4,6 +4,7 @@
   "description": "shopping mall",
   "author": "huhan",
   "private": true,
+  "homepage": ".",
   "scripts": {
     "start": "webpack-dev-server --config build/dev.js",
     "dev": "npm start",

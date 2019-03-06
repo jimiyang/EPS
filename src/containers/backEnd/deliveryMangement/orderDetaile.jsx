@@ -41,7 +41,6 @@ class OrderDetail extends Component {
     window.api('goods.goodsDetail', {order_no: id}).then((rs) => {
       //Object.assign(form, rs.goods_detail[0]);
       const data = rs.goods_detail[0];
-      console.log(rs);
       const form = {
         goods_name: data.goods_name,
         goods_bar_no: data.goods_bar_no,

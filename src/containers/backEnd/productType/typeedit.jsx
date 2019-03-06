@@ -64,7 +64,6 @@ class TypeEdit extends Component {
   selParentEvent = (value) => {
     const pid = value === '' ? 0 : value;
     const form = Object.assign({}, this.state.form, {superior_id: pid});
-    console.log(pid);
     this.setState({
       form,
       parent_id: value

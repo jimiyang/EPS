@@ -180,7 +180,9 @@ class DeliveryList extends Component {
     if (this.state.endTime !== '') {
       Object.assign(params, this.state.search, {endTime: this.state.endTime});
     }
-    console.log(params);
+    if (Object.keys(params).length === 0) {
+      Object.assign(params, this.state.search);
+    }
     this.loadList(params);
   }
   //上一页
@@ -197,7 +199,6 @@ class DeliveryList extends Component {
       ...this.state.search,
       next: this.state.lastOrdernum
     };
-    console.log(params);
     this.loadList(params);
   }
   render() {
@@ -282,8 +283,8 @@ class DeliveryList extends Component {
                             </div>
                           </div>
                           <div className="button-items">
-                            <Button type="primary" className="bt" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
-                            <Button type="primary" className="" onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id)}>发货</Button>
+                            <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
+                            <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id)}>发货</Button>
                           </div>
                         </div>
                         <div className="items-1">

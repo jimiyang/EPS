@@ -67,9 +67,8 @@ class OrderList extends Component {
     this.props.history.push('/orderDetail');
   }
 
-  changePage = (value) => {
-    console.log(value);
-  }
+  /*changePage = (value) => {
+  }*/
 
   render() {
     const {tabs, list} = this.state;
