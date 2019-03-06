@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import {BrowserRouter, Route, Switch, history} from 'react-router-dom';
 import {hot} from 'react-hot-loader';
 import {Provider} from 'react-redux';
 import {LocaleProvider} from 'antd';
@@ -25,16 +25,16 @@ const Router = ({component: Component, children, ...rest}) => (
     )}
   />
 );
-
 const Root = () => (
   <LocaleProvider locale={cn}>
     <BrowserRouter>
       <Provider store={Store}>
         <div className="router-content">
           {__DEVELOPMENT__ && <DevTools />}
-          <Switch>
+          <Switch history={history}>
             <Route exact path="/login" component={Login} />
-            <Router path="/" component={App} />
+            <Route path="/main" component={Main} />
+            <Route path="/" component={App} />
           </Switch>
         </div>
       </Provider>

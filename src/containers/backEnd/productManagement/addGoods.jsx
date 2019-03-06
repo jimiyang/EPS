@@ -82,9 +82,7 @@ class Add extends Component {
             message.error(error);
           });
         } else {
-          console.log(form);
           window.api('goods.modgoods', form).then((rs) => {
-            console.log(rs);
             message.success(rs.service_error_message);
           }).catch(error => {
             message.error(error);
@@ -139,7 +137,6 @@ class Add extends Component {
     return label[label.length - 1];
   }
   selParentEvent = (value) => {
-    console.log(value);
     const form = Object.assign(this.state.form, {goods_category_id: value});
     this.setState({
       form

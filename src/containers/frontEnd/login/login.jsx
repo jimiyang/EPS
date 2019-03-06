@@ -6,7 +6,7 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: 'dlsy_test128', // dlsy_test128 ptdls1 jrpt
+      userName: 'jrpt', // dlsy_test128 ptdls1 jrpt
       userPwd: '111qqq',
       authCode: '',
       txtCode: ''
@@ -57,7 +57,11 @@ class Login extends Component {
       window.localStorage.setItem('headParams', JSON.stringify(obj));
       window.localStorage.setItem('checkLogin', '100');
       window.localStorage.setItem('PKEY', res.partner_key);
-      this.props.history.push({pathname: '/'});
+      if (res.identity === 0) {
+        this.props.history.push({pathname: '/main'});
+      } else {
+        this.props.history.push({pathname: '/'});
+      }
     }).catch(error => {
       message.error(error);
     });
@@ -89,7 +93,7 @@ class Login extends Component {
   render() {
     return (
       <div className="login-blocks">
-      <h2>联富通商城</h2>
+        <h2>联富通商城</h2>
         <ul className="user-info">
           <li>
             <Input

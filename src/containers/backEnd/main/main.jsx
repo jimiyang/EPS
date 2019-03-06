@@ -36,16 +36,16 @@ class Main extends Component {
         <Layout>
           <Sider>
             <Menu mode="inline">
-              <Menu.Item key="1"><Link to="/list">商品管理</Link></Menu.Item>
-              <Menu.Item key="2"><Link to="/deliverylist">发货订单管理</Link></Menu.Item>
-              <Menu.Item key="3"><Link to="/typelist">商品类型管理</Link></Menu.Item>
+              <Menu.Item key="1"><Link to="/main/list">商品管理</Link></Menu.Item>
+              <Menu.Item key="2"><Link to="/main/deliverylist">发货订单管理</Link></Menu.Item>
+              <Menu.Item key="3"><Link to="/main/typelist">商品类型管理</Link></Menu.Item>
             </Menu>
           </Sider>
           <Content className="main-content">
-            <Route path="/list" component={List} />
-            <Route path="/deliverylist" component={DeliveryList} />
-            <Route path="/typelist" component={TypeList} />
-            <Route path="/addGoods" component={addGoods} />
+            <Route path="/main/list" component={List} />
+            <Route path="/main/deliverylist" component={DeliveryList} />
+            <Route path="/main/typelist" component={TypeList} />
+            <Route path="/main/addGoods" component={addGoods} />
           </Content>
         </Layout>
       </Layout>

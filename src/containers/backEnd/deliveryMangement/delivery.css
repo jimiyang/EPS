@@ -89,8 +89,8 @@ font-size:14px;
 .delivery-blocks .order-blocks .button-items{
    width:40%;text-align: right;
 }
-.delivery-blocks .order-blocks .items-3 .button-items .bt{
-    margin-right:30px;
+.delivery-blocks .order-blocks .items-3 .button-items button{
+    margin-left:30px;
 }
 .delivery-blocks .order-detaile .items-3 .ant-checkbox-wrapper{line-height:100px;}
 .delivery-blocks .order-detaile .items-3 .title{padding-top:10px;}
