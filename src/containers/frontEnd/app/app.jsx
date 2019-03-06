@@ -39,6 +39,8 @@ export default class App extends Component {
       const list = window.localStorage.getItem('dataSource');
       const dataSource = list !== null ? JSON.parse(list) : [];
       this.setState({dataSource});
+    } else {
+      alert('浏览器不支持localStorage');
     }
     this.getCategoryList();
   }

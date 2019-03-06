@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
 import {message, Input, Icon} from 'antd';
+<<<<<<< HEAD
+=======
+
+>>>>>>> jimiyang
 import './login.less';
 
 class Login extends Component {

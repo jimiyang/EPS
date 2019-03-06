@@ -135,7 +135,7 @@ class ProductList extends Component {
     this.loadList(params);
   }
   addProduct = () => {
-    this.props.history.push({pathname: '/addGoods'});
+    this.props.history.push({pathname: '/main/addGoods'});
   }
   render() {
     const columns = [
