@@ -13,6 +13,8 @@
 }
 .header{
   height:@headerHeight;
+  background:#fff;
+  margin-bottom:30px;
   &-order{
     background:#4386E9;
     padding:0 16px;
@@ -84,7 +86,7 @@
 .nav{
   height:50px;
   margin-right:20px;
-  &>div{
+  &>li{
     display:inline-block;
     line-height:50px;
     padding:0 24px;
@@ -94,6 +96,9 @@
     &:hover{
       color:#4386E9;
     }
+  }
+  .isChecked {
+    color: #4386E9;
   }
 }
 .search{
@@ -111,4 +116,3 @@
   padding:40px 0;
   font-size:12px;
 }
-

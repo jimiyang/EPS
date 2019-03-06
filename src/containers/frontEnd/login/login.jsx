@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
 import {message, Input, Icon} from 'antd';
 
-import {Router, hashHistory, Route} from 'react-router';
-
-import './login.css';
+import './login.less';
 
 class Login extends Component {
   constructor(props) {
@@ -62,9 +60,9 @@ class Login extends Component {
       window.localStorage.setItem('PKEY', res.partner_key);
       window.localStorage.setItem('type', res.identity);
       if (res.identity === 0) {
-        this.props.history.push({pathname: '/'});
+        this.props.history.push({pathname: '/main'});
       } else {
-        this.props.history.push({pathname: '/index'});
+        this.props.history.push({pathname: '/'});
       }
     }).catch(error => {
       message.error(error);
@@ -97,10 +95,7 @@ class Login extends Component {
   render() {
     return (
       <div className="login-blocks">
-        <div className="type">
-          <a href="#" className="active">密码登录</a>
-          <a href="#">扫码登录</a>
-        </div>
+        <h2>联富通商城</h2>
         <ul className="user-info">
           <li>
             <Input

@@ -11,7 +11,7 @@ import DevTools from '../store/DevTools';
 //登陆
 import Login from '../containers/frontEnd/login/login';
 //前台
-import app from '../containers/frontEnd/app/app';
+import App from '../containers/frontEnd/app/app';
 //后台主页(入口) jimiyang
 import Main from '../containers/backEnd/main/main';
 
@@ -25,15 +25,6 @@ const Router = ({component: Component, children, ...rest}) => (
     )}
   />
 );
-const authRequired = (nextState, replace) => {
-  console.log(window.localStorage.getItem('type'));
-  const state = store.getState();
-  if (state.admin !== 1) {
-    history.replace('/');
-  }
-  console.log(state);
-};
-console.log(Store);
 const Root = () => (
   <LocaleProvider locale={cn}>
     <BrowserRouter>
@@ -42,7 +33,8 @@ const Root = () => (
           {__DEVELOPMENT__ && <DevTools />}
           <Switch history={history}>
             <Route exact path="/login" component={Login} />
-            <Route onEnter={authRequired} path="/" component={Main} />
+            <Route path="/main" component={Main} />
+            <Route path="/" component={App} />
           </Switch>
         </div>
       </Provider>
