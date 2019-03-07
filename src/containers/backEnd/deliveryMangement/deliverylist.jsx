@@ -35,7 +35,6 @@ class DeliveryList extends Component {
       expressNo: '',
       ids: '',
       orderListData: [],
-      orderDetailData: [],
       search: {
         status: 0,
         page_size: 5
@@ -108,7 +107,7 @@ class DeliveryList extends Component {
     this.setState({
       index: idx
     });
-    let str = '';
+    /*let str = '';
     window.api('goods.goodsDetail', {order_no: number}).then(rs => {
       if (rs.goods_detail.length > 0) {
         this.state.orderDetailData.map(item => {
@@ -120,7 +119,7 @@ class DeliveryList extends Component {
       }
     }).catch(error => {
       message.error(error);
-    });
+    });*/
   }
   selExpressNameEvent = (value) => {
     this.setState({
@@ -263,7 +262,7 @@ class DeliveryList extends Component {
               this.state.orderListData.map((item, index) => (
                 <li key={index}>
                   <div className="order-title">
-                    <div className="arrow-ico" onClick={this.openEvent.bind(this, index, item.order_no)}>
+                    <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
                       <Icon type={this.state.index === index ? 'up' : 'down'} />
                     </div>
                     <span>{this.state.statusData[item.status]}</span>
@@ -272,7 +271,7 @@ class DeliveryList extends Component {
                     <span>{item.gmt_created}</span>
                   </div>
                   {
-                    this.state.orderDetailData.map((detail, idx) => (
+                    item.order_details.map((detail, idx) => (
                       <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} key={idx}>
                         <div className="items-3">
                           <div className="left">

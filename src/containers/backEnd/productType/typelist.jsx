@@ -32,7 +32,8 @@ class ProductType extends Component {
       selfId: '', //类别自身id
       visible: false,
       defaultExpandAllRows: true, //是否默认展开树形结构
-      productTypeData: []
+      productTypeData: [],
+      treeData: []
     };
   }
   componentWillMount() {
@@ -47,7 +48,8 @@ class ProductType extends Component {
         children.push({
           goods_category_name: item.goods_category_name,
           id: item.id,
-          superior_id: item.superior_id
+          superior_id: item.superior_id,
+          children: this.getChildData(data, item.id)
         });
       }
     });
@@ -70,7 +72,8 @@ class ProductType extends Component {
           }
         });
         this.setState({
-          productTypeData: arr
+          productTypeData: arr,
+          treeData: productTypeData
         });
       }
     }).catch(error => {
@@ -121,6 +124,7 @@ class ProductType extends Component {
         window.api('goods.addcategory', this.state.formParams).then((rs) => {
           message.success(rs.service_error_message);
           this.loadList();
+          //this.props.history.push({pathname: '/main/typelist'});
         }).catch(error => {
           message.error(error);
         });
@@ -177,7 +181,7 @@ class ProductType extends Component {
             </Form.Item>
             <p>父级分类目录</p>
             <Form.Item>
-              <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} />
+              <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} productTypeData={this.state.treeData} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">添加</Button>

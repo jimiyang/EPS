@@ -25,7 +25,6 @@ class ProductList extends Component {
       statusTxt: '下架',
       statusCon: '是否确定要下架此产品？',
       search: {
-        current_page: 1,
         page_size: 200,
         status: 0
       },

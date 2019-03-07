@@ -6,7 +6,6 @@ import {
   createMemoryHistory
 } from 'history';
 
-const history = createBrowserHistory();
 const instance = axios.create({
   baseURL: 'http://192.168.19.118:8000/eps/base/',
   timeout: 1000,
@@ -24,7 +23,7 @@ instance.interceptors.response.use(
         resolve(res.data.body);
       } else {
         if (res.data.body.service_error_code === 'EPS000000801') {
-          history.replaceState(null, '/login');
+          //history.goBack(null, '/login');
         }
         reject(res.data.body.service_error_message);
       }
@@ -38,10 +37,10 @@ instance.interceptors.response.use(
     } else {
       message.error(error);
     }*/
-    if (window.localStorage.getItem('checkLogin') === null) {
+    //if (window.localStorage.getItem('checkLogin') === null) {
     //msg.error('您的登录已过期，请重新登录！');
-      //this.props.history.push({pathname: '/login'});
-    }
+    //this.props.history.push({pathname: '/login'});
+    //}
   }
 );
 export default instance;

@@ -76,6 +76,10 @@ class Add extends Component {
           form
         });
         //console.log(this.state.form.goods_details);
+        if (this.state.form.goods_bar_no === '') {
+          message.error('请生成商品条形码');
+          return false;
+        }
         if (!this.props.location.query) {
           window.api('goods.addgoods', form).then((rs) => {
             message.success(rs.service_error_message);
@@ -95,7 +99,7 @@ class Add extends Component {
     });
   }
   resetEvent = () => {
-    this.props.form.resetFields();
+    /*this.props.form.resetFields();
     const form = {
       goods_bar_no: '',
       is_post: 0,
@@ -105,7 +109,8 @@ class Add extends Component {
     };
     this.setState({
       form
-    });
+    });*/
+    this.props.history.push({pathname: '/main/list'});
   }
   uploadImgEvent = (e) => {
     e.preventDefault();
@@ -141,6 +146,8 @@ class Add extends Component {
   //生成条形码
   getbarno = () => {
     api.baseInstance('goods.getbarno', {}).then((rs) => {
+      console.log(rs);
+      console.log(this.state.form);
       const form = Object.assign(this.state.form, {goods_bar_no: rs.barNo});
       this.setState({
         form
@@ -185,14 +192,7 @@ class Add extends Component {
             label="商品条形码"
           >
             <div>
-              {getFieldDecorator(
-                'goods_bar_no',
-                {
-                  initialValue: this.state.form.goods_bar_no || '',
-                  rules: [{required: true, message: '请输入商品条形码！'}],
-                }
-              )(<Input placeholder="请生成商品条形码" disabled={this.state.disabled} />)
-              }
+              <Input placeholder="请生成商品条形码" disabled={this.state.disabled} value={this.state.form.goods_bar_no} />
               <Button type="primary" onClick={this.getbarno.bind(this)}>生成条形码</Button>
             </div>
           </Form.Item>

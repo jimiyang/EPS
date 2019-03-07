@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 
+import {Redirect} from 'react-router-dom';
+
 import {
   Input,
   Form,
@@ -20,7 +22,8 @@ class TypeEdit extends Component {
         goods_category_name: '',
         superior_id: ''
       },
-      parent_id: 0
+      parent_id: 0,
+      disabled: true
     };
   }
   //react 父组件传值给子组件，子组件定义一个变量来接收props值，所传的值在父组件中更改赋值，子组件中如何同步更新
@@ -47,9 +50,12 @@ class TypeEdit extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        window.api('goods.modcategory', this.state.form).then((rs) => {
+        const form = Object.assign(this.state.form, values);
+        console.log(form);
+        window.api('goods.modcategory', form).then((rs) => {
           message.success(rs.service_error_message);
-          this.props.history.push({pathname: '/main/typelist'});
+          window.location.reload();
+          //this.props.onSelectRefresh();
         }).catch(error => {
           message.error(error);
         });
@@ -88,9 +94,9 @@ class TypeEdit extends Component {
             }
           </Form.Item>
           <Form.Item
-            label="父级目录"
+            label="所属目录"
           >
-            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} />
+            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} disabled={this.state.disabled} />
           </Form.Item>
           <Form.Item>
             <div className="button-blocks">

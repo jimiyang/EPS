@@ -6,6 +6,8 @@ import {
   Link,
 } from 'react-router-dom';
 
+import {Redirect} from 'react-router';
+
 import './main.css';
 
 import List from '../productManagement/list';
@@ -23,13 +25,13 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      login_name: ''
+      login_name: '',
+      redir: true
     };
   }
   componentWillMount() {
     //验证是否需要登录
     window.common.loginOut(this, message);
-    console.log(JSON.parse(window.localStorage.getItem('headParams')));
     if (JSON.parse(window.localStorage.getItem('headParams')) !== null) {
       this.setState({
         login_name: JSON.parse(window.localStorage.getItem('headParams')).login_name
@@ -44,6 +46,9 @@ class Main extends Component {
     });
   }
   render() {
+    if (this.state.redir === true) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <Layout className="main-blocks">
         <Header>
