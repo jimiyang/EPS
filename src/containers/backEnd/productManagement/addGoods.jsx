@@ -75,20 +75,36 @@ class Add extends Component {
         this.setState({
           form
         });
+        //console.log(this.state.form.goods_details);
         if (!this.props.location.query) {
           window.api('goods.addgoods', form).then((rs) => {
             message.success(rs.service_error_message);
+            this.props.history.push({pathname: '/main/list'});
           }).catch(error => {
             message.error(error);
           });
         } else {
           window.api('goods.modgoods', form).then((rs) => {
             message.success(rs.service_error_message);
+            this.props.history.push({pathname: '/main/list'});
           }).catch(error => {
             message.error(error);
           });
         }
       }
+    });
+  }
+  resetEvent = () => {
+    this.props.form.resetFields();
+    const form = {
+      goods_bar_no: '',
+      is_post: 0,
+      goods_details: '',
+      goods_category_id: '',
+      goods_pic: require('../../../assets/backEnd/autoImg.jpg')//默认图片
+    };
+    this.setState({
+      form
     });
   }
   uploadImgEvent = (e) => {
@@ -279,7 +295,12 @@ class Add extends Component {
             />
           </Form.Item>
           <Form.Item>
-            <div className="g-tc"><Button type="primary" htmlType="submit">保存</Button></div>
+            <div className="g-tc">
+              <Button type="primary" htmlType="submit">保存</Button>
+              <Button style={{ marginLeft: 8 }} onClick={this.resetEvent}>
+                取消
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </div>

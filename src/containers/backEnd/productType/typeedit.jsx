@@ -49,6 +49,7 @@ class TypeEdit extends Component {
       if (!err) {
         window.api('goods.modcategory', this.state.form).then((rs) => {
           message.success(rs.service_error_message);
+          this.props.history.push({pathname: '/main/typelist'});
         }).catch(error => {
           message.error(error);
         });
