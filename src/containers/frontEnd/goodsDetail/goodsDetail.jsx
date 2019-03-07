@@ -37,6 +37,7 @@ class GoodsDetail extends Component {
   getDetail = (id) => {
     const params = {id};
     window.api('goods.getgoodsdetail', params).then(res => {
+      res.sale_price = (res.sale_price).toFixed(2);
       this.setState({detail: res});
     });
   }

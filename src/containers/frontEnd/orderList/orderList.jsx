@@ -58,8 +58,122 @@ class OrderList extends Component {
     this.props.history.push('/orderDetail', {order_no: orderNo});
   }
 
-  /*changePage = (value) => {
-  }*/
+  // 改变筛选方式
+  changePage = (value) => {
+    let status;
+    switch (value) {
+      case '0':
+        status = 0;
+        this.setState({status, isChecked: null});
+        break;
+      case '1':
+        status = 1;
+        this.setState({status, isChecked: null});
+        break;
+      case '2':
+        status = 3;
+        this.setState({status, isChecked: null});
+        break;
+      default:
+        this.setState({status, isChecked: null});
+    }
+    this.getOrderList('change', status);
+  }
+
+  // 获取订单列表啊
+  getOrderList(type, status, orderNo) {
+    let {list} = this.state;
+    const params = {
+      status,
+      page_size: 10,
+    };
+    orderNo ? params.order_no = orderNo : null;
+    if (type === 'next') {
+      this.setState({loadText: '正在加载...'});
+      params.next = list[list.length - 1].order_no;
+    }
+    window.api('order.orderList', params).then(res => {
+      if (res.orders < 10) {
+        this.setState({loadMore: false, loadText: '已加在全部订单'});
+      }
+      if (type === 'change' || type === 'search' || !type) {
+        list = res.orders;
+      } else {
+        list = list.concat(res.orders);
+      }
+      this.setState({list, loadText: '加载更多'});
+      if (this.state.isChecked === null) {
+        this.getGoodsDetail(res.orders[0].order_no, 0);
+      }
+    });
+  }
+
+  // 获取商品详情
+  getGoodsDetail = (orderNo, index) => {
+    clearInterval(this.state.timer);
+    this.setState({timer: null, time: '00时00分00秒'});
+    if (index !== this.state.isChecked) {
+      const params = {
+        order_no: orderNo,
+      };
+      window.api('goods.goodsDetail', params).then(res => {
+        const detail = res.goods_detail[0];
+        const create = (new Date(detail.gmt_created)).getTime();
+        const deadline = create + 24 * 60 * 60 * 1000;
+        const timer = setInterval(() => {
+          const alltime = deadline - (new Date()).getTime();
+          const hours = parseInt(alltime / (60 * 60 * 1000), 10);
+          const time1 = alltime - hours * 60 * 60 * 1000;
+          const minutes = parseInt(time1 / (1000 * 60), 10);
+          const time2 = time1 - minutes * 60 * 1000;
+          const seconds = parseInt(time2 / 1000, 10);
+          const time = `${hours < 10 ? `0${hours}` : hours}时${minutes < 10 ? `0${minutes}` : minutes}分${seconds < 10 ? `0${seconds}` : seconds}秒`;
+          this.setState({time});
+        }, 1000);
+        this.setState({isChecked: index, detail, timer});
+      });
+    }
+  }
+
+  // 付款
+  pay = () => {
+    const {detail, list, isChecked} = this.state;
+    const info = {
+      order_no: detail.order_no,
+      real_amt: detail.real_amt,
+      total_amt: detail.total_amt,
+      address: list[isChecked].address,
+      goods_name: detail.goods_name
+    };
+    this.props.history.push('/cashier', {info});
+  }
+
+  // 取消订单
+  cancelOrder = () => {
+    const params = {
+      order_no: this.state.detail.order_no
+    };
+    window.api('order.cancelOrder', params).then(res => {
+      this.state.list[this.state.isChecked].status = 4;
+      this.state.detail.status = 4;
+    });
+  }
+
+  // 确认收货
+  confirmReceipt = () => {
+    const {detail, list, isChecked} = this.state;
+    const params = {
+      order_no: detail.order_no,
+      ids: `${detail.id}`,
+    };
+    window.api('order.confirmReceived', params).then(res => {
+      list[isChecked].status = 3;
+      detail.status = 3;
+      message.success('确认收货，已完成订单！');
+    }).catch((err) => {
+      message.error(err);
+    });
+  }
 
   render() {
     const {

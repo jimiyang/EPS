@@ -87,9 +87,23 @@ class ProductList extends Component {
       message.error(error);
     });
   }
+  selNameEvent = (value) => {
+    this.setState({
+      goods_name: value
+    });
+  }
   //商品名称模糊搜索
   handleNameSearch = (value) => {
-    const form = Object.assign(this.state.search, {goods_name: value});
+    this.setState({
+      goods_name: value
+    });
+    const form = {
+      goods_name: value,
+      ...this.state.search
+    };
+    if (!value) {
+      return false;
+    }
     window.api('goods.getgoodslist', form).then(rs => {
       const node = rs.goods_list.map((item) => ({
         name: `${item.goods_name}`
@@ -107,7 +121,6 @@ class ProductList extends Component {
     });
   }
   changeBarEvent = (e) => {
-    console.log(e.target.value);
     this.setState({
       goods_bar_no: e.target.value
     });
@@ -129,9 +142,11 @@ class ProductList extends Component {
     if (this.state.goods_category_id !== '') {
       Object.assign(params, this.state.search, {goods_category_id: this.state.goods_category_id});
     }
+    //console.log(Object.keys(params).length);
     if (Object.keys(params).length === 0) {
       Object.assign(params, this.state.search);
     }
+    console.log(params);
     this.loadList(params);
   }
   addProduct = () => {
@@ -214,6 +229,7 @@ class ProductList extends Component {
               placeholder="请输入商品名称"
               optionLabelProp="text"
               onSelect={this.selGoodsNameEvent}
+              onChange={this.selNameEvent}
             >
               <Input suffix={<Icon type="search" className="certain-category-icon" />} />
             </AutoComplete>

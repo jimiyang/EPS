@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
 import './goods.less';
 
 export default class Goods extends Component {
@@ -37,6 +36,7 @@ export default class Goods extends Component {
       page_size: 8,
       current_page: 1,
       goods_category_name: category,
+      status: 0,
     };
     window.api('goods.getgoodslist', params).then(res => {
       const partList = this.state.partList;

@@ -10,7 +10,7 @@ class Cashier extends Component {
       detail: {},
       payInfo: {remainder: 999},
       index: 0, // 支付模式 0 返佣账户 1 充值账户
-      payMode: ['返佣账户', '充值账户'],
+      payMode: ['返佣账户'], // ['返佣账户', '充值账户']
       ModalText: '确认支付当前订单？',
       visible: false,
       confirmLoading: false,
@@ -73,7 +73,6 @@ class Cashier extends Component {
         confirmLoading: false,
         ModalText: '确认支付当前订单？',
       });
-      this.props.history.push('/successfulPayment', {order_no: params.order_no});
     });
   }
 

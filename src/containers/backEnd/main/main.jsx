@@ -20,17 +20,37 @@ const {
   Header, Sider, Content,
 } = Layout;
 class Main extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      login_name: ''
+    };
+  }
   componentWillMount() {
     //验证是否需要登录
     window.common.loginOut(this, message);
+    console.log(JSON.parse(window.localStorage.getItem('headParams')));
+    if (JSON.parse(window.localStorage.getItem('headParams')) !== null) {
+      this.setState({
+        login_name: JSON.parse(window.localStorage.getItem('headParams')).login_name
+      });
+    }
+  }
+  loginOutEvent = () => {
+    window.api('eps.logout', {login_name: this.state.login_name}).then(rs => {
+      if (rs.service_status === 'S') {
+        this.props.history.push({pathname: '/login'});
+      }
+    });
   }
   render() {
     return (
       <Layout className="main-blocks">
         <Header>
           联拓富新零售赋能平台
-          <div>
-            <Link to="/login">退出登录</Link>
+          <div className="person-center">
+            <label>当前用户：{this.state.login_name}</label>
+            <span onClick={this.loginOutEvent}>退出登录</span>
           </div>
         </Header>
         <Layout>

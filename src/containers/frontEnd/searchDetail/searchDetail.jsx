@@ -54,11 +54,14 @@ class SearchDetail extends Component {
     const params = {
       page_size: 10,
       current_page: pageNumber,
+      status: 0,
     };
     id !== null ? params.goods_category_id = id : null;
+    console.log(id);
     sortWay ? params.sort_way = sortWay : null;
     searchContent ? params.goods_name = searchContent : null;
     window.api('goods.getgoodslist', params).then(res => {
+      console.log(res);
       res.goods_list.length > 0 ? this.setState({list: res.goods_list, total: res.total_page}) : this.setState({list: []});
     });
   }
@@ -110,7 +113,7 @@ class SearchDetail extends Component {
                 list.map((item, index) => (
                   <li key={index} onClick={this.toDetail.bind(this, item.id)}>
                     <img src={item.goods_picture} />
-                    <p className="price">￥{(item.cost_price).toFixed(2)}</p>
+                    <p className="price">￥{(item.sale_price).toFixed(2)}</p>
                     <p className="name">{item.goods_name}</p>
                   </li>
                 ))

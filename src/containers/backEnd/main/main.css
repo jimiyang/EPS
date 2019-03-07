@@ -1,4 +1,8 @@
 .main-blocks{background: #f00;}
+.main-blocks .person-center{font-size:14px;color:#1890ff;cursor: pointer;}
+.main-blocks .person-center label{
+    display: inline-block;margin:0 20px;
+}
 .main-blocks .ant-layout-header{
     background:#EDEDED;font-size:20px;line-height:80px;border-bottom:1px solid #D9DEE4;height:80px;
     display: flex;align-items: center;justify-content: space-between;
