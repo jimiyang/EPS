@@ -45,6 +45,13 @@
 .add-blocks .ant-form-item-children input{width:60%;margin-right:10px;}
 .add-blocks .ql-snow .ql-picker{line-height:24px;}
 .add-blocks .typeedit-blocks{width:60%;}
+.add-blocks .content{
+    display: flex;margin-bottom:24px;
+}
+.add-blocks .content .ant-form-item-control-wrapper{
+    width:60%;display: flex;align-items: center;
+}
+.add-blocks .content .ant-form-item-control-wrapper button{margin-left:5%;}
 .g-tc{text-align:center;}
 .h400{height:400px;}
 .add-blocks .form .ant-cascader-picker{width:60%;}

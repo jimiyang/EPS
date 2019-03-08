@@ -23,7 +23,7 @@ class ProductList extends Component {
       statusTxt: '下架',
       statusCon: '是否确定要下架此产品？',
       search: {
-        page_size: 200,
+        page_size: 10,
         status: 0
       },
       goodsList: [],

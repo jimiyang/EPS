@@ -58,7 +58,7 @@ class OrderDetail extends Component {
     window.api('order.orderList', {order_no: id}).then((rs) => {
       const data = rs.orders[0];
       const goods = data.order_details[0];
-      console.log(rs);
+      //console.log(rs);
       const form = {
         receiver: data.receiver,
         mobile: data.mobile,
@@ -114,7 +114,7 @@ class OrderDetail extends Component {
           <div>{this.state.form.created_name}</div>
         </li>
         <li>
-          <label>下单账号：</label>
+          <label>代理商编号：</label>
           <div>{this.state.form.created_no}</div>
         </li>
         <li>

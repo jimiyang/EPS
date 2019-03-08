@@ -107,6 +107,7 @@ class ProductType extends Component {
     this.setState({
       formParams
     });
+    console.log(e.target.value);
   }
   selParentEvent = (value) => {
     this.setState({
@@ -137,6 +138,12 @@ class ProductType extends Component {
   }
   resetEvent = () => {
     this.props.form.resetFields();
+    this.setState({
+      formParams: {
+        goods_category_name: ''
+      },
+      parent_id: ''
+    });
   }
   render() {
     const columns = [{
@@ -192,7 +199,7 @@ class ProductType extends Component {
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">添加</Button>
-              <Button onClick={this.resetEvent}>取消</Button>
+              <Button onClick={this.resetEvent}>清空</Button>
             </Form.Item>
           </Form>
         </div>

@@ -81,6 +81,10 @@ class Add extends Component {
           message.error('请生成商品条形码');
           return false;
         }
+        if (this.state.form.goods_pic === '/static/img/autoImg.fdadbc7.jpg') {
+          message.error('请上传商品图片');
+          return false;
+        }
         if (!this.props.location.query) {
           window.api('goods.addgoods', form).then((rs) => {
             message.success(rs.service_error_message);
@@ -147,8 +151,6 @@ class Add extends Component {
   //生成条形码
   getbarno = () => {
     api.baseInstance('goods.getbarno', {}).then((rs) => {
-      console.log(rs);
-      console.log(this.state.form);
       const form = Object.assign(this.state.form, {goods_bar_no: rs.barNo});
       this.setState({
         form
@@ -192,14 +194,15 @@ class Add extends Component {
             )(<Input placeholder="请输入商品名称" />)
             }
           </Form.Item>
-          <Form.Item
-            label="商品条形码"
-          >
-            <div>
+          <div className="content">
+            <div className="ant-form-item-label">
+              <label className="ant-form-item-required">商品条形码</label>
+            </div>
+            <div className="ant-form-item-control-wrapper">
               <Input placeholder="请生成商品条形码" disabled={this.state.disabled} value={this.state.form.goods_bar_no} />
               <Button type="primary" onClick={this.getbarno.bind(this)}>生成条形码</Button>
             </div>
-          </Form.Item>
+          </div>
           <Form.Item
             label="商品类型"
           >
@@ -252,9 +255,10 @@ class Add extends Component {
               <Radio value={1}>否</Radio>
             </RadioGroup>
           </Form.Item>
-          <Form.Item
-            label="商品图片"
-          >
+          <div className="content">
+            <div className="ant-form-item-label">
+              <label className="ant-form-item-required">商品图片</label>
+            </div>
             <div className="col-md-6">
               <input type="file" accept="image/jpg,image/jpeg,image/png,image/bmp" onChange={this.uploadImgEvent} ref="file" name="file" className="valid coverfile" />
               <img src={this.state.form.goods_pic} className={`show-pic ${this.state.isShow === true ? 'hide' : null}`} />
@@ -268,7 +272,7 @@ class Add extends Component {
                 <i className="icon-close anticon-delete voucherImgIcon" />
               </div>
             </div>
-          </Form.Item>
+          </div>
           <Form.Item
             label="商品详情"
             style={{height: 400}}
