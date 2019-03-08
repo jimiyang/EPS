@@ -5,17 +5,10 @@ import {
   Route,
   Link,
 } from 'react-router-dom';
-
-import {Redirect} from 'react-router';
-
 import './main.css';
-
 import List from '../productManagement/list';
-
 import DeliveryList from '../deliveryMangement/deliverylist';
-
 import TypeList from '../productType/typelist';
-
 import addGoods from '../productManagement/addGoods';
 
 const {
@@ -25,8 +18,7 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      login_name: '',
-      redir: true
+      login_name: ''
     };
   }
   componentWillMount() {
@@ -46,9 +38,6 @@ class Main extends Component {
     });
   }
   render() {
-    if (this.state.redir === true) {
-      return (<Redirect to="/login" />);
-    }
     return (
       <Layout className="main-blocks">
         <Header>

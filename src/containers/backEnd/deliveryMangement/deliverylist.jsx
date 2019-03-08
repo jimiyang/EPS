@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-
 import {
   Icon,
   Input,
@@ -8,15 +7,11 @@ import {
   Modal,
   message
 } from 'antd';
-
+import {Redirect} from 'react-router';
 import 'moment/locale/zh-cn';
-
 import moment from 'moment';
-
 import './delivery.css';
-
 import OrderDetaile from './orderDetaile';
-
 import SendDelivery from './sendDelivery';
 
 moment.locale('zh-cn');
@@ -45,7 +40,8 @@ class DeliveryList extends Component {
       startTime: '',
       endTime: '',
       firstOrdernum: '', //分页上一页所用的订单号
-      lastOrdernum: ''//分页下一页所用的订单编号
+      lastOrdernum: '', //分页下一页所用的订单编号
+      redirect: false
     };
   }
   componentWillMount() {
@@ -74,6 +70,11 @@ class DeliveryList extends Component {
       });
     }).catch(error => {
       message.error(error);
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
     });
   }
   selTap = (index) => {
@@ -202,6 +203,9 @@ class DeliveryList extends Component {
     this.loadList(params);
   }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <div className="delivery-blocks">
         <Modal

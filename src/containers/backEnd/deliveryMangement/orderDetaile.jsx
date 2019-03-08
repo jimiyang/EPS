@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-
 import {message} from 'antd';
-
 import './delivery.css';
 
 class OrderDetail extends Component {

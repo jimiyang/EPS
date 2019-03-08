@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-
 import {Tree, message} from 'antd';
-
 import './list.css';
 
 const {TreeNode} = Tree;

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-
 import {
   Icon,
   Input,
@@ -9,9 +8,8 @@ import {
   Popconfirm,
   message
 } from 'antd';
-
+import {Redirect} from 'react-router';
 import './list.css';
-
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 const {Option} = AutoComplete;
@@ -31,7 +29,8 @@ class ProductList extends Component {
       goodsList: [],
       goods_name: '',
       goods_bar_no: '',
-      goods_category_id: ''
+      goods_category_id: '',
+      redirect: false
     };
   }
   //数据加载，dom未初始化
@@ -53,6 +52,11 @@ class ProductList extends Component {
         goodsList: rs.goods_list
       });
     }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
       message.error(error);
     });
   }
@@ -205,6 +209,9 @@ class ProductList extends Component {
         )
       }
     ];
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <div className="product-blocks">
         <div className="nav-items">

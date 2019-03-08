@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-
 import {
   Form,
   Input,
@@ -7,15 +6,11 @@ import {
   Button,
   message
 } from 'antd';
-
+import {Redirect} from 'react-router';
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
-
 import 'react-quill/dist/quill.snow.css'; // ES6
-
 import './list.css';
-
 import api from '../../../api/api.js';
-
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 const RadioGroup = Radio.Group;
@@ -31,7 +26,8 @@ class Add extends Component {
         goods_details: '',
         goods_category_id: '',
         goods_pic: require('../../../assets/backEnd/autoImg.jpg')//默认图片
-      }
+      },
+      redirect: false
     };
   }
   componentWillMount() {
@@ -65,6 +61,11 @@ class Add extends Component {
       });
     }).catch(error => {
       message.error(error);
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
     });
   }
   addtionProEvent = (e) => {
@@ -173,6 +174,9 @@ class Add extends Component {
   }
   render() {
     const {getFieldDecorator} = this.props.form;
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <div className="add-blocks">
         <Form onSubmit={this.addtionProEvent} className="form" name="form" id="form">

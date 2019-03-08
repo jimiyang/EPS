@@ -1,16 +1,11 @@
 import React, {Component} from 'react';
-
-import {Redirect} from 'react-router-dom';
-
 import {
   Input,
   Form,
   Button,
   message
 } from 'antd';
-
 import './style.css';
-
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 class TypeEdit extends Component {
@@ -54,8 +49,8 @@ class TypeEdit extends Component {
         console.log(form);
         window.api('goods.modcategory', form).then((rs) => {
           message.success(rs.service_error_message);
-          window.location.reload();
           //this.props.onSelectRefresh();
+          this.props.modifyEvent(e);
         }).catch(error => {
           message.error(error);
         });

@@ -1,20 +1,16 @@
 import React, {Component} from 'react';
-
 import {
   Input,
   Button,
   Table,
   Modal,
-  TreeSelect,
   Form,
   Popconfirm,
   message
 } from 'antd';
-
+import {Redirect} from 'react-router';
 import './style.css';
-
 import TypeEdit from './typeedit';
-
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 class ProductType extends Component {
@@ -33,7 +29,8 @@ class ProductType extends Component {
       visible: false,
       defaultExpandAllRows: true, //是否默认展开树形结构
       productTypeData: [],
-      treeData: []
+      treeData: [],
+      redirect: false
     };
   }
   componentWillMount() {
@@ -78,6 +75,11 @@ class ProductType extends Component {
       }
     }).catch(error => {
       message.error(error);
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
     });
   }
   editEvent = (id) => {
@@ -124,12 +126,14 @@ class ProductType extends Component {
         window.api('goods.addcategory', this.state.formParams).then((rs) => {
           message.success(rs.service_error_message);
           this.loadList();
-          //this.props.history.push({pathname: '/main/typelist'});
         }).catch(error => {
           message.error(error);
         });
       }
     });
+  }
+  modifyEvent = (e) => {
+    this.loadList();
   }
   resetEvent = () => {
     this.props.form.resetFields();
@@ -153,6 +157,9 @@ class ProductType extends Component {
       )
     }];
     const {getFieldDecorator} = this.props.form;
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <div className="type-blocks">
         <Modal
@@ -163,7 +170,7 @@ class ProductType extends Component {
           visible={this.state.visible}
           footer={null}
         >
-          <TypeEdit selfId={this.state.selfId} onClick={this.cancelEvent.bind(this)} />
+          <TypeEdit selfId={this.state.selfId} onClick={this.cancelEvent.bind(this)} modifyEvent={this.modifyEvent} />
         </Modal>
         <div className="left">
           <Form onSubmit={this.addTypeEvent} className="form" name="form">
