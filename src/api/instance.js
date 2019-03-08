@@ -1,11 +1,5 @@
 import axios from 'axios';
 
-import {
-  createBrowserHistory,
-  createHashHistory,
-  createMemoryHistory
-} from 'history';
-
 const instance = axios.create({
   baseURL: 'http://192.168.19.118:8000/eps/base/',
   timeout: 1000,
