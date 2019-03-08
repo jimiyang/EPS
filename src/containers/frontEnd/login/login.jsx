@@ -50,6 +50,7 @@ class Login extends Component {
       login_pwd: this.state.userPwd
     };
     window.api('eps.login', params).then(res => {
+      console.log(res);
       const obj = {
         login_name: _this.state.userName,
         partner_id: res.partner_id,

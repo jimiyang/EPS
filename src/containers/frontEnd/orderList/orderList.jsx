@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Tabs, Input, message} from 'antd';
+import {Tabs, Input, message, Modal} from 'antd';
 import './orderList.less';
 
 const TabPane = Tabs.TabPane;
@@ -35,22 +35,19 @@ class OrderList extends Component {
   state = {
     tabs: ['全部订单', '等待付款', '等待收货'],
     list: [],
-    isChecked: null, // 被选中的Index
     detail: {}, // 当前选中的订单的详情
     status: 0, //0：全部订单，1：等待付款，2：等待发货，3：等待收货，4：已完成，5：已取消（默认0）
     loadMore: true, // 是否能加载更多
     loadText: '加载更多',
-    timer: null, // 定时器
-    time: null, // 倒计时
+    ModalText: '确认取消当前订单？',
+    visible: false,
+    confirmLoading: false,
+    cancelOrderNo: null, // 将要取消的订单编号
+    cancelIndex: null, // 将要取消订单的索引
   }
 
   componentWillMount() {
     this.getOrderList('first', 0);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.state.timer);
-    this.setState({timer: null});
   }
 
   // 跳转到订单详情
@@ -64,23 +61,23 @@ class OrderList extends Component {
     switch (value) {
       case '0':
         status = 0;
-        this.setState({status, isChecked: null});
+        this.setState({status});
         break;
       case '1':
         status = 1;
-        this.setState({status, isChecked: null});
+        this.setState({status});
         break;
       case '2':
         status = 3;
-        this.setState({status, isChecked: null});
+        this.setState({status});
         break;
       default:
-        this.setState({status, isChecked: null});
+        this.setState({status});
     }
     this.getOrderList('change', status);
   }
 
-  // 获取订单列表啊
+  // 获取订单列表
   getOrderList(type, status, orderNo) {
     let {list} = this.state;
     const params = {
@@ -93,56 +90,27 @@ class OrderList extends Component {
       params.next = list[list.length - 1].order_no;
     }
     window.api('order.orderList', params).then(res => {
-      if (res.orders < 10) {
-        this.setState({loadMore: false, loadText: '已加在全部订单'});
+      if (res.orders.length < 10) {
+        this.setState({loadMore: false, loadText: '已加载全部订单'});
       }
       if (type === 'change' || type === 'search' || !type) {
         list = res.orders;
       } else {
         list = list.concat(res.orders);
       }
-      this.setState({list, loadText: '加载更多'});
-      if (this.state.isChecked === null) {
-        this.getGoodsDetail(res.orders[0].order_no, 0);
-      }
+      this.setState({list});
     });
   }
 
-  // 获取商品详情
-  getGoodsDetail = (orderNo, index) => {
-    clearInterval(this.state.timer);
-    this.setState({timer: null, time: '00时00分00秒'});
-    if (index !== this.state.isChecked) {
-      const params = {
-        order_no: orderNo,
-      };
-      window.api('goods.goodsDetail', params).then(res => {
-        const detail = res.goods_detail[0];
-        const create = (new Date(detail.gmt_created)).getTime();
-        const deadline = create + 24 * 60 * 60 * 1000;
-        const timer = setInterval(() => {
-          const alltime = deadline - (new Date()).getTime();
-          const hours = parseInt(alltime / (60 * 60 * 1000), 10);
-          const time1 = alltime - hours * 60 * 60 * 1000;
-          const minutes = parseInt(time1 / (1000 * 60), 10);
-          const time2 = time1 - minutes * 60 * 1000;
-          const seconds = parseInt(time2 / 1000, 10);
-          const time = `${hours < 10 ? `0${hours}` : hours}时${minutes < 10 ? `0${minutes}` : minutes}分${seconds < 10 ? `0${seconds}` : seconds}秒`;
-          this.setState({time});
-        }, 1000);
-        this.setState({isChecked: index, detail, timer});
-      });
-    }
-  }
-
   // 付款
-  pay = () => {
-    const {detail, list, isChecked} = this.state;
+  pay = (index) => {
+    const {list} = this.state;
+    const detail = list[index].order_details[0];
     const info = {
       order_no: detail.order_no,
       real_amt: detail.real_amt,
       total_amt: detail.total_amt,
-      address: list[isChecked].address,
+      address: list[index].address,
       goods_name: detail.goods_name
     };
     this.props.history.push('/cashier', {info});
@@ -150,25 +118,59 @@ class OrderList extends Component {
 
   // 取消订单
   cancelOrder = () => {
+    this.setState({
+      ModalText: '正在支付，请稍候',
+      confirmLoading: true,
+    });
+    const {list, cancelOrderNo, cancelIndex} = this.state;
     const params = {
-      order_no: this.state.detail.order_no
+      order_no: cancelOrderNo
     };
     window.api('order.cancelOrder', params).then(res => {
-      this.state.list[this.state.isChecked].status = 4;
-      this.state.detail.status = 4;
+      message.success('已取消');
+      this.setState({
+        visible: false,
+        confirmLoading: false,
+        ModalText: '确认取消当前订单？',
+      });
+      list[cancelIndex].order_details[0].status = 4;
+      this.setState({list});
+    }).catch(err => {
+      message.error(err);
+      this.setState({
+        visible: false,
+        confirmLoading: false,
+        ModalText: '确认取消当前订单？',
+      });
+    });
+  }
+
+  // 打开取消窗口
+  showModal = (orderNo, cancelIndex) => {
+    this.setState({
+      visible: true,
+      cancelOrderNo: orderNo,
+      cancelIndex,
+    });
+  }
+
+  // 关闭取消窗口
+  handleCancel = () => {
+    this.setState({
+      visible: false,
     });
   }
 
   // 确认收货
-  confirmReceipt = () => {
-    const {detail, list, isChecked} = this.state;
+  confirmReceipt = (orderNo, ids, index) => {
+    const {list} = this.state;
     const params = {
-      order_no: detail.order_no,
-      ids: `${detail.id}`,
+      order_no: orderNo,
+      ids: `${ids}`,
     };
-    window.api('order.confirmReceived', params).then(res => {
-      list[isChecked].status = 3;
-      detail.status = 3;
+    window.api('order.confirmReceived', params).then(() => {
+      list[index].order_details[0].status = 3;
+      this.setState({list});
       message.success('确认收货，已完成订单！');
     }).catch((err) => {
       message.error(err);
@@ -177,7 +179,7 @@ class OrderList extends Component {
 
   render() {
     const {
-      detail, isChecked, tabs, list, loadMore, loadText, status, time
+      detail, tabs, list, loadMore, loadText, status, visible, confirmLoading, ModalText, cancelOrderNo, cancelIndex
     } = this.state;
     return (
       <div id="orderList">
@@ -198,8 +200,7 @@ class OrderList extends Component {
                     {
                       list.map((item2, index2) => (
                         <li key={index2}>
-                          <div className="title" onClick={this.getGoodsDetail.bind(this, item2.order_no, index2)}>
-                            <span className="isChecked" hidden={index2 !== isChecked} />
+                          <div className="title">
                             <div style={{
                               width: '400px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden'
                             }}
@@ -216,21 +217,21 @@ class OrderList extends Component {
                               <span>{item2.order_no}</span>
                             </div>
                           </div>
-                          <div className="content" hidden={index2 !== isChecked}>
+                          <div className="content">
                             <div style={{width: '450px'}} className="info">
-                              <img src={detail.goods_pic} />
-                              <p>{detail.goods_name}</p>
+                              <img src={item2.order_details[0].goods_pic} />
+                              <p>{item2.order_details[0].goods_name}</p>
                             </div>
-                            <p style={{width: '120px'}}>￥{detail.goods_sale_price}</p>
-                            <p style={{width: '120px'}}>{detail.goods_qty}</p>
-                            <p style={{width: '120px'}}>￥{detail.total_amt}</p>
+                            <p style={{width: '120px'}}>￥{(item2.order_details[0].goods_sale_price).toFixed(2)}</p>
+                            <p style={{width: '120px'}}>{item2.order_details[0].goods_qty}</p>
+                            <p style={{width: '120px'}}>￥{(item2.order_details[0].total_amt).toFixed(2)}</p>
                             <div style={{width: '120px'}}>
-                              <Status status={detail.status} />
-                              <p style={{marginTop: '30px', cursor: 'pointer'}} onClick={this.toOrderDetail.bind(this, detail.order_no)}>订单详情</p>
+                              <Status status={item2.order_details[0].status} />
+                              <p style={{marginTop: '30px', cursor: 'pointer'}} onClick={this.toOrderDetail.bind(this, item2.order_details[0].order_no)}>订单详情</p>
                             </div>
                             <div className="operation">
-                              {detail.status === 2 ? <button onClick={this.confirmReceipt}>确认收货</button> : null}
-                              {detail.status === 0 ? <div><p style={{color: '#ddd'}}>{time}</p><button onClick={this.pay}>付款</button><p onClick={this.cancelOrder}>取消订单</p></div> : null}
+                              {item2.order_details[0].status === 2 ? <button onClick={this.confirmReceipt.bind(this, item2.order_details[0].order_no, item2.order_details[0].id, index2)}>确认收货</button> : null}
+                              {item2.order_details[0].status === 0 ? <div><button onClick={this.pay.bind(this, index)}>付款</button><p onClick={this.showModal.bind(this, item2.order_details[0].order_no, index2)}>取消订单</p></div> : null}
                             </div>
                           </div>
                         </li>
@@ -255,6 +256,16 @@ class OrderList extends Component {
           }
         </section>
         <section className="default" hidden={list.length > 0}>查询不到订单</section>
+        <div>
+          <Modal
+            visible={visible}
+            onOk={this.cancelOrder}
+            confirmLoading={confirmLoading}
+            onCancel={this.handleCancel}
+          >
+            <p>{ModalText}</p>
+          </Modal>
+        </div>
       </div>
     );
   }

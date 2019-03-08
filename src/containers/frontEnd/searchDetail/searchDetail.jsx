@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {Pagination, Icon} from 'antd';
 import {connect} from 'react-redux';
+import {Pagination, Icon} from 'antd';
 import './searchDetail.less';
-import {changeSearchContent} from '../../../store/reduces/frontEnd';
+import {changeSearchDetail} from '../../../store/reduces/frontEnd';
 
 @connect(
-  (state) => ({searchContent: state.frontEnd.searchContent, id: state.frontEnd.id}),
-  {changeSearchContent},
+  (state) => ({searchContent: state.frontEnd.searchContent, id: state.frontEnd.id, typeName: state.frontEnd.typeName}),
+  {changeSearchDetail},
 )
 
 class SearchDetail extends Component {
@@ -20,21 +20,22 @@ class SearchDetail extends Component {
   }
 
   componentWillMount() {
-    this.setState({searchContent: this.props.searchContent, id: this.props.id});
-    this.getList(this.props.searchContent, 1, 1, this.props.id);
-  }
-
-  componentWillUnmount() {
-    this.props.changeSearchContent({searchContent: '', id: null});
+    const info = this.props.location.state;
+    this.setState({searchContent: info.searchContent, id: info.id});
+    this.props.changeSearchDetail(info);
+    this.getList(info.searchContent, 1, 1, info.id);
   }
 
   componentWillReceiveProps(props) {
-    if (this.state.searchContent !== props.searchContent || this.props.id !== this.state.id) {
-      this.getList(props.searchContent, 1, 1, props.id);
-      this.setState({
-        searchContent: props.searchContent, pageNumber: 1, sortIndex: 1, id: this.props.id
-      });
-    }
+    const info = props.location.state;
+    this.getList(info.searchContent, 1, 1, info.id);
+    this.setState({
+      searchContent: info.searchContent, pageNumber: 1, sortIndex: 1, id: info.id
+    });
+  }
+
+  componentWillUnmount() {
+    this.props.changeSearchDetail({});
   }
 
   // 获取搜寻的商品列表
@@ -57,11 +58,9 @@ class SearchDetail extends Component {
       status: 0,
     };
     id !== null ? params.goods_category_id = id : null;
-    console.log(id);
     sortWay ? params.sort_way = sortWay : null;
     searchContent ? params.goods_name = searchContent : null;
     window.api('goods.getgoodslist', params).then(res => {
-      console.log(res);
       res.goods_list.length > 0 ? this.setState({list: res.goods_list, total: res.total_page}) : this.setState({list: []});
     });
   }

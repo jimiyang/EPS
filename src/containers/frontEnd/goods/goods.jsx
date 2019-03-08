@@ -45,6 +45,11 @@ export default class Goods extends Component {
     });
   }
 
+  // 跳转到搜索页
+  toSearchDetail = (id, typeName) => {
+    this.props.history.push('/searchDetail', {id, typeName, searchContent: ''});
+  }
+
   // 跳转到详情页
   toDetail = (id) => {
     this.props.history.push('/goodsDetail', {id});
@@ -57,7 +62,7 @@ export default class Goods extends Component {
         {
           partList.map((item, index) => (
             <section className="sku-block" key={index} hidden={item.goods_list.length === 0}>
-              <h3 className="sku-cat-title">{part[index].goods_category_name}</h3>
+              <h3 style={{cursor: 'pointer'}} className="sku-cat-title" onClick={this.toSearchDetail.bind(this, part[index].id, part[index].goods_category_name)}>{part[index].goods_category_name}</h3>
               <ul className="sku-list">
                 {
                   item.goods_list.map(($0, $1) => (

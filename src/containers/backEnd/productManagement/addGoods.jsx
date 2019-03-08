@@ -75,7 +75,6 @@ class Add extends Component {
         this.setState({
           form
         });
-        //console.log(this.state.form.goods_details);
         if (!this.props.location.query) {
           window.api('goods.addgoods', form).then((rs) => {
             message.success(rs.service_error_message);

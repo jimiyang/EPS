@@ -48,7 +48,6 @@ class GenerateOrder extends Component {
           post_code: values.postalCode,
           goods,
         };
-        values.postalCode ? params.post_code = values.postalCode : null;
         window.localStorage.setItem('orderInfo', JSON.stringify(values));
         window.api('order.createorder', params).then(res => {
           const info = {
@@ -151,7 +150,7 @@ class GenerateOrder extends Component {
                   {
                     initialValue: consignee ? consignee.postalCode : '',
                     rules: [
-                      {required: false},
+                      {required: true},
                       {pattern: /^[0-9]{6}$/, message: '邮政编码格式有误'}
                     ]
                   }

@@ -27,7 +27,6 @@ function baseInstance(service, params) {
     },
     body: params
   };
-  console.log(form);
   return (
     axios.post('/gateway.in', form).then((response) => response)
   );

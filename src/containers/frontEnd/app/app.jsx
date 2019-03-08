@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
 import {Route} from 'react-router-dom';
-import {message, AutoComplete, Icon, Input, Button} from 'antd';
+import {connect} from 'react-redux';
+import {message, AutoComplete, Icon, Input, Button, Menu, Dropdown} from 'antd';
 // 路由
 import goods from '../goods/goods';
 import searchDetail from '../searchDetail/searchDetail';
@@ -12,14 +12,14 @@ import successfulPayment from '../successfulPayment/successfulPayment';
 import orderList from '../orderList/orderList';
 import orderDetail from '../orderDetail/orderDetail';
 import './app.less';
-import {changeSearchContent} from '../../../store/reduces/frontEnd';
+import {changeSearchDetail} from '../../../store/reduces/frontEnd';
 
 function IsLogin(props) {
   return props.loginstate ? <div className="header-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
 }
 @connect(
-  (state) => ({searchContent: state.frontEnd.searchContent, goodsType: state.frontEnd.goodsType}),
-  {changeSearchContent},
+  (state) => (state),
+  {changeSearchDetail},
 )
 export default class App extends Component {
   constructor(props) {
@@ -30,7 +30,7 @@ export default class App extends Component {
       searchContent: '', // 搜索的内容
       dataSource: [], // 搜索列表
       goodsType: [], // 商品类型列表
-      isChecked: null, // 被选中的分类
+      typeName: '请选择分类', // 选择分类名称
     };
   }
 
@@ -46,9 +46,14 @@ export default class App extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if (props.searchContent === '') {
-      this.setState({searchContent: props.searchContent});
+    let typeName = '请选择分类';
+    let searchContent = '';
+    if (props.location.pathname === '/searchDetail') {
+      const info = props.location.state;
+      typeName = info.typeName ? info.typeName : '请选择分类';
+      searchContent = info.searchContent;
     }
+    this.setState({typeName, searchContent});
   }
 
   // 获取产品类型列表
@@ -58,7 +63,7 @@ export default class App extends Component {
       current_page: 1,
       superior_id: 0,
     };
-    window.api('goods.getcategorylist', params).then(res => {
+    window.api('goods.getcategorylist', params).then((res) => {
       const goodsType = res.goods_category_list;
       this.setState({goodsType});
       window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
@@ -85,24 +90,26 @@ export default class App extends Component {
   }
 
   // 跳转到搜索页
-  toSearchDetail = (id, isChecked) => {
+  toSearchDetail = (id, typeName, searchContent) => {
     const {
-      searchContent, dataSource, canSearch
+      dataSource, canSearch
     } = this.state;
-    this.props.location.pathname !== '/searchDetail' ? this.props.history.push('/searchDetail') : null;
+    this.props.history.push('/searchDetail', {id, typeName, searchContent});
     if (canSearch) {
       if (searchContent !== '') { // 获取下拉列表
         const list = dataSource;
         const index = dataSource.indexOf(searchContent);
         list.unshift(searchContent);
-        if (list.length > 5) {
-          index === -1 ? list.splice(5, 1) : list.splice(index + 1, 1);
+        if (index !== -1) {
+          list.splice(index + 1, 1);
+        } else {
+          list.length > 5 ? list.splice(list.length - 1, 1) : null;
         }
         window.localStorage.setItem('dataSource', JSON.stringify(list));
       }
     }
-    this.setState({isChecked});
-    this.props.changeSearchContent({searchContent, id});
+    this.props.changeSearchDetail({id, typeName, searchContent});
+    this.setState({typeName, searchContent});
   }
 
   // 登出
@@ -116,7 +123,22 @@ export default class App extends Component {
   }
 
   render() {
-    const {dataSource, loginstate, isChecked} = this.state;
+    const {
+      dataSource, loginstate, typeName, searchContent
+    } = this.state;
+    const menu = (
+      <Menu>
+        <Menu.Item key="0" onClick={this.toSearchDetail.bind(this, null, '全部', '')}>全部</Menu.Item>
+        <Menu.Divider />
+        {
+          this.state.goodsType.map((item, index) => (
+            <Menu.Item key={index + 1}>
+              <a onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name, '')}>{item.goods_category_name}</a>
+            </Menu.Item>
+          ))
+        }
+      </Menu>
+    );
     return (
       <div className="page">
         <div className="header-bar">
@@ -137,24 +159,22 @@ export default class App extends Component {
             <h1 className="header-logo"><Icon type="code-sandbox" />联拓富商城 </h1>
             <div className="header-cont">
               <div className="header-menu">
-                <ul className="nav">
-                  {
-                    this.state.goodsType.map((item, index) => (
-                      <li className={index === this.state.isChecked ? 'isChecked' : null} key={index} onClick={this.toSearchDetail.bind(this, item.id, index)}>{item.goods_category_name}</li>
-                    ))
-                  }
-                </ul>
+                <Dropdown overlay={menu} trigger={['click']}>
+                  <a className="ant-dropdown-link" href="#">
+                    {typeName} <Icon type="down" />
+                  </a>
+                </Dropdown>
               </div>
               <div className="search" style={{width: 300}}>
                 <AutoComplete
                   dataSource={dataSource}
                   className="search-cont"
                   size="large"
-                  value={this.state.searchContent}
+                  value={searchContent}
                   onChange={this.getSearchContent}
                   placeholder="搜索商品"
                   style={{width: '100%'}}
-                ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail.bind(this, null)}><Icon type="search" /></Button>)} />
+                ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail.bind(this, null, '全部', searchContent)}><Icon type="search" /></Button>)} />
                 </AutoComplete>
               </div>
             </div>

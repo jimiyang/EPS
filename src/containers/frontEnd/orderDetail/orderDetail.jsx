@@ -41,7 +41,6 @@ class OrderDetail extends Component {
   componentWillMount() {
     const orderNo = this.props.location.state.order_no;
     this.getOrderDetail(orderNo);
-    this.getGoodsDetail(orderNo);
   }
 
   componentWillUnmount() {
@@ -75,17 +74,7 @@ class OrderDetail extends Component {
         default:
           step = 5;
       }
-      this.setState({order: res.orders[0], step});
-    });
-  }
-
-  // 获取商品详情
-  getGoodsDetail = (orderNo) => {
-    const params = {
-      order_no: orderNo,
-    };
-    window.api('goods.goodsDetail', params).then(res => {
-      const detail = res.goods_detail[0];
+      const detail = res.orders[0].order_details[0];
       const create = (new Date(detail.gmt_created)).getTime();
       const deadline = create + 24 * 60 * 60 * 1000;
       const timer = setInterval(() => {
@@ -100,7 +89,10 @@ class OrderDetail extends Component {
       }, 1000);
       detail.total_amt = (detail.total_amt).toFixed(2);
       detail.real_amt = (detail.real_amt).toFixed(2);
-      this.setState({goods: detail, timer});
+      detail.goods_sale_price = (detail.goods_sale_price).toFixed(2);
+      this.setState({
+        order: res.orders[0], step, goods: detail, timer
+      });
     });
   }
 
@@ -127,6 +119,7 @@ class OrderDetail extends Component {
     window.api('order.confirmReceived', params).then(res => {
       goods.status = 3;
       order.status = 3;
+      this.setState({step: 4});
       message.success('确认收货，已完成订单！');
     }).catch((err) => {
       message.error(err);
@@ -197,7 +190,7 @@ class OrderDetail extends Component {
             </div>
             <div>
               <i>商品总额：</i>
-              <span>￥{order.total_amt}</span>
+              <span>￥{goods.total_amt}</span>
             </div>
           </div>) : null}
           {order.status === 2 || order.status === 3 ? (<div>
