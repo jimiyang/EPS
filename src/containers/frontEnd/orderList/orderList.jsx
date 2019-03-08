@@ -93,6 +93,7 @@ class OrderList extends Component {
       params.next = list[list.length - 1].order_no;
     }
     window.api('order.orderList', params).then(res => {
+      console.log(res);
       if (res.orders < 10) {
         this.setState({loadMore: false, loadText: '已加在全部订单'});
       }
@@ -109,14 +110,14 @@ class OrderList extends Component {
   }
 
   // 获取商品详情
-  getGoodsDetail = (orderNo, index) => {
+  getGoodsDetail = (orderNo, index, ctime) => {
     clearInterval(this.state.timer);
     this.setState({timer: null, time: '00时00分00秒'});
     if (index !== this.state.isChecked) {
       const params = {
         order_no: orderNo,
       };
-      window.api('goods.goodsDetail', params).then(res => {
+      /*window.api('goods.goodsDetail', params).then(res => {
         const detail = res.goods_detail[0];
         const create = (new Date(detail.gmt_created)).getTime();
         const deadline = create + 24 * 60 * 60 * 1000;
@@ -131,10 +132,22 @@ class OrderList extends Component {
           this.setState({time});
         }, 1000);
         this.setState({isChecked: index, detail, timer});
-      });
+      });*/
+      const create = (new Date(ctime)).getTime();
+      const deadline = create + 24 * 60 * 60 * 1000;
+      const timer = setInterval(() => {
+        const alltime = deadline - (new Date()).getTime();
+        const hours = parseInt(alltime / (60 * 60 * 1000), 10);
+        const time1 = alltime - hours * 60 * 60 * 1000;
+        const minutes = parseInt(time1 / (1000 * 60), 10);
+        const time2 = time1 - minutes * 60 * 1000;
+        const seconds = parseInt(time2 / 1000, 10);
+        const time = `${hours < 10 ? `0${hours}` : hours}时${minutes < 10 ? `0${minutes}` : minutes}分${seconds < 10 ? `0${seconds}` : seconds}秒`;
+        this.setState({time});
+      }, 1000);
+      this.setState({isChecked: index, timer});
     }
   }
-
   // 付款
   pay = () => {
     const {detail, list, isChecked} = this.state;
@@ -198,7 +211,7 @@ class OrderList extends Component {
                     {
                       list.map((item2, index2) => (
                         <li key={index2}>
-                          <div className="title" onClick={this.getGoodsDetail.bind(this, item2.order_no, index2)}>
+                          <div className="title" onClick={this.getGoodsDetail.bind(this, item2.order_no, index2, item2.order_details[0].gmt_created)}>
                             <span className="isChecked" hidden={index2 !== isChecked} />
                             <div style={{
                               width: '400px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden'
@@ -218,19 +231,19 @@ class OrderList extends Component {
                           </div>
                           <div className="content" hidden={index2 !== isChecked}>
                             <div style={{width: '450px'}} className="info">
-                              <img src={detail.goods_pic} />
-                              <p>{detail.goods_name}</p>
+                              <img src={item2.order_details[0].goods_pic} />
+                              <p>{item2.order_details[0].goods_name}</p>
                             </div>
-                            <p style={{width: '120px'}}>￥{detail.goods_sale_price}</p>
-                            <p style={{width: '120px'}}>{detail.goods_qty}</p>
-                            <p style={{width: '120px'}}>￥{detail.total_amt}</p>
+                            <p style={{width: '120px'}}>￥{item2.order_details[0].goods_sale_price}</p>
+                            <p style={{width: '120px'}}>{item2.order_details[0].goods_qty}</p>
+                            <p style={{width: '120px'}}>￥{item2.order_details[0].total_amt}</p>
                             <div style={{width: '120px'}}>
-                              <Status status={detail.status} />
-                              <p style={{marginTop: '30px', cursor: 'pointer'}} onClick={this.toOrderDetail.bind(this, detail.order_no)}>订单详情</p>
+                              <Status status={item2.order_details[0].status} />
+                              <p style={{marginTop: '30px', cursor: 'pointer'}} onClick={this.toOrderDetail.bind(this, item2.order_details[0].order_no)}>订单详情</p>
                             </div>
                             <div className="operation">
-                              {detail.status === 2 ? <button onClick={this.confirmReceipt}>确认收货</button> : null}
-                              {detail.status === 0 ? <div><p style={{color: '#ddd'}}>{time}</p><button onClick={this.pay}>付款</button><p onClick={this.cancelOrder}>取消订单</p></div> : null}
+                              {item2.order_details[0].status === 2 ? <button onClick={this.confirmReceipt}>确认收货</button> : null}
+                              {item2.order_details[0].status === 0 ? <div><p style={{color: '#ddd'}}>{time}</p><button onClick={this.pay}>付款</button><p onClick={this.cancelOrder}>取消订单</p></div> : null}
                             </div>
                           </div>
                         </li>

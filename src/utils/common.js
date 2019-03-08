@@ -15,9 +15,9 @@ const utils = {
   },
   loginOut(obj, msg) {
     if (window.localStorage.getItem('checkLogin') === null) {
-      msg.error('请重新登录！');
+      //msg.error('请重新登录！');
       obj.props.history.push({pathname: '/login'});
-      return false;
+      //return false;
     }
   },
   beforeUpload(file, msg) { //上传图片之前判断图片大小
