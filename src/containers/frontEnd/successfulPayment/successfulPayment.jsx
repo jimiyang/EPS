@@ -62,8 +62,8 @@ class SearchDetail extends Component {
           </div>
           <div className="progress">
             <Steps current={2}>
-              <Step title="提交订单" description={detail.gmt_created} />
-              <Step title="支付成功" description={detail.gmt_cashed} />
+              <Step title="提交订单" description="" />
+              <Step title="支付成功" description="" />
               <Step title="正在发货" description="" />
               <Step title="确认收货" description="" />
             </Steps>
