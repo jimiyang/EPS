@@ -2,15 +2,10 @@ const path = require('path');
 
 module.exports = {
   dev: {
-<<<<<<< HEAD
     host: '192.168.4.95',
     port: 8081,
     // host: 'localhost',
     // port: 8080,
-=======
-    host: 'localhost',
-    port: 8080,
->>>>>>> jimiyang
     proxyTable: {},
     useEslint: false,
     autoOpenBrowser: false,

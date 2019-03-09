@@ -11,37 +11,21 @@ export default class Goods extends Component {
   }
 
   componentWillMount() {
-    this.getCategoryList();
+    this.getHomepage();
+    // this.getCategoryList();
   }
 
-  // 获取产品类型列表
-  getCategoryList = () => {
-    const params = {
-      page_size: 100,
-      current_page: 1,
-      superior_id: 0,
-    };
-    window.api('goods.getcategorylist', params).then(res => {
-      const part = res.goods_category_list;
-      this.setState({part});
-      part.forEach((item, index) => {
-        this.getGoodsList(item.goods_category_name, index);
+  // 首页信息
+  getHomepage() {
+    window.api('goods.homepage', {}).then(res => {
+      const info = res.hot_category;
+      const part = [];
+      const partList = [];
+      info.forEach((item, index) => {
+        part.push(item);
+        partList.push(item.goods);
       });
-    });
-  }
-
-  // 获取产品列表
-  getGoodsList(category, index) {
-    const params = {
-      page_size: 8,
-      current_page: 1,
-      goods_category_name: category,
-      status: 0,
-    };
-    window.api('goods.getgoodslist', params).then(res => {
-      const partList = this.state.partList;
-      partList[index] = res;
-      this.setState({partList});
+      this.setState({part, partList});
     });
   }
 
@@ -60,12 +44,12 @@ export default class Goods extends Component {
     return (
       <div className="sku">
         {
-          partList.map((item, index) => (
-            <section className="sku-block" key={index} hidden={item.goods_list.length === 0}>
-              <h3 style={{cursor: 'pointer'}} className="sku-cat-title" onClick={this.toSearchDetail.bind(this, part[index].id, part[index].goods_category_name)}>{part[index].goods_category_name}</h3>
+          part.map((item, index) => (
+            <section className="sku-block" key={index} hidden={partList[index].length === 0}>
+              <h3 style={{cursor: 'pointer'}} className="sku-cat-title" onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name)}>{item.goods_category_name}</h3>
               <ul className="sku-list">
                 {
-                  item.goods_list.map(($0, $1) => (
+                  partList[index].map(($0, $1) => (
                     <li key={$1} onClick={this.toDetail.bind(this, $0.id)}>
                       <img src={$0.goods_picture} />
                       <div className="sku-cont">
