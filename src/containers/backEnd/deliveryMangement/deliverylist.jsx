@@ -41,7 +41,8 @@ class DeliveryList extends Component {
       endTime: '',
       firstOrdernum: '', //分页上一页所用的订单号
       lastOrdernum: '', //分页下一页所用的订单编号
-      redirect: false
+      redirect: false,
+      text: '发货'
     };
   }
   componentWillMount() {
@@ -53,7 +54,7 @@ class DeliveryList extends Component {
     let firstOrdernum = '';
     let lastOrdernum = '';
     window.api('order.orderList', params).then(rs => {
-      //console.log(rs);
+      console.log(rs);
       if (rs.orders.length > 0) {
         lastOrdernum = rs.orders[rs.orders.length - 1].order_no;
         firstOrdernum = rs.orders[0].order_no;
@@ -93,11 +94,20 @@ class DeliveryList extends Component {
       orderNumber: value
     });
   }
-  sendDeliveryEvent = (number, id) => {
+  sendDeliveryEvent = (number, id, isPost, index) => {
+    //const index = (this.state.index === idx) ? '-1' : idx;
+    if (isPost === 0) {
+      message.error('此订单为软件产品');
+      this.setState({
+        text: '已发货'
+      });
+      return false;
+    }
     this.setState({
       expressVisible: true,
       orderNumber: number,
-      ids: id
+      ids: id,
+      text: '发货'
     });
   }
   closeEvent = () => {
@@ -278,8 +288,8 @@ class DeliveryList extends Component {
           <ul>
             {
               this.state.orderListData.map((item, index) => (
-                <li key={index} onClick={this.openEvent.bind(this, index)}>
-                  <div className="order-title">
+                <li key={index} >
+                  <div className="order-title" onClick={this.openEvent.bind(this, index)}>
                     <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
                       <Icon type={this.state.index === index ? 'up' : 'down'} />
                     </div>
@@ -302,7 +312,7 @@ class DeliveryList extends Component {
                           </div>
                           <div className="button-items">
                             <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
-                            <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id)}>发货</Button>
+                            <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id, detail.is_post)}>{this.state.text}</Button>
                           </div>
                         </div>
                         <div className="items-1">

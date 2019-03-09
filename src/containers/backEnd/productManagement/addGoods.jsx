@@ -27,7 +27,8 @@ class Add extends Component {
         goods_category_id: '',
         goods_pic: require('../../../assets/backEnd/autoImg.jpg')//默认图片
       },
-      redirect: false
+      redirect: false,
+      maxLength: 10
     };
   }
   componentWillMount() {
@@ -229,7 +230,7 @@ class Add extends Component {
                   {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
                 ]
               }
-            )(<Input placeholder="请输入商品成本价" />)
+            )(<Input placeholder="请输入商品成本价" maxLength={this.state.maxLength} />)
             }
           </Form.Item>
           <Form.Item
@@ -244,7 +245,7 @@ class Add extends Component {
                   {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
                 ]
               }
-            )(<Input placeholder="请输入商品售价" />)
+            )(<Input placeholder="请输入商品售价" maxLength={this.state.maxLength} />)
             }
           </Form.Item>
           <Form.Item
@@ -273,39 +274,41 @@ class Add extends Component {
               </div>
             </div>
           </div>
-          <Form.Item
-            label="商品详情"
-            style={{height: 400}}
-          >
-            <ReactQuill
-              placeholder="请输入商品描述详情。。。。。。"
-              theme="snow"
-              style={{width: 700, height: 300}}
-              value={this.state.form.goods_details}
-              onChange={this.handleChange}
-              modules={{
-                toolbar: [
-                  ['bold', 'italic', 'underline', 'strike'],
-                  ['blockquote', 'code-block'],
-                  [{header: 1}, {header: 2}],
-                  [{list: 'ordered'}, {list: 'bullet'}],
-                  [{script: 'sub'}, {script: 'super'}],
-                  [{indent: '-1'}, {indent: '+1'}],
-                  [{direction: 'rtl'}],
-                  [{header: [1, 2, 3, 4, 5, 6, false]}],
-                  [{color: []}, {background: []}],
-                  [{font: []}],
-                  [{align: []}],
-                  ['link', 'image', 'video'],
-                  ['clean']
-                ],
-              }}
-            />
-          </Form.Item>
+          <div className="content">
+            <div className="ant-form-item-label">
+              <label className="ant-form-item-required">商品详情</label>
+            </div>
+            <div>
+              <ReactQuill
+                placeholder="请输入商品描述详情。。。。。。"
+                theme="snow"
+                style={{width: 700, height: 300}}
+                value={this.state.form.goods_details}
+                onChange={this.handleChange}
+                modules={{
+                  toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    [{header: 1}, {header: 2}],
+                    [{list: 'ordered'}, {list: 'bullet'}],
+                    [{script: 'sub'}, {script: 'super'}],
+                    [{indent: '-1'}, {indent: '+1'}],
+                    [{direction: 'rtl'}],
+                    [{header: [1, 2, 3, 4, 5, 6, false]}],
+                    [{color: []}, {background: []}],
+                    [{font: []}],
+                    [{align: []}],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                  ],
+                }}
+              />
+            </div>
+          </div>
           <Form.Item>
             <div className="g-tc">
               <Button type="primary" htmlType="submit">保存</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.resetEvent}>
+              <Button style={{marginLeft: 8}} onClick={this.resetEvent}>
                 取消
               </Button>
             </div>
