@@ -305,7 +305,7 @@ class Add extends Component {
           <Form.Item>
             <div className="g-tc">
               <Button type="primary" htmlType="submit">保存</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.resetEvent}>
+              <Button style={{marginLeft: 8}} onClick={this.resetEvent}>
                 取消
               </Button>
             </div>
