@@ -317,7 +317,7 @@ class DeliveryList extends Component {
                           </div>
                         </div>
                         <div className="items-1">
-                          <p><label>下单账号：</label>{item.payer_account}</p>
+                          <p><label>代理商账号：</label>{item.payer_account}</p>
                           <p><label>数量：</label>{detail.goods_qty}</p>
                           <p><label>合计：</label><em className="red">{detail.total_amt}</em></p>
                           <p><label>收货地址：</label>{item.province}</p>
