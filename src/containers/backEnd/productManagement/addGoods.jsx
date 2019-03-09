@@ -77,13 +77,17 @@ class Add extends Component {
         this.setState({
           form
         });
-        //console.log(this.state.form.goods_details);
+        console.log(this.state.form.goods_details);
         if (this.state.form.goods_bar_no === '') {
           message.error('请生成商品条形码');
           return false;
         }
         if (this.state.form.goods_pic === '/static/img/autoImg.fdadbc7.jpg') {
           message.error('请上传商品图片');
+          return false;
+        }
+        if (this.state.form.goods_details === '') {
+          message.error('请填写商品内容');
           return false;
         }
         if (!this.props.location.query) {
@@ -274,7 +278,7 @@ class Add extends Component {
               </div>
             </div>
           </div>
-          <div className="content">
+          <div className="content" style={{height: 400}}>
             <div className="ant-form-item-label">
               <label className="ant-form-item-required">商品详情</label>
             </div>
