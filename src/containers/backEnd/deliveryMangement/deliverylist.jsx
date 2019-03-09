@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-
 import {
   Icon,
   Input,
@@ -8,15 +7,11 @@ import {
   Modal,
   message
 } from 'antd';
-
+import {Redirect} from 'react-router';
 import 'moment/locale/zh-cn';
-
 import moment from 'moment';
-
 import './delivery.css';
-
 import OrderDetaile from './orderDetaile';
-
 import SendDelivery from './sendDelivery';
 
 moment.locale('zh-cn');
@@ -31,14 +26,13 @@ class DeliveryList extends Component {
       expressVisible: false,
       menuData: ['全部订单', '待付款订单', '待发货订单', '待收货订单', '已完成订单', '已取消订单'],
       statusData: ['待付款订单', '待发货订单', '待收货订单', '已完成订单', '已取消订单'],
-      expressName: '请选择快递',
+      expressName: '',
       expressNo: '',
       ids: '',
       orderListData: [],
-      orderDetailData: [],
       search: {
         status: 0,
-        page_size: 5
+        page_size: 10
       },
       orderNumber: '',
       agentNo: '',
@@ -46,7 +40,8 @@ class DeliveryList extends Component {
       startTime: '',
       endTime: '',
       firstOrdernum: '', //分页上一页所用的订单号
-      lastOrdernum: ''//分页下一页所用的订单编号
+      lastOrdernum: '', //分页下一页所用的订单编号
+      redirect: false
     };
   }
   componentWillMount() {
@@ -58,6 +53,7 @@ class DeliveryList extends Component {
     let firstOrdernum = '';
     let lastOrdernum = '';
     window.api('order.orderList', params).then(rs => {
+      //console.log(rs);
       if (rs.orders.length > 0) {
         lastOrdernum = rs.orders[rs.orders.length - 1].order_no;
         firstOrdernum = rs.orders[0].order_no;
@@ -65,16 +61,22 @@ class DeliveryList extends Component {
           isHide: false
         });
       } else {
-        message.error('没有可查询数据！');
+        this.setState({
+          isHide: true
+        });
       }
       this.setState({
         orderListData: rs.orders,
         firstOrdernum,
-        lastOrdernum,
-        isHide: true
+        lastOrdernum
       });
     }).catch(error => {
       message.error(error);
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
     });
   }
   selTap = (index) => {
@@ -105,10 +107,11 @@ class DeliveryList extends Component {
     });
   }
   openEvent = (idx, number) => {
+    const index = (this.state.index === idx) ? '-1' : idx;
     this.setState({
-      index: idx
+      index
     });
-    let str = '';
+    /*let str = '';
     window.api('goods.goodsDetail', {order_no: number}).then(rs => {
       if (rs.goods_detail.length > 0) {
         this.state.orderDetailData.map(item => {
@@ -120,7 +123,7 @@ class DeliveryList extends Component {
       }
     }).catch(error => {
       message.error(error);
-    });
+    });*/
   }
   selExpressNameEvent = (value) => {
     this.setState({
@@ -133,6 +136,14 @@ class DeliveryList extends Component {
     });
   }
   sendEvent = () => {
+    if (this.state.expressName === '') {
+      message.error('请选择快递');
+      return false;
+    }
+    if (this.state.expressNo === '') {
+      message.error('请填写快递单号');
+      return false;
+    }
     const params = {
       order_no: this.state.orderNumber,
       express_name: this.state.expressName,
@@ -141,6 +152,10 @@ class DeliveryList extends Component {
     };
     window.api('order.send', params).then((rs) => {
       message.success(rs.service_error_message);
+      this.loadList(this.state.search);
+      this.setState({
+        expressVisible: false
+      });
     }).catch(error => {
       message.error(error);
     });
@@ -178,7 +193,7 @@ class DeliveryList extends Component {
       Object.assign(params, this.state.search, {start_time: this.state.startTime});
     }
     if (this.state.endTime !== '') {
-      Object.assign(params, this.state.search, {endTime: this.state.endTime});
+      Object.assign(params, this.state.search, {end_time: this.state.endTime});
     }
     if (Object.keys(params).length === 0) {
       Object.assign(params, this.state.search);
@@ -202,6 +217,9 @@ class DeliveryList extends Component {
     this.loadList(params);
   }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <div className="delivery-blocks">
         <Modal
@@ -253,25 +271,25 @@ class DeliveryList extends Component {
           <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
         <div className="order-blocks">
-          <div className={`no-data ${this.state.isHide === true ? 'hide' : null}`}>
+          <div className={`no-data ${this.state.isHide === false ? 'hide' : null}`}>
             <img src={require('../../../assets/backEnd/nodata-ico.png')} />
             <p>没有数据!</p>
           </div>
           <ul>
             {
               this.state.orderListData.map((item, index) => (
-                <li key={index}>
+                <li key={index} onClick={this.openEvent.bind(this, index)}>
                   <div className="order-title">
-                    <div className="arrow-ico" onClick={this.openEvent.bind(this, index, item.order_no)}>
+                    <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
                       <Icon type={this.state.index === index ? 'up' : 'down'} />
                     </div>
                     <span>{this.state.statusData[item.status]}</span>
-                    <span className="agentName">{item.agent_name}</span>
+                    <span className="agentName">{item.agent_no}/{item.agent_name}</span>
                     <span>订单号：{item.order_no}</span>
                     <span>{item.gmt_created}</span>
                   </div>
                   {
-                    this.state.orderDetailData.map((detail, idx) => (
+                    item.order_details.map((detail, idx) => (
                       <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} key={idx}>
                         <div className="items-3">
                           <div className="left">
@@ -301,7 +319,7 @@ class DeliveryList extends Component {
             }
           </ul>
         </div>
-        <div className="pagetion">
+        <div className={`pagetion ${this.state.isHide === true ? 'hide' : null}`}>
           <span onClick={this.preEvent.bind(this)}>上一页</span>
           <span onClick={this.nextEvent.bind(this)}>下一页</span>
         </div>

@@ -5,15 +5,10 @@ import {
   Route,
   Link,
 } from 'react-router-dom';
-
 import './main.css';
-
 import List from '../productManagement/list';
-
 import DeliveryList from '../deliveryMangement/deliverylist';
-
 import TypeList from '../productType/typelist';
-
 import addGoods from '../productManagement/addGoods';
 
 const {
@@ -29,7 +24,6 @@ class Main extends Component {
   componentWillMount() {
     //验证是否需要登录
     window.common.loginOut(this, message);
-    console.log(JSON.parse(window.localStorage.getItem('headParams')));
     if (JSON.parse(window.localStorage.getItem('headParams')) !== null) {
       this.setState({
         login_name: JSON.parse(window.localStorage.getItem('headParams')).login_name

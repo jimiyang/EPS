@@ -18,13 +18,15 @@ instance.interceptors.response.use(
   },
   err => {
     //const {data: {err: errnum, error}} = (err || {}).response;
-    console.log(`失败：${err}`);
-  //   if (errnum === 200 && error) {
-  //     message.success(error);
-  //   } else {
-  //     reject(res.data.body.service_error_message);
-  //   }
-  // return promise;
+    /*if (errnum === 200 && error) {
+      message.success(error);
+    } else {
+      message.error(error);
+    }*/
+    //if (window.localStorage.getItem('checkLogin') === null) {
+    //msg.error('您的登录已过期，请重新登录！');
+    //this.props.history.push({pathname: '/login'});
+    //}
   }
 );
 export default instance;

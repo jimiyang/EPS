@@ -43,7 +43,7 @@
     font-size: 14px;
 }
 .delivery-blocks .order-blocks li{
-    margin-bottom:10px;
+    margin-bottom:10px;cursor: pointer;
 }
 
 .delivery-blocks .order-blocks .order-title{

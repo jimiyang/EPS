@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-
 import {message} from 'antd';
-
 import './delivery.css';
 
 class OrderDetail extends Component {
@@ -19,9 +17,7 @@ class OrderDetail extends Component {
         express_name: '',
         express_no: '',
         order_no: '',
-        gmt_created: ''
-      },
-      orderForm: {
+        gmt_created: '',
         address: '',
         receiver: '',
         mobile: '',
@@ -38,9 +34,10 @@ class OrderDetail extends Component {
     this.loadList(props.order_no);
   }
   loadList = (id) => {
-    window.api('goods.goodsDetail', {order_no: id}).then((rs) => {
+    /*window.api('goods.goodsDetail', {order_no: id}).then((rs) => {
       //Object.assign(form, rs.goods_detail[0]);
       const data = rs.goods_detail[0];
+      //console.log(rs);
       const form = {
         goods_name: data.goods_name,
         goods_bar_no: data.goods_bar_no,
@@ -57,18 +54,31 @@ class OrderDetail extends Component {
       this.setState({
         form
       });
-    });
+    });*/
     window.api('order.orderList', {order_no: id}).then((rs) => {
       const data = rs.orders[0];
-      const params = {
+      const goods = data.order_details[0];
+      //console.log(rs);
+      const form = {
         receiver: data.receiver,
         mobile: data.mobile,
         address: data.address,
         post_code: data.post_code,
-        gmt_cashed: data.gmt_cashed
+        gmt_cashed: data.gmt_cashed, //付款时间
+        goods_name: goods.goods_name,
+        goods_bar_no: goods.goods_bar_no,
+        goods_category_name: goods.goods_category_name,
+        goods_sale_price: goods.goods_sale_price,
+        total_amt: goods.real_amt,
+        agent_name: goods.agent_name,
+        created_name: goods.created_name,
+        created_no: goods.created_no,
+        order_no: goods.order_no,
+        gmt_created: goods.gmt_created,
+        goods_qty: goods.goods_qty
       };
       this.setState({
-        orderForm: params
+        form
       });
     });
   }
@@ -104,24 +114,24 @@ class OrderDetail extends Component {
           <div>{this.state.form.created_name}</div>
         </li>
         <li>
-          <label>下单账号：</label>
+          <label>代理商编号：</label>
           <div>{this.state.form.created_no}</div>
         </li>
         <li>
           <label>收货人姓名：</label>
-          <div>{this.state.orderForm.receiver}</div>
+          <div>{this.state.form.receiver}</div>
         </li>
         <li>
           <label>收货人地址：</label>
-          <div>{this.state.orderForm.address}</div>
+          <div>{this.state.form.address}</div>
         </li>
         <li>
           <label>联系人电话：</label>
-          <div>{this.state.orderForm.mobile}</div>
+          <div>{this.state.form.mobile}</div>
         </li>
         <li>
           <label>邮编：</label>
-          <div>{this.state.orderForm.post_code}</div>
+          <div>{this.state.form.post_code}</div>
         </li>
         <li>
           <label>订单号：</label>
@@ -133,7 +143,7 @@ class OrderDetail extends Component {
         </li>
         <li>
           <label>付款时间：</label>
-          <div>{this.state.orderForm.gmt_cashed}</div>
+          <div>{this.state.form.gmt_cashed}</div>
         </li>
       </ul>
     );

@@ -1,13 +1,10 @@
 import React, {Component} from 'react';
-
 import {
   Input,
   Select,
   message
 } from 'antd';
-
 import './delivery.css';
-
 import Data from '../../../utils/expressData.js';
 
 const Option = Select.Option;

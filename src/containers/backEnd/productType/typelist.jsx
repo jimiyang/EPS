@@ -1,20 +1,16 @@
 import React, {Component} from 'react';
-
 import {
   Input,
   Button,
   Table,
   Modal,
-  TreeSelect,
   Form,
   Popconfirm,
   message
 } from 'antd';
-
+import {Redirect} from 'react-router';
 import './style.css';
-
 import TypeEdit from './typeedit';
-
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 class ProductType extends Component {
@@ -32,7 +28,9 @@ class ProductType extends Component {
       selfId: '', //类别自身id
       visible: false,
       defaultExpandAllRows: true, //是否默认展开树形结构
-      productTypeData: []
+      productTypeData: [],
+      treeData: [],
+      redirect: false
     };
   }
   componentWillMount() {
@@ -47,7 +45,8 @@ class ProductType extends Component {
         children.push({
           goods_category_name: item.goods_category_name,
           id: item.id,
-          superior_id: item.superior_id
+          superior_id: item.superior_id,
+          children: this.getChildData(data, item.id)
         });
       }
     });
@@ -70,11 +69,17 @@ class ProductType extends Component {
           }
         });
         this.setState({
-          productTypeData: arr
+          productTypeData: arr,
+          treeData: productTypeData
         });
       }
     }).catch(error => {
       message.error(error);
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
     });
   }
   editEvent = (id) => {
@@ -102,6 +107,7 @@ class ProductType extends Component {
     this.setState({
       formParams
     });
+    console.log(e.target.value);
   }
   selParentEvent = (value) => {
     this.setState({
@@ -127,8 +133,17 @@ class ProductType extends Component {
       }
     });
   }
+  modifyEvent = (e) => {
+    this.loadList();
+  }
   resetEvent = () => {
     this.props.form.resetFields();
+    this.setState({
+      formParams: {
+        goods_category_name: ''
+      },
+      parent_id: ''
+    });
   }
   render() {
     const columns = [{
@@ -149,6 +164,9 @@ class ProductType extends Component {
       )
     }];
     const {getFieldDecorator} = this.props.form;
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <div className="type-blocks">
         <Modal
@@ -159,7 +177,7 @@ class ProductType extends Component {
           visible={this.state.visible}
           footer={null}
         >
-          <TypeEdit selfId={this.state.selfId} onClick={this.cancelEvent.bind(this)} />
+          <TypeEdit selfId={this.state.selfId} onClick={this.cancelEvent.bind(this)} modifyEvent={this.modifyEvent} />
         </Modal>
         <div className="left">
           <Form onSubmit={this.addTypeEvent} className="form" name="form">
@@ -177,11 +195,11 @@ class ProductType extends Component {
             </Form.Item>
             <p>父级分类目录</p>
             <Form.Item>
-              <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} />
+              <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} productTypeData={this.state.treeData} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">添加</Button>
-              <Button onClick={this.resetEvent}>取消</Button>
+              <Button onClick={this.resetEvent}>清空</Button>
             </Form.Item>
           </Form>
         </div>
