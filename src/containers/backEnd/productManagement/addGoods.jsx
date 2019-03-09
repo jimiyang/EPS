@@ -27,7 +27,8 @@ class Add extends Component {
         goods_category_id: '',
         goods_pic: require('../../../assets/backEnd/autoImg.jpg')//默认图片
       },
-      redirect: false
+      redirect: false,
+      maxLength: 10
     };
   }
   componentWillMount() {
@@ -229,7 +230,7 @@ class Add extends Component {
                   {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
                 ]
               }
-            )(<Input placeholder="请输入商品成本价" maxLength="10" />)
+            )(<Input placeholder="请输入商品成本价" maxLength={this.state.maxLength} />)
             }
           </Form.Item>
           <Form.Item
@@ -244,7 +245,7 @@ class Add extends Component {
                   {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
                 ]
               }
-            )(<Input placeholder="请输入商品售价" maxLength="10" />)
+            )(<Input placeholder="请输入商品售价" maxLength={this.state.maxLength} />)
             }
           </Form.Item>
           <Form.Item
