@@ -86,6 +86,10 @@ class Add extends Component {
           message.error('请上传商品图片');
           return false;
         }
+        if (this.state.form.goods_details === '') {
+          message.error('请填写商品内容');
+          return false;
+        }
         if (!this.props.location.query) {
           window.api('goods.addgoods', form).then((rs) => {
             message.success(rs.service_error_message);
