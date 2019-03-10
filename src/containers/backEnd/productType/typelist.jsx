@@ -107,7 +107,6 @@ class ProductType extends Component {
     this.setState({
       formParams
     });
-    console.log(e.target.value);
   }
   selParentEvent = (value) => {
     this.setState({

@@ -51,7 +51,6 @@ export default (params, key) => {
     }
     let _params = parseParam(sortObj(params))
     const sign = md5(_params + key)
-    //console.log(`sign:::${_params}`);
     const MD5 = sign.toLowerCase()
     return {sign:MD5}
 }

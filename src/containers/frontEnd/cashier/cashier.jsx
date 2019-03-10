@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Modal, message} from 'antd';
-import bg from '../../../assets//bg.jpg';
 import './cashier.less';
 
 class Cashier extends Component {
@@ -116,7 +115,6 @@ class Cashier extends Component {
                   <li onClick={this.changeWay.bind(this, index)} key={index}>
                     <div>
                       <span className={this.state.index === index ? 'isChecked' : 'notChecked'} />
-                      <img src={bg} />
                       <p className="name">{item}</p>
                     </div>
                     <p className="remainder">账户余额: ￥{payInfo.available_balance}</p>

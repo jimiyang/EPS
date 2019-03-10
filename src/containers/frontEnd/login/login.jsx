@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {message, Input, Icon} from 'antd';
+import {message, Input, Icon, Button} from 'antd';
 import './login.less';
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: 'jrpt', // dlsy_test128 ptdls1 jrpt
+      userName: 'xuqiandls', // dlsy_test128 ptdls1 jrpt
       userPwd: '111qqq',
       authCode: '',
       txtCode: ''
@@ -50,7 +50,6 @@ class Login extends Component {
       login_pwd: this.state.userPwd
     };
     window.api('eps.login', params).then(res => {
-      console.log(res);
       const obj = {
         login_name: _this.state.userName,
         partner_id: res.partner_id,
@@ -99,30 +98,42 @@ class Login extends Component {
           <li>
             <Input
               placeholder="请输入用户名"
-              prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}} />}
+              size="large"
+              prefix={
+                <Icon type="user" />
+              }
               onChange={this.onChangeUserName}
               value={this.state.userName}
             />
           </li>
           <li>
-            <Input.Password placeholder="请输入密码" value={this.state.userPwd} />
+            <Input.Password
+              placeholder="请输入密码"
+              size="large"
+              prefix={
+                <Icon type="lock" />
+              }
+              value={this.state.userPwd}
+            />
           </li>
-          <li className="flex-blocks">
+          <li>
             <Input
               placeholder="请输入验证码"
+              size="large"
               onChange={this.onChangeAuthName}
-              className="auth-code"
               value={this.state.txtCode}
+              addonAfter={this.state.authCode}
             />
-            <span onClick={this.authCodeEvent.bind(this)} >{this.state.authCode}</span>
           </li>
           <li className="btn-submit">
-            <input
-              type="button"
-              className="blue-btn"
-              value="登录"
+            <Button
+              type="primary"
+              size="large"
               onClick={this.loginInEvent.bind(this)}
-            />
+              block
+            >
+              登录
+            </Button>
           </li>
         </ul>
       </div>

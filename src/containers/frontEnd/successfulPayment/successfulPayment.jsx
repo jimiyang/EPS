@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Steps} from 'antd';
-import bg from '../../../assets/bg.jpg';
 import './successfulPayment.less';
 
 const Step = Steps.Step;
@@ -44,7 +43,6 @@ class SearchDetail extends Component {
         <section>
           <div className="info">
             <div className="success">
-              <img src={bg} />
               <p>您已成功付款 <span>{detail.real_amt}</span> 元</p>
             </div>
             <div className="address">

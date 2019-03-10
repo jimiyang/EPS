@@ -2,13 +2,22 @@ const path = require('path');
 
 module.exports = {
   dev: {
-    host: '192.168.4.95',
-    port: 8081,
+    host: 'localhost',
+    port: 8080,
     // host: 'localhost',
     // port: 8080,
-    proxyTable: {},
-    useEslint: false,
-    autoOpenBrowser: false,
+    proxyTable: {
+      '/eps': {
+        target: 'http://inteps.51ebill.com',
+        changeOrigin: true,
+        secure: false,
+        pathRewrite: {
+          '^/eps': '/eps'
+        }
+      }
+    },
+    useEslint: true,
+    autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,
     showEslintErrorsInOverlay: true,

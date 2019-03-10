@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Tabs, Input, message, Modal} from 'antd';
+import {Tabs, Input, message, Modal, Empty} from 'antd';
 import './orderList.less';
 
 const TabPane = Tabs.TabPane;
@@ -255,7 +255,9 @@ class OrderList extends Component {
             loadMore ? <button onClick={this.getOrderList.bind(this, 'next', status, null)}>{loadText}</button> : <button>{loadText}</button>
           }
         </section>
-        <section className="default" hidden={list.length > 0}>查询不到订单</section>
+        <section className="default" hidden={list.length > 0}>
+          <Empty />
+        </section>
         <div>
           <Modal
             visible={visible}

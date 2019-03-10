@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Pagination, Icon} from 'antd';
+import {Pagination, Icon, Empty} from 'antd';
 import './searchDetail.less';
 import {changeSearchDetail} from '../../../store/reduces/frontEnd';
 
@@ -117,7 +117,7 @@ class SearchDetail extends Component {
                   </li>
                 ))
               }
-            </ul>) : <div className="default"><Icon type="inbox" /><span>查询不到相关产品</span></div>
+            </ul>) : <div className="default"><Empty /></div>
           }
         </section>
         <section className="pagination" hidden={list.length === 0}>

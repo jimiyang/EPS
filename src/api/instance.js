@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://192.168.19.118:8000/eps/base/',
+  //baseURL: 'http://inteps.liantuobank.com/eps/base/',
   timeout: 1000,
-  withCredentials: true,
+  withCredentials: true
 });
 instance.interceptors.response.use(
   res => {
@@ -17,7 +17,6 @@ instance.interceptors.response.use(
     return promise;
   },
   err => {
-    console.log(err);
     //const {data: {err: errnum, error}} = (err || {}).response;
     /*if (errnum === 200 && error) {
       message.success(error);

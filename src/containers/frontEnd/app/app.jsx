@@ -13,9 +13,10 @@ import orderList from '../orderList/orderList';
 import orderDetail from '../orderDetail/orderDetail';
 import './app.less';
 import {changeSearchDetail} from '../../../store/reduces/frontEnd';
+import NotFound from '../../404';
 
 function IsLogin(props) {
-  return props.loginstate ? <div className="header-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
+  return props.loginstate ? <div className="headers-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
 }
 @connect(
   (state) => (state),
@@ -36,13 +37,15 @@ export default class App extends Component {
 
   componentWillMount() {
     if (window.localStorage) {
-      const list = window.localStorage.getItem('dataSource');
-      const dataSource = list !== null ? JSON.parse(list) : [];
-      this.setState({dataSource});
-    } else {
-      alert('浏览器不支持localStorage');
+      if (!window.localStorage.getItem('PKEY')) {
+        this.props.history.push('/login');
+      } else {
+        const list = window.localStorage.getItem('dataSource');
+        const dataSource = list !== null ? JSON.parse(list) : [];
+        this.setState({dataSource});
+        this.getCategoryList();
+      }
     }
-    this.getCategoryList();
   }
 
   componentWillReceiveProps(props) {
@@ -141,24 +144,27 @@ export default class App extends Component {
     );
     return (
       <div className="page">
-        <div className="header-bar">
+        <div className="headers-bar">
           <div className="container">
-            <div className="header-bar-nav">
+            <div className="headers-bar-nav">
               <div onClick={this.toHome}>首页</div>
               <div>其他入口</div>
               <div>其他链接</div>
               <div>MS系统</div>
             </div>
-            <div className="header-tool">
-              <IsLogin loginstate={loginstate} />  <div className="header-order" onClick={this.toMyOrder}><Icon type="file-text" />我的订单</div>
+            <div className="headers-tool">
+              <IsLogin loginstate={loginstate} />  <div className="headers-order" onClick={this.toMyOrder}><Icon type="file-text" />我的订单</div>
             </div>
           </div>
         </div>
-        <header className="header">
-          <div className="container header-container">
-            <h1 className="header-logo"><Icon type="code-sandbox" />联拓富商城 </h1>
-            <div className="header-cont">
-              <div className="header-menu">
+        <header className="headers">
+          <div className="container headers-container">
+            <h1
+              className="headers-logo"
+              onClick={this.toHome}
+            ><Icon type="code-sandbox" />联拓富商城 </h1>
+            <div className="headers-cont">
+              <div className="headers-menu">
                 <Dropdown overlay={menu} trigger={['click']}>
                   <a className="ant-dropdown-link" href="#">
                     {typeName} <Icon type="down" />
@@ -180,16 +186,7 @@ export default class App extends Component {
             </div>
           </div>
         </header>
-        <section className="container">
-          <Route exact path="/" component={goods} />
-          <Route path="/searchDetail" component={searchDetail} />
-          <Route path="/goodsDetail" component={goodsDetail} />
-          <Route path="/generateOrder" component={generateOrder} />
-          <Route path="/cashier" component={cashier} />
-          <Route path="/successfulPayment" component={successfulPayment} />
-          <Route path="/orderList" component={orderList} />
-          <Route path="/orderDetail" component={orderDetail} />
-        </section>
+        <section className="container">{this.props.children}</section>
         <div className="footer">
           ©2019 lianfutong.com
         </div>
