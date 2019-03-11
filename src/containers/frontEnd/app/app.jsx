@@ -3,17 +3,8 @@ import {Route} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {message, AutoComplete, Icon, Input, Button, Menu, Dropdown, Modal} from 'antd';
 // 路由
-import goods from '../goods/goods';
-import searchDetail from '../searchDetail/searchDetail';
-import goodsDetail from '../goodsDetail/goodsDetail';
-import generateOrder from '../generateOrder/generateOrder';
-import cashier from '../cashier/cashier';
-import successfulPayment from '../successfulPayment/successfulPayment';
-import orderList from '../orderList/orderList';
-import orderDetail from '../orderDetail/orderDetail';
 import './app.less';
 import {changeSearchDetail} from '../../../store/reduces/frontEnd';
-import NotFound from '../../404';
 
 function IsLogin(props) {
   return props.loginstate ? <div className="headers-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
@@ -198,11 +189,11 @@ export default class App extends Component {
             </div>
           </div>
         </div>
-        <header className="header">
-          <div className="container header-container">
-            <h1 className="header-logo" onClick={this.toHome}><Icon type="code-sandbox" />联拓富商城 </h1>
-            <div className="header-cont">
-              <div className="header-menu">
+        <header className="headers">
+          <div className="container headers-container">
+            <h1 className="headers-logo" onClick={this.toHome}><Icon type="code-sandbox" />联拓富商城 </h1>
+            <div className="headers-cont">
+              <div className="headers-menu">
                 <Dropdown overlay={menu} trigger={['click']}>
                   <a className="ant-dropdown-link" href="#">
                     {typeName} <Icon type="down" />
