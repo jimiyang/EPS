@@ -224,7 +224,6 @@ class DeliveryList extends Component {
     if (Object.keys(params).length === 0) {
       Object.assign(params, this.state.search);
     }
-    //console.log(params);
     this.loadList(params);
   }
   //上一页

@@ -6,7 +6,6 @@ import './app.less';
 import {changeSearchDetail} from '../../../store/reduces/frontEnd';
 
 function IsLogin(props) {
-  console.log(props);
   return props.fullName ? <div className="headers-user"><p>{props.fullName}</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
 }
 @connect(
@@ -37,7 +36,6 @@ export default class App extends Component {
         const list = window.localStorage.getItem('dataSource');
         const dataSource = list !== null ? JSON.parse(list) : [];
         const fullName = window.localStorage.getItem('fullName');
-        console.log(fullName);
         this.setState({dataSource, fullName});
         this.getCategoryList();
       }
