@@ -36,7 +36,7 @@ module.exports = {
     assetsPublicPath: '/',
     productionSourceMap: true,
     devtool: '#source-map',
-    productionGzip: false,
+    productionGzip: true,
     productionGzipExtensions: ['js', 'css'],
   }
 };
