@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {Route} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {message, AutoComplete, Icon, Input, Button, Menu, Dropdown, Modal} from 'antd';
 // 路由
@@ -61,6 +60,7 @@ export default class App extends Component {
       superior_id: 0,
     };
     window.api('goods.getcategorylist', params).then((res) => {
+      console.log(res);
       const goodsType = res.goods_category_list;
       this.setState({goodsType});
       window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
@@ -126,6 +126,7 @@ export default class App extends Component {
         confirmLoading: false,
         ModalText: '是否登出当前账户？',
       });
+      window.localStorage.clear();
       this.props.history.push('/login');
     }).catch(err => {
       message.error(err);
@@ -158,7 +159,7 @@ export default class App extends Component {
 
   render() {
     const {
-      dataSource, loginstate, typeName, searchContent, visible, confirmLoading, ModalText
+      dataSource, loginstate, typeName, searchContent, visible, confirmLoading, ModalText, goodsType
     } = this.state;
     const menu = (
       <Menu>
@@ -193,13 +194,18 @@ export default class App extends Component {
           <div className="container headers-container">
             <h1 className="headers-logo" onClick={this.toHome}><Icon type="code-sandbox" />联拓富商城 </h1>
             <div className="headers-cont">
-              <div className="headers-menu">
-                <Dropdown overlay={menu} trigger={['click']}>
+              <ul className="headers-menu">
+                {/* <Dropdown overlay={menu} trigger={['click']}>
                   <a className="ant-dropdown-link" href="#">
                     {typeName} <Icon type="down" />
                   </a>
-                </Dropdown>
-              </div>
+                </Dropdown> */}
+                {
+                  goodsType.map((item, index) => (
+                    <li>{item.mame}</li>
+                  ))
+                }
+              </ul>
               <div className="search" style={{width: 300}}>
                 <AutoComplete
                   dataSource={dataSource}
