@@ -57,7 +57,7 @@ class SearchDetail extends Component {
       current_page: pageNumber,
       status: 0,
     };
-    id !== null ? params.goods_category_id = id : null;
+    id > 0 ? params.goods_category_id = id : null;
     sortWay ? params.sort_way = sortWay : null;
     searchContent ? params.goods_name = searchContent : null;
     window.api('goods.getgoodslist', params).then(res => {

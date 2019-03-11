@@ -294,7 +294,7 @@ class DeliveryList extends Component {
           <li className="items"><label>结束日期：</label>
             <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={this.entTimeEvent} />
           </li>
-          <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
+          <li className="items"><Button type="primary" size="large" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
         <div className="order-blocks">
           <div className={`no-data ${this.state.isHide === false ? 'hide' : null}`}>

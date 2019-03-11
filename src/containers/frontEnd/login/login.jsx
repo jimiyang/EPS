@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import {message, Input, Icon, Button} from 'antd';
 import './login.less';
+import aes from '../../../api/aes/public';
+import common from '../../../utils/common.js';
+
 
 class Login extends Component {
   constructor(props) {
@@ -15,6 +18,7 @@ class Login extends Component {
 
   //组件刚经历constructor,初始完数据,未渲染,dom还未渲染
   componentWillMount() {
+    //this.getKey();
     this.setState({
       authCode: window.common.createCode()
     });
@@ -29,6 +33,20 @@ class Login extends Component {
   //组件销毁
   componentWillUnmount() {
     document.removeEventListener('keydown', this.onKeyDown);
+  }
+
+  getKey() {
+    const query = this.props.location.search;
+    if (query) {
+      const key = common.getQueryString(query).key;
+      console.log(key);
+      const obj = JSON.parse(aes.Decrypt(key));
+      console.log(obj);
+      // window.localStorage.setItem('fullName', fullName);
+      // window.localStorage.setItem('headParams', JSON.stringify(obj));
+      // window.localStorage.setItem('checkLogin', '100');
+      // window.localStorage.setItem('PKEY', res.partner_key);
+    }
   }
 
   // 登录
