@@ -50,6 +50,7 @@ const Root = () => (
             <Route exact path="/main/typelist" component={TypeList} />
             <Route exact path="/main/addGoods" component={addGoods} />
             <Redirect to="/main/list" />
+            <Route path="*" component={NotFound} />
           </Router>
           <Router path="/" component={App} >
             <Route exact path="/goods" component={goods} />
@@ -61,8 +62,8 @@ const Root = () => (
             <Route exact path="/orderList" component={orderList} />
             <Route exact path="/orderDetail" component={orderDetail} />
             <Redirect to="/goods" />
+            <Route path="*" component={NotFound} />
           </Router>
-          <Route path="*" component={NotFound} />
         </Switch>
       </Provider>
     </BrowserRouter>
