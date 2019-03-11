@@ -60,7 +60,6 @@ export default class App extends Component {
       superior_id: 0,
     };
     window.api('goods.getcategorylist', params).then((res) => {
-      console.log(res);
       const goodsType = res.goods_category_list;
       this.setState({goodsType});
       window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
