@@ -46,9 +46,9 @@ class Main extends Component {
         <Layout>
           <Sider>
             <Menu mode="inline" style={{height: '100%', borderRight: 0}}>
-              <Menu.Item key="1"><Icon type="appstore" /><span><Link to="/main/list">商品管理</Link></span></Menu.Item>
-              <Menu.Item key="2"><Icon type="folder" /><span><Link to="/main/deliverylist">发货订单管理</Link></span></Menu.Item>
-              <Menu.Item key="3"><Icon type="project" /><span><Link to="/main/typelist">商品类型管理</Link></span></Menu.Item>
+              <Menu.Item key="1"><Link to="/main/list"><Icon type="appstore" />商品管理</Link></Menu.Item>
+              <Menu.Item key="2"><Link to="/main/deliverylist"><Icon type="folder" />发货订单管理</Link></Menu.Item>
+              <Menu.Item key="3"><Link to="/main/typelist"><Icon type="project" />商品类型管理</Link></Menu.Item>
             </Menu>
           </Sider>
           <Content className="main-content">
