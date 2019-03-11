@@ -6,16 +6,7 @@ module.exports = {
     port: 8080,
     // host: 'localhost',
     // port: 8080,
-    proxyTable: {
-      '/eps': {
-        target: 'http://inteps.51ebill.com',
-        changeOrigin: true,
-        secure: false,
-        pathRewrite: {
-          '^/eps': '/eps'
-        }
-      }
-    },
+    proxyTable: {},
     useEslint: true,
     autoOpenBrowser: true,
     errorOverlay: true,
