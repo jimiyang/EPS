@@ -93,7 +93,7 @@ class OrderList extends Component {
       params.next = list[list.length - 1].order_no;
     }
     window.api('order.orderList', params).then(res => {
-      console.log(res);
+      //console.log(res);
       if (res.orders < 10) {
         this.setState({loadMore: false, loadText: '已加在全部订单'});
       }

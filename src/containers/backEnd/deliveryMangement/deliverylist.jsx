@@ -54,7 +54,7 @@ class DeliveryList extends Component {
     let firstOrdernum = '';
     let lastOrdernum = '';
     window.api('order.orderList', params).then(rs => {
-      console.log(rs);
+      //console.log(rs);
       if (rs.orders.length > 0) {
         lastOrdernum = rs.orders[rs.orders.length - 1].order_no;
         firstOrdernum = rs.orders[0].order_no;
@@ -208,7 +208,7 @@ class DeliveryList extends Component {
     if (Object.keys(params).length === 0) {
       Object.assign(params, this.state.search);
     }
-    console.log(params);
+    //console.log(params);
     this.loadList(params);
   }
   //上一页
