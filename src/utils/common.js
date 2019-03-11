@@ -36,6 +36,18 @@ const utils = {
       msg.error('请上传小于2MB的图片!');
     }
     return isJPG && isLt2M;
-  }
+  },
+  getQueryString(url) {
+    const str = url.split('?');
+    const arr = str[1].split('&');
+    const obj = {};
+    for (let i = 0; i < arr.length; i++) {
+      const num = arr[i].indexOf('=');
+      if (num > 0) {
+        obj[arr[i].substring(0, num)] = arr[i].substr(num + 1);
+      }
+    }
+    return obj;
+  },
 };
 export default utils;

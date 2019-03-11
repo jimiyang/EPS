@@ -184,7 +184,7 @@ export default class App extends Component {
               <ul className="headers-menu">
                 {
                   goodsType.map((item, index) => (
-                    <li className={typeName === item.goods_category_name ? 'isChecked' : null} key={index} onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name, null)}>{item.goods_category_name}</li>
+                    <li className={typeName === item.goods_category_name ? 'isChecked' : null} key={index} onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name, '')}>{item.goods_category_name}</li>
                   ))
                 }
               </ul>
@@ -197,7 +197,7 @@ export default class App extends Component {
                   onChange={this.getSearchContent}
                   placeholder="搜索商品"
                   style={{width: '100%'}}
-                ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail.bind(this, null, '全部', searchContent)}><Icon type="search" /></Button>)} />
+                ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail.bind(this, '', '全部', searchContent)}><Icon type="search" /></Button>)} />
                 </AutoComplete>
               </div>
             </div>
