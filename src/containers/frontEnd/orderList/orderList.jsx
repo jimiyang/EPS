@@ -90,8 +90,9 @@ class OrderList extends Component {
       params.next = list[list.length - 1].order_no;
     }
     window.api('order.orderList', params).then(res => {
-      if (res.orders.length < 10) {
-        this.setState({loadMore: false, loadText: '已加载全部订单'});
+      //console.log(res);
+      if (res.orders < 10) {
+        this.setState({loadMore: false, loadText: '已加在全部订单'});
       }
       if (type === 'change' || type === 'search' || !type) {
         list = res.orders;

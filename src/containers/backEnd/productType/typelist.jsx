@@ -56,8 +56,8 @@ class ProductType extends Component {
   loadList = () => {
     window.api('goods.getcategorylist', this.state.search).then((rs) => {
       const productTypeData = rs.goods_category_list;
+      const arr = [];
       if (productTypeData.length > 0) {
-        const arr = [];
         productTypeData.map(item => {
           if (item.superior_id === 0) {
             arr.push({
@@ -69,10 +69,12 @@ class ProductType extends Component {
           }
         });
         this.setState({
-          productTypeData: arr,
           treeData: productTypeData
         });
       }
+      this.setState({
+        productTypeData: arr
+      });
     }).catch(error => {
       message.error(error);
       if (error === '用户信息失效，请重新登录') {
