@@ -12,7 +12,6 @@ export default class Goods extends Component {
 
   componentWillMount() {
     this.getHomepage();
-    // this.getCategoryList();
   }
 
   // 首页信息

@@ -93,12 +93,21 @@ class DeliveryList extends Component {
       orderNumber: value
     });
   }
-  sendDeliveryEvent = (number, id, isPost, index) => {
+  sendDeliveryEvent = (number, id, isPost, index, detail) => {
     //const index = (this.state.index === idx) ? '-1' : idx;
-    if (isPost === 0) {
-      message.error('此订单为软件产品');
+    const list = this.state.orderListData;
+    if (isPost === 1) {
+      message.success('发货成功！');
       this.setState({
         text: '已发货'
+      });
+      const params = {
+        order_no: detail.order_no,
+        ids: detail.id
+      };
+      window.api('order.send', params).then((rs) => {
+        list[index].status = 2;
+        this.setState({orderListData: list});
       });
       return false;
     }
@@ -201,12 +210,21 @@ class DeliveryList extends Component {
     if (this.state.startTime !== '') {
       Object.assign(params, this.state.search, {start_time: this.state.startTime});
     }
-    if (this.state.endTime !== '') {
+    if (this.state.endTime !== '' && this.state.startTime !== '') {
+      const startTime = (new Date(this.state.startTime)).getTime();
+      const endTime = (new Date(this.state.endTime)).getTime();
+      if (startTime > endTime) {
+        message.error('开始时间必须早于结束时间');
+        return;
+      }
       Object.assign(params, this.state.search, {end_time: this.state.endTime});
+    } else if (this.state.endTime !== '' && this.state.startTime === '') {
+      message.error('请选择开始时间');
     }
     if (Object.keys(params).length === 0) {
       Object.assign(params, this.state.search);
     }
+    //console.log(params);
     this.loadList(params);
   }
   //上一页
@@ -272,10 +290,10 @@ class DeliveryList extends Component {
             <Input onChange={this.orderNumEvent} />
           </li>
           <li className="items"><label>开始日期：</label>
-            <DatePicker onChange={this.startTimeEvent} />
+            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={this.startTimeEvent} />
           </li>
           <li className="items"><label>结束日期：</label>
-            <DatePicker onChange={this.entTimeEvent} />
+            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={this.entTimeEvent} />
           </li>
           <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
@@ -311,7 +329,7 @@ class DeliveryList extends Component {
                           </div>
                           <div className="button-items">
                             <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
-                            <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id, detail.is_post)}>{this.state.text}</Button>
+                            <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id, detail.is_post, index, detail)}>{this.state.text}</Button>
                           </div>
                         </div>
                         <div className="items-1">
