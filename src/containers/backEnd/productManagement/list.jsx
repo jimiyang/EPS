@@ -244,7 +244,7 @@ class ProductList extends Component {
           <li className="items"><label>商品类型：</label>
             <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.goods_category_id} />
           </li>
-          <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
+          <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)} size="large">搜索</Button></li>
         </ul>
         <Table
           columns={columns}

@@ -32,6 +32,7 @@ class Main extends Component {
         this.props.history.push({pathname: '/login'});
       }
     });
+    window.localStorage.clear();
   }
   render() {
     return (
