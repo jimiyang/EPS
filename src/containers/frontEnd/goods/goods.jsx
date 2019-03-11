@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Empty} from 'antd';
 import './goods.less';
 
 export default class Goods extends Component {
@@ -43,23 +44,24 @@ export default class Goods extends Component {
     return (
       <div className="sku">
         {
-          part.map((item, index) => (
-            <section className="sku-block" key={index} hidden={partList[index].length === 0}>
-              <h3 style={{cursor: 'pointer'}} className="sku-cat-title" onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name)}>{item.goods_category_name}</h3>
-              <ul className="sku-list">
-                {
-                  partList[index].map(($0, $1) => (
-                    <li key={$1} onClick={this.toDetail.bind(this, $0.id)}>
-                      <img src={$0.goods_picture} />
-                      <div className="sku-cont">
-                        <h2>{$0.goods_name}</h2>
-                        <p className="price">{($0.sale_price).toFixed(2)}</p>
-                      </div>
-                    </li>))
-                }
-              </ul>
-            </section>
-          ))
+          partList.length > 0 ? (
+            part.map((item, index) => (
+              <section className="sku-block" key={index} hidden={partList[index].length === 0}>
+                <h3 style={{cursor: 'pointer'}} className="sku-cat-title" onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name)}>{item.goods_category_name}</h3>
+                <ul className="sku-list">
+                  {
+                    partList[index].map(($0, $1) => (
+                      <li key={$1} onClick={this.toDetail.bind(this, $0.id)}>
+                        <img src={$0.goods_picture} />
+                        <div className="sku-cont">
+                          <h2>{$0.goods_name}</h2>
+                          <p className="price">{($0.sale_price).toFixed(2)}</p>
+                        </div>
+                      </li>))
+                  }
+                </ul>
+              </section>
+            ))) : (<div><Empty /></div>)
         }
       </div>
     );
