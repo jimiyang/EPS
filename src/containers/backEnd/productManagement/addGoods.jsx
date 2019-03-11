@@ -286,7 +286,7 @@ class Add extends Component {
             </div>
             <div>
               <ReactQuill
-                placeholder="请输入商品描述详情。。。。。。"
+                placeholder="请输入商品描述详情"
                 theme="snow"
                 style={{width: 700, height: 300}}
                 value={this.state.form.goods_details}
