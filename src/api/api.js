@@ -28,7 +28,7 @@ function baseInstance(service, params) {
     body: params
   };
   return (
-    axios.post('/eps/base/gateway.in', form).then((response) => response)
+    axios.post('gateway.in', form).then((response) => response)
   );
 }
 export default {baseInstance};
