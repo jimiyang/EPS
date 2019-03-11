@@ -46,7 +46,7 @@ class TypeEdit extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const form = Object.assign(this.state.form, values);
-        console.log(form);
+        //console.log(form);
         window.api('goods.modcategory', form).then((rs) => {
           message.success(rs.service_error_message);
           //this.props.onSelectRefresh();
