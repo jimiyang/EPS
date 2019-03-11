@@ -35,7 +35,6 @@ class OrderList extends Component {
   state = {
     tabs: ['全部订单', '等待付款', '等待收货'],
     list: [],
-    detail: {}, // 当前选中的订单的详情
     status: 0, //0：全部订单，1：等待付款，2：等待发货，3：等待收货，4：已完成，5：已取消（默认0）
     loadMore: true, // 是否能加载更多
     loadText: '加载更多',
@@ -90,9 +89,8 @@ class OrderList extends Component {
       params.next = list[list.length - 1].order_no;
     }
     window.api('order.orderList', params).then(res => {
-      //console.log(res);
-      if (res.orders < 10) {
-        this.setState({loadMore: false, loadText: '已加在全部订单'});
+      if (res.orders.length < 10) {
+        this.setState({loadMore: false, loadText: '已加载全部订单'});
       }
       if (type === 'change' || type === 'search' || !type) {
         list = res.orders;
@@ -180,7 +178,7 @@ class OrderList extends Component {
 
   render() {
     const {
-      detail, tabs, list, loadMore, loadText, status, visible, confirmLoading, ModalText, cancelOrderNo, cancelIndex
+      tabs, list, loadMore, loadText, status, visible, confirmLoading, ModalText
     } = this.state;
     return (
       <div id="orderList">
