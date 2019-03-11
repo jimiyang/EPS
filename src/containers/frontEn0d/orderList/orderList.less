@@ -1,0 +1,125 @@
+#orderList {
+  .top {
+    position: relative;
+    .searchInput {
+      position: absolute;
+      right: 0;
+      top: 5px;
+    }
+    .searchInput {
+      width: 300px;
+    }
+    .status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #e4e4e4;
+      line-height: 40px;
+      li {
+        text-align: center;
+      }
+    }
+    .order {
+      li {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: #fff;
+        margin-bottom: 20px;
+        &>div{
+          font-size:13px;
+        }
+      }
+      .name {
+        background: #e4e4e4;
+        line-height: 40px;
+        padding-left: 15px;
+        display: flex;
+        p {
+          color: #b1b1b1;
+          margin-right: 100px;
+        }
+      }
+      .title {
+        padding: 13px 20px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom:1px solid #eee;
+        align-items: center;
+        line-height: 30px;
+        position: relative;
+        cursor: pointer;
+        .isChecked {
+          background: red;
+          border-radius: 50%;
+          width: 15px;
+          height: 15px;
+          position: absolute;
+          left: 20px;
+        }
+      }
+      .content {
+        padding: 50px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        p {
+          text-align: center;
+        }
+        .info {
+          display: flex;
+          justify-content: flex-start;
+          align-items:center;
+          p {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size:14px;
+          }
+        }
+        img {
+          width: 60px;
+          height: 60px;
+          margin: 0 15px 0 30px
+        }
+        .operation {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          width: 120px;
+          button {
+            width: 70px;
+            height: 30px;
+            margin: 10px 25px;
+            background: #009dd2;
+            color: #fff;
+            border-radius: 5px;
+            border: 0;
+          }
+          p {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+  .default {
+    width: 100%;
+    line-height: 500px;
+    text-align: center;
+    font-size: 28px;
+  }
+  .pagination {
+    margin-top:30px;
+    button {
+      width: 100%;
+      background: #009dd2;
+      color: #fff;
+      height: 50px;
+      border: 0;
+      cursor: pointer;
+    }
+  }
+}

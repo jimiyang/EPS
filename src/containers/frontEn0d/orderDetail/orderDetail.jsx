@@ -75,29 +75,23 @@ class OrderDetail extends Component {
           step = 5;
       }
       const detail = res.orders[0].order_details[0];
-      if (status === 0) {
-        const create = (new Date(detail.gmt_created)).getTime();
-        const deadline = create + 24 * 60 * 60 * 1000;
-        const timer = setInterval(() => {
-          const alltime = deadline - (new Date()).getTime();
-          const hours = parseInt(alltime / (60 * 60 * 1000), 10);
-          const time1 = alltime - hours * 60 * 60 * 1000;
-          const minutes = parseInt(time1 / (1000 * 60), 10);
-          const time2 = time1 - minutes * 60 * 1000;
-          const seconds = parseInt(time2 / 1000, 10);
-          const time = `${hours < 10 ? `0${hours}` : hours}时${minutes < 10 ? `0${minutes}` : minutes}分${seconds < 10 ? `0${seconds}` : seconds}秒`;
-          if (time === '00时00分00秒') {
-            res.orders[0].status = 4;
-          } else {
-            this.setState({time, timer});
-          }
-        }, 1000);
-      }
+      const create = (new Date(detail.gmt_created)).getTime();
+      const deadline = create + 24 * 60 * 60 * 1000;
+      const timer = setInterval(() => {
+        const alltime = deadline - (new Date()).getTime();
+        const hours = parseInt(alltime / (60 * 60 * 1000), 10);
+        const time1 = alltime - hours * 60 * 60 * 1000;
+        const minutes = parseInt(time1 / (1000 * 60), 10);
+        const time2 = time1 - minutes * 60 * 1000;
+        const seconds = parseInt(time2 / 1000, 10);
+        const time = `${hours < 10 ? `0${hours}` : hours}时${minutes < 10 ? `0${minutes}` : minutes}分${seconds < 10 ? `0${seconds}` : seconds}秒`;
+        this.setState({time});
+      }, 1000);
       detail.total_amt = (detail.total_amt).toFixed(2);
       detail.real_amt = (detail.real_amt).toFixed(2);
       detail.goods_sale_price = (detail.goods_sale_price).toFixed(2);
       this.setState({
-        order: res.orders[0], step, goods: detail
+        order: res.orders[0], step, goods: detail, timer
       });
     });
   }

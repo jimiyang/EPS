@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {message, AutoComplete, Icon, Input, Button, Menu, Dropdown, Modal} from 'antd';
+import {message, AutoComplete, Icon, Input, Button, Menu, Dropdown} from 'antd';
 // 路由
 import goods from '../goods/goods';
 import searchDetail from '../searchDetail/searchDetail';
@@ -32,9 +32,6 @@ export default class App extends Component {
       dataSource: [], // 搜索列表
       goodsType: [], // 商品类型列表
       typeName: '请选择分类', // 选择分类名称
-      ModalText: '是否登出当前账户？',
-      visible: false,
-      confirmLoading: false,
     };
   }
 
@@ -120,44 +117,7 @@ export default class App extends Component {
 
   // 登出
   logout = () => {
-    this.setState({
-      ModalText: '登出中,请稍后...',
-      confirmLoading: true,
-    });
-    const loginName = JSON.parse(window.localStorage.getItem('headParams')).login_name;
-    const params = {
-      login_name: loginName
-    };
-    window.api('eps.logout', params).then(res => {
-      message.success('已登出');
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '是否登出当前账户？',
-      });
-      this.props.history.push('/login');
-    }).catch(err => {
-      message.error(err);
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '是否登出当前账户？',
-      });
-    });
-  }
-
-  // 打开登出窗口
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  }
-
-  // 关闭登出窗口
-  handleCancel = () => {
-    this.setState({
-      visible: false,
-    });
+    this.setState({loginstate: !this.state.loginstate});
   }
 
   // 获取搜索框内容
@@ -167,7 +127,7 @@ export default class App extends Component {
 
   render() {
     const {
-      dataSource, loginstate, typeName, searchContent, visible, confirmLoading, ModalText
+      dataSource, loginstate, typeName, searchContent
     } = this.state;
     const menu = (
       <Menu>
@@ -191,7 +151,6 @@ export default class App extends Component {
               <div>其他入口</div>
               <div>其他链接</div>
               <div>MS系统</div>
-              <div onClick={this.showModal}>登出</div>
             </div>
             <div className="headers-tool">
               <IsLogin loginstate={loginstate} />  <div className="headers-order" onClick={this.toMyOrder}><Icon type="file-text" />我的订单</div>
@@ -200,7 +159,10 @@ export default class App extends Component {
         </div>
         <header className="headers">
           <div className="container headers-container">
-            <h1 className="headers-logo" onClick={this.toHome}><Icon type="code-sandbox" />联拓富商城 </h1>
+            <h1
+              className="headers-logo"
+              onClick={this.toHome}
+            ><Icon type="code-sandbox" />联拓富商城 </h1>
             <div className="headers-cont">
               <div className="headers-menu">
                 <Dropdown overlay={menu} trigger={['click']}>
@@ -227,16 +189,6 @@ export default class App extends Component {
         <section className="container">{this.props.children}</section>
         <div className="footer">
           ©2019 lianfutong.com
-        </div>
-        <div>
-          <Modal
-            visible={visible}
-            onOk={this.logout}
-            confirmLoading={confirmLoading}
-            onCancel={this.handleCancel}
-          >
-            <p>{ModalText}</p>
-          </Modal>
         </div>
       </div>
     );
