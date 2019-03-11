@@ -74,11 +74,9 @@ class Add extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const form = Object.assign(this.state.form, values);
-        //console.log(values);
         this.setState({
           form
         });
-        //console.log(this.state.form.goods_details);
         if (this.state.form.goods_bar_no === '') {
           message.error('请生成商品条形码');
           return false;
@@ -204,11 +202,11 @@ class Add extends Component {
             }
           </Form.Item>
           <div className="content">
-            <div className="ant-form-item-label">
+            <div className="ant-form-item-label" style={{overflow: 'inherit'}}>
               <label className="ant-form-item-required">商品条形码</label>
             </div>
-            <div className="ant-form-item-control-wrapper">
-              <Input placeholder="请生成商品条形码" disabled={this.state.disabled} value={this.state.form.goods_bar_no} />
+            <div className="ant-form-item-control-wrapper" style={{width: '80%'}}>
+              <Input placeholder="请生成商品条形码" style={{width: '60%'}} disabled={this.state.disabled} value={this.state.form.goods_bar_no} />
               <Button type="primary" onClick={this.getbarno.bind(this)}>生成条形码</Button>
             </div>
           </div>

@@ -6,7 +6,7 @@ import './app.less';
 import {changeSearchDetail} from '../../../store/reduces/frontEnd';
 
 function IsLogin(props) {
-  return props.loginstate ? <div className="headers-user"><img src={require('../../../assets/logo.png')} /><p>刘玲一级代理商</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
+  return props.fullName ? <div className="headers-user"><p>{props.fullName}</p></div> : <div><p className="not">您还未登录，请登录</p></div>;
 }
 @connect(
   (state) => (state),
@@ -16,7 +16,6 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginstate: true, // 0 未登录 1 已登录
       canSearch: false, // 是否能够搜索
       searchContent: '', // 搜索的内容
       dataSource: [], // 搜索列表
@@ -25,6 +24,7 @@ export default class App extends Component {
       ModalText: '是否登出当前账户？',
       visible: false,
       confirmLoading: false,
+      fullName: null, // 用户名
     };
   }
 
@@ -35,7 +35,8 @@ export default class App extends Component {
       } else {
         const list = window.localStorage.getItem('dataSource');
         const dataSource = list !== null ? JSON.parse(list) : [];
-        this.setState({dataSource});
+        const fullName = window.localStorage.getItem('fullName');
+        this.setState({dataSource, fullName});
         this.getCategoryList();
       }
     }
@@ -158,21 +159,8 @@ export default class App extends Component {
 
   render() {
     const {
-      dataSource, loginstate, typeName, searchContent, visible, confirmLoading, ModalText, goodsType
+      dataSource, searchContent, visible, confirmLoading, ModalText, goodsType, typeName, fullName
     } = this.state;
-    const menu = (
-      <Menu>
-        <Menu.Item key="0" onClick={this.toSearchDetail.bind(this, null, '全部', '')}>全部</Menu.Item>
-        <Menu.Divider />
-        {
-          this.state.goodsType.map((item, index) => (
-            <Menu.Item key={index + 1}>
-              <a onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name, '')}>{item.goods_category_name}</a>
-            </Menu.Item>
-          ))
-        }
-      </Menu>
-    );
     return (
       <div className="page">
         <div className="headers-bar">
@@ -185,7 +173,7 @@ export default class App extends Component {
               <div onClick={this.showModal}>登出</div>
             </div>
             <div className="headers-tool">
-              <IsLogin loginstate={loginstate} />  <div className="headers-order" onClick={this.toMyOrder}><Icon type="file-text" />我的订单</div>
+              <IsLogin fullName={fullName} />  <div className="headers-order" onClick={this.toMyOrder}><Icon type="file-text" />我的订单</div>
             </div>
           </div>
         </div>
@@ -194,14 +182,9 @@ export default class App extends Component {
             <h1 className="headers-logo" onClick={this.toHome}><Icon type="code-sandbox" />联拓富商城 </h1>
             <div className="headers-cont">
               <ul className="headers-menu">
-                {/* <Dropdown overlay={menu} trigger={['click']}>
-                  <a className="ant-dropdown-link" href="#">
-                    {typeName} <Icon type="down" />
-                  </a>
-                </Dropdown> */}
                 {
                   goodsType.map((item, index) => (
-                    <li>{item.mame}</li>
+                    <li className={typeName === item.goods_category_name ? 'isChecked' : null} key={index} onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name, null)}>{item.goods_category_name}</li>
                   ))
                 }
               </ul>
