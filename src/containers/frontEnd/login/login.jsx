@@ -54,6 +54,8 @@ class Login extends Component {
         login_name: _this.state.userName,
         partner_id: res.partner_id,
       };
+      const fullName = res.full_name;
+      window.localStorage.setItem('fullName', fullName);
       window.localStorage.setItem('headParams', JSON.stringify(obj));
       window.localStorage.setItem('checkLogin', '100');
       window.localStorage.setItem('PKEY', res.partner_key);

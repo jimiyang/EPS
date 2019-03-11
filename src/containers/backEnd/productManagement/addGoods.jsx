@@ -74,11 +74,9 @@ class Add extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const form = Object.assign(this.state.form, values);
-        //console.log(values);
         this.setState({
           form
         });
-        //console.log(this.state.form.goods_details);
         if (this.state.form.goods_bar_no === '') {
           message.error('请生成商品条形码');
           return false;
