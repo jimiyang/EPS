@@ -116,6 +116,7 @@ class OrderList extends Component {
   pay = (index) => {
     const {list} = this.state;
     const detail = list[index].order_details[0];
+    console.log(list, index);
     const info = {
       order_no: detail.order_no,
       real_amt: detail.real_amt,
@@ -123,6 +124,7 @@ class OrderList extends Component {
       address: list[index].address,
       goods_name: detail.goods_name
     };
+    console.log(info);
     this.props.history.push('/cashier', {info});
   }
 
@@ -250,7 +252,7 @@ class OrderList extends Component {
                             </div>
                             <div className="operation">
                               {item2.order_details[0].status === 2 ? <button onClick={this.confirmReceipt.bind(this, item2.order_details[0].order_no, item2.order_details[0].id, index2)}>确认收货</button> : null}
-                              {item2.order_details[0].status === 0 ? <div><button onClick={this.pay.bind(this, index)}>付款</button><p onClick={this.showModal.bind(this, item2.order_details[0].order_no, index2)}>取消订单</p></div> : null}
+                              {item2.order_details[0].status === 0 ? <div><button onClick={this.pay.bind(this, index2)}>付款</button><p onClick={this.showModal.bind(this, item2.order_details[0].order_no, index2)}>取消订单</p></div> : null}
                             </div>
                           </div>
                         </li>
