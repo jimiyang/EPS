@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {message} from 'antd';
+import {Redirect} from 'react-router';
 import './delivery.css';
 
 class OrderDetail extends Component {
@@ -22,13 +23,17 @@ class OrderDetail extends Component {
         receiver: '',
         mobile: '',
         post_code: '',
-      }
+      },
+      redirect: false,
     };
   }
   componentWillMount() {
     //验证是否需要登录
-    window.common.loginOut(this, message);
-    this.loadList(this.props.order_no);
+    if (window.common.loginOut(this)) {
+      this.loadList(this.props.order_no);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
   componentWillReceiveProps(props) {
     this.loadList(props.order_no);
@@ -78,9 +83,19 @@ class OrderDetail extends Component {
       this.setState({
         form
       });
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
   }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <ul className="detail-items">
         <li>

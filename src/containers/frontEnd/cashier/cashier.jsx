@@ -19,9 +19,13 @@ class Cashier extends Component {
   }
 
   componentWillMount() {
-    const detail = this.props.location.state.info;
-    this.setState({detail});
-    this.getPayInfo();
+    if (window.common.loginOut(this)) {
+      const detail = this.props.location.state.info;
+      this.setState({detail});
+      this.getPayInfo();
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
 
   // 改变付款方式

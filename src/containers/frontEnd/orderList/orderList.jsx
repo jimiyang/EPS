@@ -48,7 +48,11 @@ class OrderList extends Component {
   }
 
   componentWillMount() {
-    this.getOrderList('first', 0);
+    if (window.common.loginOut(this)) {
+      this.getOrderList('first', 0);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
 
   // 跳转到订单详情

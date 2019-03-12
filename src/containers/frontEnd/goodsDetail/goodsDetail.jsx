@@ -13,10 +13,13 @@ class GoodsDetail extends Component {
     };
   }
   componentWillMount() {
-    this.getDetail(this.props.location.state.id);
+    if (window.common.loginOut(this)) {
+      this.getDetail(this.props.location.state.id);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
-  componentDidMount() {
-  }
+
   // 跳转到生成订单页
   toOrder = () => {
     const {detail} = this.state;

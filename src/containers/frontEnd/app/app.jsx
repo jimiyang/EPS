@@ -31,14 +31,18 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    if (!window.localStorage.getItem('PKEY')) {
-      this.props.history.push('/login');
+    if (window.common.loginOut(this)) {
+      if (!window.localStorage.getItem('PKEY')) {
+        this.props.history.push('/login');
+      } else {
+        const list = window.localStorage.getItem('dataSource');
+        const dataSource = list !== null ? JSON.parse(list) : [];
+        const fullName = window.localStorage.getItem('fullName');
+        this.setState({dataSource, fullName});
+        this.getCategoryList();
+      }
     } else {
-      const list = window.localStorage.getItem('dataSource');
-      const dataSource = list !== null ? JSON.parse(list) : [];
-      const fullName = window.localStorage.getItem('fullName');
-      this.setState({dataSource, fullName});
-      this.getCategoryList();
+      message.error('登录信息失效，请重新登录');
     }
   }
 

@@ -5,6 +5,7 @@ import {
   Button,
   message
 } from 'antd';
+import {Redirect} from 'react-router';
 import './style.css';
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
@@ -26,9 +27,11 @@ class TypeEdit extends Component {
     this.getTypeById(props.selfId);
   }
   componentWillMount() {
-    this.getTypeById(this.props.selfId);
-    //验证是否需要登录
-    window.common.loginOut(this, message);
+    if (window.common.loginOut(this)) {
+      this.getTypeById(this.props.selfId);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
   getTypeById = (sId) => {
     window.api('goods.getcategorylist', {id: sId}).then(rs => {
@@ -38,6 +41,11 @@ class TypeEdit extends Component {
         parent_id: pid,
       });
     }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
       message.error(error);
     });
   }
@@ -51,6 +59,11 @@ class TypeEdit extends Component {
           //this.props.onSelectRefresh();
           this.props.modifyEvent(e);
         }).catch(error => {
+          if (error === '用户信息失效，请重新登录') {
+            this.setState({
+              redirect: true
+            });
+          }
           message.error(error);
         });
       }
@@ -71,6 +84,9 @@ class TypeEdit extends Component {
     });
   }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const {getFieldDecorator} = this.props.form;
     return (
       <div className="typeedit-blocks">

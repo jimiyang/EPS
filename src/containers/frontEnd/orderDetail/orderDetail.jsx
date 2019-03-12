@@ -41,8 +41,12 @@ class OrderDetail extends Component {
   }
 
   componentWillMount() {
-    const orderNo = this.props.location.state.order_no;
-    this.getOrderDetail(orderNo);
+    if (window.common.loginOut(this)) {
+      const orderNo = this.props.location.state.order_no;
+      this.getOrderDetail(orderNo);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
 
   componentWillUnmount() {

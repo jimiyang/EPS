@@ -32,9 +32,11 @@ class Add extends Component {
     };
   }
   componentWillMount() {
-    this.initForm();
-    //验证是否需要登录
-    window.common.loginOut(this, message);
+    if (window.common.loginOut(this)) {
+      this.initForm();
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
   componentDidMount() {
     const textbox = this.refs.textarea;
@@ -94,6 +96,11 @@ class Add extends Component {
             message.success(rs.service_error_message);
             this.props.history.push({pathname: '/main/list'});
           }).catch(error => {
+            if (error === '用户信息失效，请重新登录') {
+              this.setState({
+                redirect: true
+              });
+            }
             message.error(error);
           });
         } else {
@@ -101,6 +108,11 @@ class Add extends Component {
             message.success(rs.service_error_message);
             this.props.history.push({pathname: '/main/list'});
           }).catch(error => {
+            if (error === '用户信息失效，请重新登录') {
+              this.setState({
+                redirect: true
+              });
+            }
             message.error(error);
           });
         }

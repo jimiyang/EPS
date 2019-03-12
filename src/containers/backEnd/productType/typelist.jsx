@@ -34,9 +34,11 @@ class ProductType extends Component {
     };
   }
   componentWillMount() {
-    this.loadList();
-    //验证是否需要登录
-    window.common.loginOut(this, message);
+    if (window.common.loginOut(this)) {
+      this.loadList();
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
   getChildData = (data, pid) => {
     const children = [];
@@ -94,7 +96,12 @@ class ProductType extends Component {
     window.api('goods.delcategory', {id}).then((rs) => {
       message.success(rs.service_error_message);
       this.loadList();
-    }).catch((error) => {
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
       message.error(error);
     });
   }
@@ -129,6 +136,11 @@ class ProductType extends Component {
           message.success(rs.service_error_message);
           this.loadList();
         }).catch(error => {
+          if (error === '用户信息失效，请重新登录') {
+            this.setState({
+              redirect: true
+            });
+          }
           message.error(error);
         });
       }

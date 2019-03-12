@@ -35,9 +35,11 @@ class ProductList extends Component {
   }
   //数据加载，dom未初始化
   componentWillMount() {
-    //验证是否需要登录
-    window.common.loginOut(this, message);
-    this.loadList(this.state.search);
+    if (window.common.loginOut(this)) {
+      this.loadList(this.state.search);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
   renderOption(item, index) {
     return (
@@ -87,6 +89,11 @@ class ProductList extends Component {
       message.success(rs.service_error_message);
       this.loadList(this.state.search);
     }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
       message.error(error);
     });
   }
@@ -115,6 +122,11 @@ class ProductList extends Component {
         productNameData: value ? node : []
       });
     }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
       message.error(error);
     });
   }

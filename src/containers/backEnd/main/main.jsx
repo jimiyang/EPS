@@ -5,6 +5,7 @@ import {
   Route,
   Link,
 } from 'react-router-dom';
+import {Redirect} from 'react-router';
 import './main.less';
 
 const {
@@ -14,16 +15,20 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      redirect: false,
       login_name: ''
     };
   }
   componentWillMount() {
     //验证是否需要登录
-    window.common.loginOut(this, message);
-    if (JSON.parse(window.localStorage.getItem('headParams')) !== null) {
-      this.setState({
-        login_name: JSON.parse(window.localStorage.getItem('headParams')).login_name
-      });
+    if (window.common.loginOut(this)) {
+      if (JSON.parse(window.localStorage.getItem('headParams')) !== null) {
+        this.setState({
+          login_name: JSON.parse(window.localStorage.getItem('headParams')).login_name
+        });
+      }
+    } else {
+      message.error('登录信息失效，请重新登录');
     }
   }
   loginOutEvent = () => {
@@ -31,10 +36,20 @@ class Main extends Component {
       if (rs.service_status === 'S') {
         this.props.history.push({pathname: '/login'});
       }
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
     window.localStorage.clear();
   }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <Layout>
         <Header className="header">

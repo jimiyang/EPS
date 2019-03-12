@@ -47,8 +47,11 @@ class DeliveryList extends Component {
   }
   componentWillMount() {
     //验证是否需要登录
-    window.common.loginOut(this, message);
-    this.loadList(this.state.search);
+    if (window.common.loginOut(this)) {
+      this.loadList(this.state.search);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
   loadList = (params) => {
     let firstOrdernum = '';
@@ -108,6 +111,13 @@ class DeliveryList extends Component {
       window.api('order.send', params).then((rs) => {
         list[index].status = 2;
         this.setState({orderListData: list});
+      }).catch(error => {
+        if (error === '用户信息失效，请重新登录') {
+          this.setState({
+            redirect: true
+          });
+        }
+        message.error(error);
       });
       return false;
     }
@@ -175,6 +185,11 @@ class DeliveryList extends Component {
         expressVisible: false
       });
     }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
       message.error(error);
     });
     //this.loadList(this.state.search);

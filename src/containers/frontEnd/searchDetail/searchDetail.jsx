@@ -22,10 +22,14 @@ class SearchDetail extends Component {
   }
 
   componentWillMount() {
-    const info = this.props.location.state;
-    this.setState({searchContent: info.searchContent, id: info.id});
-    this.props.changeSearchDetail(info);
-    this.getList(info.searchContent, 1, 1, info.id);
+    if (window.common.loginOut(this)) {
+      const info = this.props.location.state;
+      this.setState({searchContent: info.searchContent, id: info.id});
+      this.props.changeSearchDetail(info);
+      this.getList(info.searchContent, 1, 1, info.id);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
 
   componentWillReceiveProps(props) {

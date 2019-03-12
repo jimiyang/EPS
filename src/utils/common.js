@@ -13,12 +13,14 @@ const utils = {
     }
     return code.toUpperCase();
   },
-  loginOut(obj, msg) {
+  loginOut(obj) {
     if (window.localStorage.getItem('checkLogin') === null) {
       //msg.error('请重新登录！');
       obj.props.history.push({pathname: '/login'});
+      return false;
       //return false;
     }
+    return true;
   },
   beforeUpload(file, msg) { //上传图片之前判断图片大小
     const typeArr = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmg'];

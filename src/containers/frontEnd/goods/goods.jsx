@@ -13,10 +13,14 @@ export default class Goods extends Component {
     };
   }
   componentWillMount() {
-    if (window.localStorage.getItem('PKEY')) {
-      this.getHomepage();
+    if (window.common.loginOut(this)) {
+      if (window.localStorage.getItem('PKEY')) {
+        this.getHomepage();
+      } else {
+        this.props.history.push('/login');
+      }
     } else {
-      this.props.history.push('/login');
+      message.error('登录信息失效，请重新登录');
     }
   }
   // 首页信息

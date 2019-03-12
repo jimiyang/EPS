@@ -25,7 +25,9 @@ class EmployeesList extends Component {
   }
   componentWillMount() {
     //验证是否需要登录
-    window.common.loginOut(this, message);
+    if (!window.common.loginOut(this)) {
+      message.error('登录信息失效，请重新登录');
+    }
   }
   renderOption(item) {
     return (

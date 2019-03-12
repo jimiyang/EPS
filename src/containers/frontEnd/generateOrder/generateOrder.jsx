@@ -17,8 +17,12 @@ class GenerateOrder extends Component {
   }
 
   componentWillMount() {
-    const consignee = JSON.parse(window.localStorage.getItem('orderInfo'));
-    this.setState({info: this.props.location.state.info, consignee});
+    if (window.common.loginOut(this)) {
+      const consignee = JSON.parse(window.localStorage.getItem('orderInfo'));
+      this.setState({info: this.props.location.state.info, consignee});
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
 
   // 提交表单
