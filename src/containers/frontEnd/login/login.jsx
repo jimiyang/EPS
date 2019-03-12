@@ -44,7 +44,7 @@ class Login extends Component {
     }
   }
   loginCallback(res) {
-    window.localStorage.setItem('fullName', res.fullName);
+    window.localStorage.setItem('fullName', res.full_name);
     window.localStorage.setItem('PKEY', res.partner_key);
     window.localStorage.setItem('identity', res.identity);
     const headParams = {
