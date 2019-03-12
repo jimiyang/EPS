@@ -94,6 +94,11 @@ class Login extends Component {
       userName: e.target.value
     });
   }
+  onChangeUserPwd = (e) => {
+    this.setState({
+      userPwd: e.target.value
+    });
+  }
   onChangeAuthName = (e) => {
     this.setState({
       txtCode: e.target.value.toUpperCase()
@@ -131,6 +136,7 @@ class Login extends Component {
               prefix={
                 <Icon type="lock" />
               }
+              onChange={this.onChangeUserPwd}
               value={this.state.userPwd}
             />
           </li>
