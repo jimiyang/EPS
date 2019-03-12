@@ -39,9 +39,7 @@ class Login extends Component {
     const query = this.props.location.search;
     if (query) {
       const key = common.getQueryString(query).key;
-      console.log(key);
       const obj = JSON.parse(aes.Decrypt(key));
-      console.log(obj);
       // window.localStorage.setItem('fullName', fullName);
       // window.localStorage.setItem('headParams', JSON.stringify(obj));
       // window.localStorage.setItem('checkLogin', '100');
