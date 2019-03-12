@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import moment from 'moment';
-import {Form, Input, Cascader, Button} from 'antd';
+import {Form, Input, Cascader, Button, message} from 'antd';
+import {Redirect} from 'react-router';
 import {adData} from '../../../utils/area';
 import './generateOrder.less';
 
@@ -11,6 +12,7 @@ class GenerateOrder extends Component {
     this.state = {
       info: {}, // 商品信息
       consignee: {}, // 收货人信息
+      redirect: false,
     };
   }
 
@@ -58,11 +60,21 @@ class GenerateOrder extends Component {
             goods_name: this.state.info.name
           };
           this.props.history.push('/cashier', {info});
+        }).catch(error => {
+          if (error === '用户信息失效，请重新登录') {
+            this.setState({
+              redirect: true
+            });
+          }
+          message.error(error);
         });
       }
     });
   }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const {info, consignee} = this.state;
     const {getFieldDecorator} = this.props.form;
     return (

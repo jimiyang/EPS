@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
+import {Redirect} from 'react-router';
 import {connect} from 'react-redux';
-import {message, AutoComplete, Icon, Input, Button, Menu, Dropdown, Modal} from 'antd';
+import {message, AutoComplete, Icon, Input, Button, Modal} from 'antd';
 // 路由
 import './app.less';
 import {changeSearchDetail} from '../../../store/reduces/frontEnd';
@@ -25,6 +26,7 @@ export default class App extends Component {
       visible: false,
       confirmLoading: false,
       fullName: null, // 用户名
+      redirect: false,
     };
   }
 
@@ -62,11 +64,13 @@ export default class App extends Component {
       const goodsType = res.goods_category_list;
       this.setState({goodsType});
       window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
-    }).catch(err => {
-      if (err === '用户信息失效，请重新登录') {
-        message.error(err);
-        this.props.history.push('/login');
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
       }
+      message.error(error);
     });
   }
 
@@ -127,6 +131,11 @@ export default class App extends Component {
       window.localStorage.clear();
       this.props.history.push('/login');
     }).catch(err => {
+      if (err === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
       message.error(err);
       this.setState({
         visible: false,
@@ -156,6 +165,9 @@ export default class App extends Component {
   }
 
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const {
       dataSource, searchContent, visible, confirmLoading, ModalText, goodsType, typeName, fullName
     } = this.state;

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Pagination, Icon, Empty} from 'antd';
+import {Pagination, Icon, Empty, message} from 'antd';
+import {Redirect} from 'react-router';
 import './searchDetail.less';
 import {changeSearchDetail} from '../../../store/reduces/frontEnd';
 
@@ -17,6 +18,7 @@ class SearchDetail extends Component {
     searchContent: '', // 上一个搜索的内容
     total: 0, // 总页数
     id: null, // 一级商品id
+    redirect: false,
   }
 
   componentWillMount() {
@@ -62,6 +64,13 @@ class SearchDetail extends Component {
     searchContent ? params.goods_name = searchContent : null;
     window.api('goods.getgoodslist', params).then(res => {
       res.goods_list.length > 0 ? this.setState({list: res.goods_list, total: res.total_page}) : this.setState({list: []});
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
   }
 
@@ -88,6 +97,9 @@ class SearchDetail extends Component {
   }
 
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const {list, pageNumber, total} = this.state;
     return (
       <div id="searchDetail">

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Tabs, Input, message, Modal, Empty} from 'antd';
+import {Redirect} from 'react-router';
 import './orderList.less';
 
 const TabPane = Tabs.TabPane;
@@ -43,6 +44,7 @@ class OrderList extends Component {
     confirmLoading: false,
     cancelOrderNo: null, // 将要取消的订单编号
     cancelIndex: null, // 将要取消订单的索引
+    redirect: false,
   }
 
   componentWillMount() {
@@ -98,6 +100,13 @@ class OrderList extends Component {
         list = list.concat(res.orders);
       }
       this.setState({list});
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
   }
 
@@ -135,6 +144,11 @@ class OrderList extends Component {
       list[cancelIndex].order_details[0].status = 4;
       this.setState({list});
     }).catch(err => {
+      if (err === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
       message.error(err);
       this.setState({
         visible: false,
@@ -171,12 +185,20 @@ class OrderList extends Component {
       list[index].order_details[0].status = 3;
       this.setState({list});
       message.success('确认收货，已完成订单！');
-    }).catch((err) => {
-      message.error(err);
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
   }
 
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const {
       tabs, list, loadMore, loadText, status, visible, confirmLoading, ModalText
     } = this.state;

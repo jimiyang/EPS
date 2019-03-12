@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Steps} from 'antd';
+import {Steps, message} from 'antd';
+import {Redirect} from 'react-router';
 import './successfulPayment.less';
 
 const Step = Steps.Step;
@@ -8,6 +9,7 @@ class SearchDetail extends Component {
   state = {
     detail: {}, // 订单详情
     orderNo: null, // 订单编号
+    redirect: false,
   }
 
   componentWillMount() {
@@ -33,10 +35,20 @@ class SearchDetail extends Component {
     };
     window.api('order.orderList', params).then(res => {
       this.setState({detail: res.orders[0]});
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
   }
 
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const {detail} = this.state;
     return (
       <div id="successfulPayment">

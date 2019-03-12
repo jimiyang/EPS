@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Steps, message, Icon} from 'antd';
+import {Redirect} from 'react-router';
 import './orderDetail.less';
 
 const Step = Steps.Step;
@@ -36,6 +37,7 @@ class OrderDetail extends Component {
     step: 0, // 第几步
     time: '', // 剩余时间
     timer: null, // 定时器
+    redirect: false,
   }
 
   componentWillMount() {
@@ -99,6 +101,13 @@ class OrderDetail extends Component {
       this.setState({
         order: res.orders[0], step, goods: detail
       });
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
   }
 
@@ -138,6 +147,9 @@ class OrderDetail extends Component {
   }
 
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const {
       order, goods, step, time
     } = this.state;

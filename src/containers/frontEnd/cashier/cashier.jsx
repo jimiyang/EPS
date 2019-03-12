@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Modal, message} from 'antd';
+import {Redirect} from 'react-router';
 import './cashier.less';
 
 class Cashier extends Component {
@@ -13,6 +14,7 @@ class Cashier extends Component {
       ModalText: '确认支付当前订单？',
       visible: false,
       confirmLoading: false,
+      redirect: false,
     };
   }
 
@@ -35,6 +37,13 @@ class Cashier extends Component {
     window.api('Info.getaccountlist', params).then(res => {
       res.account[0].available_balance = (Number(res.account[0].available_balance)).toFixed(2);
       this.setState({payInfo: res.account[0]});
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
   }
 
@@ -66,6 +75,11 @@ class Cashier extends Component {
       });
       this.props.history.push('/successfulPayment', {order_no: params.order_no});
     }).catch(err => {
+      if (err === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
       message.error(err);
       this.setState({
         visible: false,
@@ -83,6 +97,9 @@ class Cashier extends Component {
   }
 
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const {
       visible, confirmLoading, ModalText, payMode, detail, payInfo
     } = this.state;

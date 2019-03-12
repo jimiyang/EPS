@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Empty} from 'antd';
+import {Empty, message} from 'antd';
+import {Redirect} from 'react-router';
 import './goods.less';
 
 export default class Goods extends Component {
@@ -8,6 +9,7 @@ export default class Goods extends Component {
     this.state = {
       part: [], // 一级类的列表
       partList: [], // 类的商品列表
+      redirect: false,
     };
   }
   componentWillMount() {
@@ -28,6 +30,13 @@ export default class Goods extends Component {
         partList.push(item.goods);
       });
       this.setState({part, partList});
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
   }
   // 跳转到搜索页
@@ -39,6 +48,9 @@ export default class Goods extends Component {
     this.props.history.push('/goodsDetail', {id});
   }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const {part, partList} = this.state;
     return (
       <div className="sku">

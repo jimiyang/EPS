@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {InputNumber} from 'antd';
+import {InputNumber, message} from 'antd';
+import {Redirect} from 'react-router';
 import './goodsDetail.less';
 
 class GoodsDetail extends Component {
@@ -8,6 +9,7 @@ class GoodsDetail extends Component {
     this.state = {
       count: 1, // 购买的商品数量
       detail: {}, // 商品详情
+      redirect: false,
     };
   }
   componentWillMount() {
@@ -39,9 +41,19 @@ class GoodsDetail extends Component {
     window.api('goods.getgoodsdetail', params).then(res => {
       res.sale_price = (res.sale_price).toFixed(2);
       this.setState({detail: res});
+    }).catch(error => {
+      if (error === '用户信息失效，请重新登录') {
+        this.setState({
+          redirect: true
+        });
+      }
+      message.error(error);
     });
   }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     const detail = this.state.detail;
     return (
       <div id="goodsDetail">
