@@ -12,9 +12,13 @@ export default class Goods extends Component {
   }
 
   componentWillMount() {
-    this.getHomepage();
+    console.log('goods');
+    if (window.localStorage.getItem('PKEY')) {
+      this.getHomepage();
+    } else {
+      this.props.history.push('/login');
+    }
   }
-
   // 首页信息
   getHomepage() {
     window.api('goods.homepage', {}).then(res => {
@@ -28,17 +32,14 @@ export default class Goods extends Component {
       this.setState({part, partList});
     });
   }
-
   // 跳转到搜索页
   toSearchDetail = (id, typeName) => {
     this.props.history.push('/searchDetail', {id, typeName, searchContent: ''});
   }
-
   // 跳转到详情页
   toDetail = (id) => {
     this.props.history.push('/goodsDetail', {id});
   }
-
   render() {
     const {part, partList} = this.state;
     return (
@@ -54,8 +55,8 @@ export default class Goods extends Component {
                       <li key={$1} onClick={this.toDetail.bind(this, $0.id)}>
                         <img src={$0.goods_picture} />
                         <div className="sku-cont">
+                          <p className="price"><em>¥</em>{($0.sale_price).toFixed(2)}</p>
                           <h2>{$0.goods_name}</h2>
-                          <p className="price">{($0.sale_price).toFixed(2)}</p>
                         </div>
                       </li>))
                   }

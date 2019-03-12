@@ -29,16 +29,15 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    if (window.localStorage) {
-      if (!window.localStorage.getItem('PKEY')) {
-        this.props.history.push('/login');
-      } else {
-        const list = window.localStorage.getItem('dataSource');
-        const dataSource = list !== null ? JSON.parse(list) : [];
-        const fullName = window.localStorage.getItem('fullName');
-        this.setState({dataSource, fullName});
-        this.getCategoryList();
-      }
+    console.log('app');
+    if (!window.localStorage.getItem('PKEY')) {
+      this.props.history.push('/login');
+    } else {
+      const list = window.localStorage.getItem('dataSource');
+      const dataSource = list !== null ? JSON.parse(list) : [];
+      const fullName = window.localStorage.getItem('fullName');
+      this.setState({dataSource, fullName});
+      this.getCategoryList();
     }
   }
 

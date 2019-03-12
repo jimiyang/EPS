@@ -98,7 +98,7 @@ class SearchDetail extends Component {
             </li>
             <li onClick={this.changeSort.bind(this, 2)}>
               <p className={this.state.sortIndex > 1 ? 'isChecked' : null}>价格</p>
-              <div>
+              <div className="toggle">
                 <div className={this.state.sortIndex === 2 ? 'choose1 smallToBig' : 'smallToBig'}><Icon type="caret-up" /></div>
                 <div className={this.state.sortIndex === 3 ? 'choose2 bigToSmall' : 'bigToSmall'}><Icon type="caret-down" /></div>
               </div>
@@ -107,13 +107,13 @@ class SearchDetail extends Component {
         </section>
         <section className="list">
           { list.length > 0 ? (
-            <ul>
+            <ul className="sku-list">
               {
                 list.map((item, index) => (
                   <li key={index} onClick={this.toDetail.bind(this, item.id)}>
                     <img src={item.goods_picture} />
                     <p className="price">￥{(item.sale_price).toFixed(2)}</p>
-                    <p className="name">{item.goods_name}</p>
+                    <h2>{item.goods_name}</h2>
                   </li>
                 ))
               }

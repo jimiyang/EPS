@@ -9,11 +9,10 @@
       display: flex;
       align-items:center;
       li {
-        
         cursor: pointer;
         position: relative;
-        font-size:12px;
-        padding:14px 0;
+        font-size:13px;
+        padding:10px 0;
         display: flex;
         align-items:center;
         justify-content:center;
@@ -112,4 +111,16 @@
     justify-content: center;
     margin: 50px 0;
   }
+}
+
+.toggle{
+  &>div{
+    position: relative;
+  }
+  .smallToBig{
+    bottom:-4px;
+  }
+  .bigToSmall{
+    top:-4px;
+  } 
 }
