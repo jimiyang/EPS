@@ -112,8 +112,10 @@ class SearchDetail extends Component {
                 list.map((item, index) => (
                   <li key={index} onClick={this.toDetail.bind(this, item.id)}>
                     <img src={item.goods_picture} />
-                    <p className="price">￥{(item.sale_price).toFixed(2)}</p>
-                    <h2>{item.goods_name}</h2>
+                    <div className="sku-list-info">
+                      <p className="price">￥{(item.sale_price).toFixed(2)}</p>
+                      <h2>{item.goods_name}</h2>
+                    </div>
                   </li>
                 ))
               }

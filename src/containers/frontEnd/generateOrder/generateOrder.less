@@ -1,17 +1,20 @@
 #generateOrder {
-  .title {
-    background: #e4e4e4;
-    line-height: 40px;
-    padding-left: 15px;
+  .page-title {
+    color:#4386E9;
+    font-size:16px;
+    line-height:16px;
+    padding-left:10px;
+    border-left:10px solid #4386E9;
   }
   .content {
     background:#fff;
     border-top: 0;
-    padding: 25px 50px;
+    padding: 10px 30px;
+    border-radius:4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
   }
   .top {
     .content {
-      min-height: 315px;
       margin-bottom: 40px;
       ul {
         display: flex;
@@ -37,41 +40,44 @@
           padding-bottom: 10px;
         }
       }
-      .goods {
-        margin-top: 25px;
-        img {
-          width: 75px;
-          height: 75px;
-          margin-right: 25px;
-        }
-      }
+      
     }
   }
-  .bottom {
-    position: relative;
-    margin-bottom: 150px;
-    input {
-      width: 300px;
+  .goods {
+    display: flex;
+    border-bottom:1px dashed #eee;
+    padding:30px 0;
+    justify-content: space-between;
+    span{
+      color:#888;
     }
-    .ant-row {
-      display: flex;
-      justify-content: flex-start;
-    }
-    .ant-form-item-label {
-      width: 85px;
-    }
-    .submitButton {
-      position: absolute;
-      bottom: -115px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      button {
-        width: 140px;
-        height: 40px;
-        background: #009dd2;
+    .price{
+      font-size:20px;
+      em{
+        font-size:12px;
       }
     }
+    &-info{
+      flex: 1;
+      .price{
+        font-size:12px;
+      }
+    }
+    h2{
+      margin-bottom:10px;
+      font-size:16px;
+      font-weight:800;
+      color:#444;
+    }
+    img {
+      width: 70px;
+      height: 70px;
+      margin-right: 25px;
+    }
+  }
+  .ant-row{
+    margin-bottom:15px;
+  }
+  .bottom {
   }
 }

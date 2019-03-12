@@ -10,7 +10,6 @@ export default class Goods extends Component {
       partList: [], // 类的商品列表
     };
   }
-
   componentWillMount() {
     if (window.localStorage.getItem('PKEY')) {
       this.getHomepage();

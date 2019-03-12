@@ -67,29 +67,18 @@ class GenerateOrder extends Component {
     const {getFieldDecorator} = this.props.form;
     return (
       <div id="generateOrder">
-        <section className="top">
-          <div className="title">确认订单信息</div>
-          <div className="content">
-            <ul className="head">
-              <li>商品名</li>
-              <li>单价</li>
-              <li>数量</li>
-              <li>合计</li>
-            </ul>
-            <ul className="goods">
-              <li>
-                <img src={info.img} />
-                <p>{info.name}</p>
-              </li>
-              <li>￥{info.price}</li>
-              <li>{info.count}</li>
-              <li>￥{(info.count * Number(info.price)).toFixed(2)}</li>
-            </ul>
+        <div className="content">
+          <div className="page-title">确认订单信息</div>
+          <div className="goods">
+            <img src={info.img} />
+            <div className="goods-info">
+              <h2>{info.name}</h2>
+              <p className="price">￥{info.price} <span> × 1</span></p>
+            </div>
+            <div className="price"><em>合计：￥</em><b>{(info.count * Number(info.price)).toFixed(2)}</b></div>
           </div>
-        </section>
-        <section className="bottom">
-          <div className="title">填写收货人信息</div>
-          <div className="content">
+          <div className="page-title">填写收货人信息</div>
+          <div className="bottom">
             <Form onSubmit={this.handleSubmit} className="form" name="form">
               <Form.Item
                 label="所在地区"
@@ -158,11 +147,11 @@ class GenerateOrder extends Component {
                 }
               </Form.Item>
               <Form.Item className="submitButton">
-                <Button type="primary" htmlType="submit">提交订单</Button>
+                <Button type="primary" size="lager" htmlType="submit">提交订单</Button>
               </Form.Item>
             </Form>
           </div>
-        </section>
+        </div>
       </div>
     );
   }
