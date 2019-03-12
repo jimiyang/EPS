@@ -8,7 +8,7 @@ class Cashier extends Component {
     super(props);
     this.state = {
       detail: {},
-      payInfo: {remainder: 999},
+      payInfo: {},
       index: 0, // 支付模式 0 返佣账户 1 充值账户
       payMode: ['返佣账户'], // ['返佣账户', '充值账户']
       ModalText: '确认支付当前订单？',
@@ -66,7 +66,8 @@ class Cashier extends Component {
     const params = {
       order_no: detail.order_no,
       pay_mode: index,
-      pay_account_no: payInfo.account_no
+      pay_account_no: payInfo.account_no,
+      account_balance: payInfo.available_balance
     };
     window.api('trade.innerpay', params).then(() => {
       message.success('支付成功');
