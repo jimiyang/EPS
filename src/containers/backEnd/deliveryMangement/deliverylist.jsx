@@ -282,11 +282,11 @@ class DeliveryList extends Component {
           </div>
         </div>
         <ul className="search-blocks">
-          <li className="items"><label>代理商编号：</label>
-            <Input onChange={this.agentEvent} />
+          <li className="items"><label style={{width: '150px'}}>代理商编号：</label>
+            <Input onChange={this.agentEvent} placeholder="请输入代理商编号" />
           </li>
           <li className="items"><label>订单号：</label>
-            <Input onChange={this.orderNumEvent} />
+            <Input onChange={this.orderNumEvent} placeholder="请输入订单号" />
           </li>
           <li className="items"><label>开始日期：</label>
             <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={this.startTimeEvent} />

@@ -15,11 +15,11 @@
     display: flex;justify-content: flex-start;margin-top:30px;font-size:14px;
 }
 .product-blocks li.items{
-    text-align: center;margin-right:20px;display: flex;justify-content: flex-start;
+    text-align: center;margin-right:10px;display: flex;justify-content: space-between;
     align-items: center;
 }
 .product-blocks li.items input{height:40px;line-height:40px;}
-.product-blocks li label{display:inline-block;width:140px;}
+.product-blocks li label{display:inline-block;width:100px;}
 .product-blocks li input{text-align: left;}
 .product-blocks li .search-list{position: relative;}
 .product-blocks li .search-list .ant-list-bordered{

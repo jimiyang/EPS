@@ -12,7 +12,6 @@ export default class Goods extends Component {
   }
 
   componentWillMount() {
-    console.log('goods');
     if (window.localStorage.getItem('PKEY')) {
       this.getHomepage();
     } else {

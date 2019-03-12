@@ -18,7 +18,7 @@ class Login extends Component {
 
   //组件刚经历constructor,初始完数据,未渲染,dom还未渲染
   componentWillMount() {
-    //this.getKey();
+    this.getKey();
     this.setState({
       authCode: window.common.createCode()
     });
@@ -39,14 +39,26 @@ class Login extends Component {
     const query = this.props.location.search;
     if (query) {
       const key = common.getQueryString(query).key;
-      const obj = JSON.parse(aes.Decrypt(key));
-      // window.localStorage.setItem('fullName', fullName);
-      // window.localStorage.setItem('headParams', JSON.stringify(obj));
-      // window.localStorage.setItem('checkLogin', '100');
-      // window.localStorage.setItem('PKEY', res.partner_key);
+      const res = JSON.parse(aes.Decrypt(key));
+      this.loginCallback(res);
     }
   }
-
+  loginCallback(res) {
+    window.localStorage.setItem('fullName', res.fullName);
+    window.localStorage.setItem('PKEY', res.partner_key);
+    window.localStorage.setItem('identity', res.identity);
+    const headParams = {
+      login_name: res.login_name,
+      partner_id: res.partner_id,
+    };
+    window.localStorage.setItem('headParams', JSON.stringify(headParams));
+    window.localStorage.setItem('checkLogin', '100');
+    if (res.identity === 0) {
+      this.props.history.push({pathname: '/main'});
+    } else {
+      this.props.history.push({pathname: '/'});
+    }
+  }
   // 登录
   login() {
     const _this = this;
@@ -70,16 +82,7 @@ class Login extends Component {
         login_name: _this.state.userName,
         partner_id: res.partner_id,
       };
-      const fullName = res.full_name;
-      window.localStorage.setItem('fullName', fullName);
-      window.localStorage.setItem('headParams', JSON.stringify(obj));
-      window.localStorage.setItem('checkLogin', '100');
-      window.localStorage.setItem('PKEY', res.partner_key);
-      if (res.identity === 0) {
-        this.props.history.push({pathname: '/main'});
-      } else {
-        this.props.history.push({pathname: '/'});
-      }
+      this.loginCallback(res);
     }).catch(error => {
       message.error(error);
     });

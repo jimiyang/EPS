@@ -29,7 +29,6 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    console.log('app');
     if (!window.localStorage.getItem('PKEY')) {
       this.props.history.push('/login');
     } else {
