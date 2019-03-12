@@ -38,14 +38,12 @@ class SearchDetail extends Component {
       order_no: orderNo,
     };
     window.api('order.orderList', params).then(res => {
-      this.setState({detail: res.orders[0]});
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
-        });
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        this.setState({detail: res.orders[0]});
       }
-      message.error(error);
     });
   }
 

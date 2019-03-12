@@ -39,15 +39,13 @@ class Cashier extends Component {
       login_name: JSON.parse(window.localStorage.getItem('headParams')).login_name
     };
     window.api('Info.getaccountlist', params).then(res => {
-      res.account[0].available_balance = (Number(res.account[0].available_balance)).toFixed(2);
-      this.setState({payInfo: res.account[0]});
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
-        });
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        res.account[0].available_balance = (Number(res.account[0].available_balance)).toFixed(2);
+        this.setState({payInfo: res.account[0]});
       }
-      message.error(error);
     });
   }
 
@@ -71,25 +69,18 @@ class Cashier extends Component {
       pay_account_no: payInfo.account_no
     };
     window.api('trade.innerpay', params).then(res => {
-      message.success('支付成功');
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '确认支付当前订单？',
-      });
-      this.props.history.push('/successfulPayment', {order_no: params.order_no});
-    }).catch(err => {
-      if (err === '用户信息失效，请重新登录') {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        message.success('支付成功');
         this.setState({
-          redirect: true
+          visible: false,
+          confirmLoading: false,
+          ModalText: '确认支付当前订单？',
         });
+        this.props.history.push('/successfulPayment', {order_no: params.order_no});
       }
-      message.error(err);
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '确认支付当前订单？',
-      });
     });
   }
 

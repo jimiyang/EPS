@@ -32,17 +32,13 @@ class Main extends Component {
     }
   }
   loginOutEvent = () => {
-    window.api('eps.logout', {login_name: this.state.login_name}).then(rs => {
-      if (rs.service_status === 'S') {
+    window.api('eps.logout', {login_name: this.state.login_name}).then(res => {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else if (res.service_status === 'S') {
         this.props.history.push({pathname: '/login'});
       }
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
-        });
-      }
-      message.error(error);
     });
     window.localStorage.clear();
   }

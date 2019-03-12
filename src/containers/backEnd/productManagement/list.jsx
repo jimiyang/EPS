@@ -114,20 +114,18 @@ class ProductList extends Component {
     if (!value) {
       return false;
     }
-    window.api('goods.getgoodslist', form).then(rs => {
-      const node = rs.goods_list.map((item) => ({
-        name: `${item.goods_name}`
-      }));
-      this.setState({
-        productNameData: value ? node : []
-      });
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
+    window.api('goods.getgoodslist', form).then(res => {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        const node = res.goods_list.map((item) => ({
+          name: `${item.goods_name}`
+        }));
         this.setState({
-          redirect: true
+          productNameData: value ? node : []
         });
       }
-      message.error(error);
     });
   }
   selGoodsNameEvent = (value) => {

@@ -59,59 +59,57 @@ class OrderDetail extends Component {
       order_no: orderNo,
     };
     window.api('order.orderList', params).then(res => {
-      const status = res.orders[0].status;
-      let step; // 0：等待付款，1：等待发货，2：等待收货，3：已完成，4：已取消（默认0）
-      switch (status) {
-        case 0:
-          step = 1;
-          break;
-        case 1:
-          step = 2;
-          break;
-        case 2:
-          step = 3;
-          break;
-        case 3:
-          step = 4;
-          break;
-        case 4:
-          step = 1;
-          break;
-        default:
-          step = 5;
-      }
-      const detail = res.orders[0].order_details[0];
-      if (status === 0) {
-        const create = (new Date(detail.gmt_created)).getTime();
-        const deadline = create + 24 * 60 * 60 * 1000;
-        const timer = setInterval(() => {
-          const alltime = deadline - (new Date()).getTime();
-          const hours = parseInt(alltime / (60 * 60 * 1000), 10);
-          const time1 = alltime - hours * 60 * 60 * 1000;
-          const minutes = parseInt(time1 / (1000 * 60), 10);
-          const time2 = time1 - minutes * 60 * 1000;
-          const seconds = parseInt(time2 / 1000, 10);
-          const time = `${hours < 10 ? `0${hours}` : hours}时${minutes < 10 ? `0${minutes}` : minutes}分${seconds < 10 ? `0${seconds}` : seconds}秒`;
-          if (time === '00时00分00秒') {
-            res.orders[0].status = 4;
-          } else {
-            this.setState({time, timer});
-          }
-        }, 1000);
-      }
-      detail.total_amt = (detail.total_amt).toFixed(2);
-      detail.real_amt = (detail.real_amt).toFixed(2);
-      detail.goods_sale_price = (detail.goods_sale_price).toFixed(2);
-      this.setState({
-        order: res.orders[0], step, goods: detail
-      });
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        const status = res.orders[0].status;
+        let step; // 0：等待付款，1：等待发货，2：等待收货，3：已完成，4：已取消（默认0）
+        switch (status) {
+          case 0:
+            step = 1;
+            break;
+          case 1:
+            step = 2;
+            break;
+          case 2:
+            step = 3;
+            break;
+          case 3:
+            step = 4;
+            break;
+          case 4:
+            step = 1;
+            break;
+          default:
+            step = 5;
+        }
+        const detail = res.orders[0].order_details[0];
+        if (status === 0) {
+          const create = (new Date(detail.gmt_created)).getTime();
+          const deadline = create + 24 * 60 * 60 * 1000;
+          const timer = setInterval(() => {
+            const alltime = deadline - (new Date()).getTime();
+            const hours = parseInt(alltime / (60 * 60 * 1000), 10);
+            const time1 = alltime - hours * 60 * 60 * 1000;
+            const minutes = parseInt(time1 / (1000 * 60), 10);
+            const time2 = time1 - minutes * 60 * 1000;
+            const seconds = parseInt(time2 / 1000, 10);
+            const time = `${hours < 10 ? `0${hours}` : hours}时${minutes < 10 ? `0${minutes}` : minutes}分${seconds < 10 ? `0${seconds}` : seconds}秒`;
+            if (time === '00时00分00秒') {
+              res.orders[0].status = 4;
+            } else {
+              this.setState({time, timer});
+            }
+          }, 1000);
+        }
+        detail.total_amt = (detail.total_amt).toFixed(2);
+        detail.real_amt = (detail.real_amt).toFixed(2);
+        detail.goods_sale_price = (detail.goods_sale_price).toFixed(2);
         this.setState({
-          redirect: true
+          order: res.orders[0], step, goods: detail
         });
       }
-      message.error(error);
     });
   }
 
@@ -136,12 +134,15 @@ class OrderDetail extends Component {
       ids: `${goods.id}`,
     };
     window.api('order.confirmReceived', params).then(res => {
-      goods.status = 3;
-      order.status = 3;
-      this.setState({step: 4});
-      message.success('确认收货，已完成订单！');
-    }).catch((err) => {
-      message.error(err);
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        goods.status = 3;
+        order.status = 3;
+        this.setState({step: 4});
+        message.success('确认收货，已完成订单！');
+      }
     });
   }
 

@@ -95,22 +95,20 @@ class OrderList extends Component {
       params.next = list[list.length - 1].order_no;
     }
     window.api('order.orderList', params).then(res => {
-      if (res.orders.length < 10) {
-        this.setState({loadMore: false, loadText: '已加载全部订单'});
-      }
-      if (type === 'change' || type === 'search' || !type) {
-        list = res.orders;
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
       } else {
-        list = list.concat(res.orders);
+        if (res.orders.length < 10) {
+          this.setState({loadMore: false, loadText: '已加载全部订单'});
+        }
+        if (type === 'change' || type === 'search' || !type) {
+          list = res.orders;
+        } else {
+          list = list.concat(res.orders);
+        }
+        this.setState({list});
       }
-      this.setState({list});
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
-        });
-      }
-      message.error(error);
     });
   }
 
@@ -139,20 +137,20 @@ class OrderList extends Component {
       order_no: cancelOrderNo
     };
     window.api('order.cancelOrder', params).then(res => {
-      message.success('已取消');
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '确认取消当前订单？',
-      });
-      list[cancelIndex].order_details[0].status = 4;
-      this.setState({list});
-    }).catch(err => {
-      if (err === '用户信息失效，请重新登录') {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        message.success('已取消');
         this.setState({
-          redirect: true
+          visible: false,
+          confirmLoading: false,
+          ModalText: '确认取消当前订单？',
         });
+        list[cancelIndex].order_details[0].status = 4;
+        this.setState({list});
       }
+    }).catch(err => {
       message.error(err);
       this.setState({
         visible: false,
@@ -185,17 +183,15 @@ class OrderList extends Component {
       order_no: orderNo,
       ids: `${ids}`,
     };
-    window.api('order.confirmReceived', params).then(() => {
-      list[index].order_details[0].status = 3;
-      this.setState({list});
-      message.success('确认收货，已完成订单！');
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
-        });
+    window.api('order.confirmReceived', params).then((res) => {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        list[index].order_details[0].status = 3;
+        this.setState({list});
+        message.success('确认收货，已完成订单！');
       }
-      message.error(error);
     });
   }
 

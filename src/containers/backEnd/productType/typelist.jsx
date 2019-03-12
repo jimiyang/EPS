@@ -56,32 +56,30 @@ class ProductType extends Component {
   }
   //商品类型查询接口
   loadList = () => {
-    window.api('goods.getcategorylist', this.state.search).then((rs) => {
-      const productTypeData = rs.goods_category_list;
-      const arr = [];
-      if (productTypeData.length > 0) {
-        productTypeData.map(item => {
-          if (item.superior_id === 0) {
-            arr.push({
-              goods_category_name: item.goods_category_name,
-              id: item.id,
-              superior_id: item.superior_id,
-              children: this.getChildData(productTypeData, item.id)
-            });
-          }
-        });
+    window.api('goods.getcategorylist', this.state.search).then((res) => {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        const productTypeData = res.goods_category_list;
+        const arr = [];
+        if (productTypeData.length > 0) {
+          productTypeData.map(item => {
+            if (item.superior_id === 0) {
+              arr.push({
+                goods_category_name: item.goods_category_name,
+                id: item.id,
+                superior_id: item.superior_id,
+                children: this.getChildData(productTypeData, item.id)
+              });
+            }
+          });
+          this.setState({
+            treeData: productTypeData
+          });
+        }
         this.setState({
-          treeData: productTypeData
-        });
-      }
-      this.setState({
-        productTypeData: arr
-      });
-    }).catch(error => {
-      message.error(error);
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
+          productTypeData: arr
         });
       }
     });
@@ -93,16 +91,14 @@ class ProductType extends Component {
     });
   }
   delEvent = (id) => {
-    window.api('goods.delcategory', {id}).then((rs) => {
-      message.success(rs.service_error_message);
-      this.loadList();
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
-        });
+    window.api('goods.delcategory', {id}).then((res) => {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        message.success(res.service_error_message);
+        this.loadList();
       }
-      message.error(error);
     });
   }
   cancelEvent = () => {
@@ -132,16 +128,14 @@ class ProductType extends Component {
           formParams: values
         });
         Object.assign(this.state.formParams, {superior_id: pid});
-        window.api('goods.addcategory', this.state.formParams).then((rs) => {
-          message.success(rs.service_error_message);
-          this.loadList();
-        }).catch(error => {
-          if (error === '用户信息失效，请重新登录') {
-            this.setState({
-              redirect: true
-            });
+        window.api('goods.addcategory', this.state.formParams).then((res) => {
+          if (res.service_error_code === 'EPS000000801') {
+            message.error(res.service_error_message);
+            this.setState({redirect: true});
+          } else {
+            message.success(res.service_error_message);
+            this.loadList();
           }
-          message.error(error);
         });
       }
     });

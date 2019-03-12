@@ -56,21 +56,19 @@ class GenerateOrder extends Component {
         };
         window.localStorage.setItem('orderInfo', JSON.stringify(values));
         window.api('order.createorder', params).then(res => {
-          const info = {
-            order_no: res.order_no,
-            real_amt: res.real_amt,
-            total_amt: res.total_amt,
-            address: res.address,
-            goods_name: this.state.info.name
-          };
-          this.props.history.push('/cashier', {info});
-        }).catch(error => {
-          if (error === '用户信息失效，请重新登录') {
-            this.setState({
-              redirect: true
-            });
+          if (res.service_error_code === 'EPS000000801') {
+            message.error(res.service_error_message);
+            this.setState({redirect: true});
+          } else {
+            const info = {
+              order_no: res.order_no,
+              real_amt: res.real_amt,
+              total_amt: res.total_amt,
+              address: res.address,
+              goods_name: this.state.info.name
+            };
+            this.props.history.push('/cashier', {info});
           }
-          message.error(error);
         });
       }
     });

@@ -9,8 +9,8 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: 'dlsy_test128', // dlsy_test128 ptdls1 jrpt
-      userPwd: '111qqq',
+      userName: '', // dlsy_test128 ptdls1 jrpt
+      userPwd: '',
       authCode: '',
       txtCode: ''
     };
@@ -61,7 +61,6 @@ class Login extends Component {
   }
   // 登录
   login() {
-    const _this = this;
     if (this.state.userName === '' || this.state.userPwd === '') {
       message.error('请输入用户名或密码');
       return false;
@@ -78,10 +77,6 @@ class Login extends Component {
       login_pwd: this.state.userPwd
     };
     window.api('eps.login', params).then(res => {
-      const obj = {
-        login_name: _this.state.userName,
-        partner_id: res.partner_id,
-      };
       this.loginCallback(res);
     }).catch(error => {
       message.error(error);

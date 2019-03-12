@@ -34,19 +34,17 @@ class TypeEdit extends Component {
     }
   }
   getTypeById = (sId) => {
-    window.api('goods.getcategorylist', {id: sId}).then(rs => {
-      const pid = rs.goods_category_list[0].superior_id === 0 ? '' : rs.goods_category_list[0].superior_id;
-      this.setState({
-        form: rs.goods_category_list[0],
-        parent_id: pid,
-      });
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
+    window.api('goods.getcategorylist', {id: sId}).then(res => {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        const pid = res.goods_category_list[0].superior_id === 0 ? '' : res.goods_category_list[0].superior_id;
         this.setState({
-          redirect: true
+          form: res.goods_category_list[0],
+          parent_id: pid,
         });
       }
-      message.error(error);
     });
   }
   modifyEvent = (e) => {
@@ -54,17 +52,15 @@ class TypeEdit extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const form = Object.assign(this.state.form, values);
-        window.api('goods.modcategory', form).then((rs) => {
-          message.success(rs.service_error_message);
-          //this.props.onSelectRefresh();
-          this.props.modifyEvent(e);
-        }).catch(error => {
-          if (error === '用户信息失效，请重新登录') {
-            this.setState({
-              redirect: true
-            });
+        window.api('goods.modcategory', form).then((res) => {
+          if (res.service_error_code === 'EPS000000801') {
+            message.error(res.service_error_message);
+            this.setState({redirect: true});
+          } else {
+            message.success(res.service_error_message);
+            //this.props.onSelectRefresh();
+            this.props.modifyEvent(e);
           }
-          message.error(error);
         });
       }
     });

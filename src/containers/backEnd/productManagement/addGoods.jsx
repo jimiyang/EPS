@@ -45,28 +45,26 @@ class Add extends Component {
     if (!this.props.location.query) {
       return false;
     }
-    window.api('goods.getgoodsdetail', {id: this.props.location.query.id}).then((rs) => {
-      const pid = rs.goods_category_id === '' ? 0 : rs.goods_category_id;
-      const params = {
-        goods_name: rs.goods_name,
-        goods_bar_no: rs.goods_bar_no,
-        goods_category_id: pid,
-        cost_price: rs.cost_price,
-        sale_price: rs.sale_price,
-        is_post: rs.is_post,
-        goods_details: rs.goods_details,
-        id: rs.id,
-        goods_pic: rs.goods_picture
-      };
-      const form = Object.assign(this.state.form, params);
-      this.setState({
-        form
-      });
-    }).catch(error => {
-      message.error(error);
-      if (error === '用户信息失效，请重新登录') {
+    window.api('goods.getgoodsdetail', {id: this.props.location.query.id}).then((res) => {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        const pid = res.goods_category_id === '' ? 0 : res.goods_category_id;
+        const params = {
+          goods_name: res.goods_name,
+          goods_bar_no: res.goods_bar_no,
+          goods_category_id: pid,
+          cost_price: res.cost_price,
+          sale_price: res.sale_price,
+          is_post: res.is_post,
+          goods_details: res.goods_details,
+          id: res.id,
+          goods_pic: res.goods_picture
+        };
+        const form = Object.assign(this.state.form, params);
         this.setState({
-          redirect: true
+          form
         });
       }
     });
@@ -92,28 +90,24 @@ class Add extends Component {
           return false;
         }
         if (!this.props.location.query) {
-          window.api('goods.addgoods', form).then((rs) => {
-            message.success(rs.service_error_message);
-            this.props.history.push({pathname: '/main/list'});
-          }).catch(error => {
-            if (error === '用户信息失效，请重新登录') {
-              this.setState({
-                redirect: true
-              });
+          window.api('goods.addgoods', form).then((res) => {
+            if (res.service_error_code === 'EPS000000801') {
+              message.error(res.service_error_message);
+              this.setState({redirect: true});
+            } else {
+              message.success(res.service_error_message);
+              this.props.history.push({pathname: '/main/list'});
             }
-            message.error(error);
           });
         } else {
-          window.api('goods.modgoods', form).then((rs) => {
-            message.success(rs.service_error_message);
-            this.props.history.push({pathname: '/main/list'});
-          }).catch(error => {
-            if (error === '用户信息失效，请重新登录') {
-              this.setState({
-                redirect: true
-              });
+          window.api('goods.modgoods', form).then((res) => {
+            if (res.service_error_code === 'EPS000000801') {
+              message.error(res.service_error_message);
+              this.setState({redirect: true});
+            } else {
+              message.success(res.service_error_message);
+              this.props.history.push({pathname: '/main/list'});
             }
-            message.error(error);
           });
         }
       }

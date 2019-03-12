@@ -65,16 +65,16 @@ export default class App extends Component {
       superior_id: 0,
     };
     window.api('goods.getcategorylist', params).then((res) => {
-      const goodsType = res.goods_category_list;
-      this.setState({goodsType});
-      window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
         this.setState({
           redirect: true
         });
+      } else {
+        const goodsType = res.goods_category_list;
+        this.setState({goodsType});
+        window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
       }
-      message.error(error);
     });
   }
 
@@ -126,26 +126,19 @@ export default class App extends Component {
       login_name: loginName
     };
     window.api('eps.logout', params).then(res => {
-      message.success('已登出');
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '是否登出当前账户？',
-      });
-      window.localStorage.clear();
-      this.props.history.push('/login');
-    }).catch(err => {
-      if (err === '用户信息失效，请重新登录') {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        message.success('已登出');
         this.setState({
-          redirect: true
+          visible: false,
+          confirmLoading: false,
+          ModalText: '是否登出当前账户？',
         });
+        window.localStorage.clear();
+        this.props.history.push('/login');
       }
-      message.error(err);
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '是否登出当前账户？',
-      });
     });
   }
 

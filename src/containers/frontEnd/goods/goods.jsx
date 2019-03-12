@@ -26,21 +26,19 @@ export default class Goods extends Component {
   // 首页信息
   getHomepage() {
     window.api('goods.homepage', {}).then(res => {
-      const info = res.hot_category;
-      const part = [];
-      const partList = [];
-      info.forEach((item, index) => {
-        part.push(item);
-        partList.push(item.goods);
-      });
-      this.setState({part, partList});
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        const info = res.hot_category;
+        const part = [];
+        const partList = [];
+        info.forEach((item, index) => {
+          part.push(item);
+          partList.push(item.goods);
         });
+        this.setState({part, partList});
       }
-      message.error(error);
     });
   }
   // 跳转到搜索页

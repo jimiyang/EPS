@@ -56,28 +56,26 @@ class DeliveryList extends Component {
   loadList = (params) => {
     let firstOrdernum = '';
     let lastOrdernum = '';
-    window.api('order.orderList', params).then(rs => {
-      if (rs.orders.length > 0) {
-        lastOrdernum = rs.orders[rs.orders.length - 1].order_no;
-        firstOrdernum = rs.orders[0].order_no;
-        this.setState({
-          isHide: false
-        });
+    window.api('order.orderList', params).then(res => {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
       } else {
+        if (res.orders.length > 0) {
+          lastOrdernum = res.orders[res.orders.length - 1].order_no;
+          firstOrdernum = res.orders[0].order_no;
+          this.setState({
+            isHide: false
+          });
+        } else {
+          this.setState({
+            isHide: true
+          });
+        }
         this.setState({
-          isHide: true
-        });
-      }
-      this.setState({
-        orderListData: rs.orders,
-        firstOrdernum,
-        lastOrdernum
-      });
-    }).catch(error => {
-      message.error(error);
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
+          orderListData: res.orders,
+          firstOrdernum,
+          lastOrdernum
         });
       }
     });
@@ -108,16 +106,14 @@ class DeliveryList extends Component {
         order_no: detail.order_no,
         ids: detail.id
       };
-      window.api('order.send', params).then((rs) => {
-        list[index].status = 2;
-        this.setState({orderListData: list});
-      }).catch(error => {
-        if (error === '用户信息失效，请重新登录') {
-          this.setState({
-            redirect: true
-          });
+      window.api('order.send', params).then((res) => {
+        if (res.service_error_code === 'EPS000000801') {
+          message.error(res.service_error_message);
+          this.setState({redirect: true});
+        } else {
+          list[index].status = 2;
+          this.setState({orderListData: list});
         }
-        message.error(error);
       });
       return false;
     }
@@ -178,19 +174,17 @@ class DeliveryList extends Component {
       express_no: this.state.expressNo,
       ids: this.state.ids
     };
-    window.api('order.send', params).then((rs) => {
-      message.success(rs.service_error_message);
-      this.loadList(this.state.search);
-      this.setState({
-        expressVisible: false
-      });
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
+    window.api('order.send', params).then((res) => {
+      if (res.service_error_code === 'EPS000000801') {
+        message.error(res.service_error_message);
+        this.setState({redirect: true});
+      } else {
+        message.success(res.service_error_message);
+        this.loadList(this.state.search);
         this.setState({
-          redirect: true
+          expressVisible: false
         });
       }
-      message.error(error);
     });
     //this.loadList(this.state.search);
   }
