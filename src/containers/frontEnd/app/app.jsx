@@ -41,8 +41,6 @@ export default class App extends Component {
         this.setState({dataSource, fullName});
         this.getCategoryList();
       }
-    } else {
-      message.error('登录信息失效，请重新登录');
     }
   }
 
@@ -65,16 +63,14 @@ export default class App extends Component {
       superior_id: 0,
     };
     window.api('goods.getcategorylist', params).then((res) => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
-        this.setState({
-          redirect: true
-        });
-      } else {
-        const goodsType = res.goods_category_list;
-        this.setState({goodsType});
-        window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
+      const goodsType = res.goods_category_list;
+      this.setState({goodsType});
+      window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
       }
+      message.error(error.service_error_message);
     });
   }
 
@@ -126,19 +122,19 @@ export default class App extends Component {
       login_name: loginName
     };
     window.api('eps.logout', params).then(res => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      message.success('已登出');
+      this.setState({
+        visible: false,
+        confirmLoading: false,
+        ModalText: '是否登出当前账户？',
+      });
+      window.localStorage.clear();
+      this.props.history.push('/login');
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        message.success('已登出');
-        this.setState({
-          visible: false,
-          confirmLoading: false,
-          ModalText: '是否登出当前账户？',
-        });
-        window.localStorage.clear();
-        this.props.history.push('/login');
       }
+      message.error(error.service_error_message);
     });
   }
 

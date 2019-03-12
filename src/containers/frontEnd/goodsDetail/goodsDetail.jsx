@@ -42,13 +42,13 @@ class GoodsDetail extends Component {
   getDetail = (id) => {
     const params = {id};
     window.api('goods.getgoodsdetail', params).then(res => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      res.sale_price = (res.sale_price).toFixed(2);
+      this.setState({detail: res});
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        res.sale_price = (res.sale_price).toFixed(2);
-        this.setState({detail: res});
       }
+      message.error(error.service_error_message);
     });
   }
   render() {

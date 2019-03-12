@@ -95,20 +95,20 @@ class OrderList extends Component {
       params.next = list[list.length - 1].order_no;
     }
     window.api('order.orderList', params).then(res => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
-        this.setState({redirect: true});
-      } else {
-        if (res.orders.length < 10) {
-          this.setState({loadMore: false, loadText: '已加载全部订单'});
-        }
-        if (type === 'change' || type === 'search' || !type) {
-          list = res.orders;
-        } else {
-          list = list.concat(res.orders);
-        }
-        this.setState({list});
+      if (res.orders.length < 10) {
+        this.setState({loadMore: false, loadText: '已加载全部订单'});
       }
+      if (type === 'change' || type === 'search' || !type) {
+        list = res.orders;
+      } else {
+        list = list.concat(res.orders);
+      }
+      this.setState({list});
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      message.error(error.service_error_message);
     });
   }
 
@@ -137,26 +137,24 @@ class OrderList extends Component {
       order_no: cancelOrderNo
     };
     window.api('order.cancelOrder', params).then(res => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
-        this.setState({redirect: true});
-      } else {
-        message.success('已取消');
-        this.setState({
-          visible: false,
-          confirmLoading: false,
-          ModalText: '确认取消当前订单？',
-        });
-        list[cancelIndex].order_details[0].status = 4;
-        this.setState({list});
-      }
-    }).catch(err => {
-      message.error(err);
+      message.success('已取消');
       this.setState({
         visible: false,
         confirmLoading: false,
         ModalText: '确认取消当前订单？',
       });
+      list[cancelIndex].order_details[0].status = 4;
+      this.setState({list});
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      this.setState({
+        visible: false,
+        confirmLoading: false,
+        ModalText: '确认取消当前订单？',
+      });
+      message.error(error.service_error_message);
     });
   }
 
@@ -184,14 +182,14 @@ class OrderList extends Component {
       ids: `${ids}`,
     };
     window.api('order.confirmReceived', params).then((res) => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      list[index].order_details[0].status = 3;
+      this.setState({list});
+      message.success('确认收货，已完成订单！');
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        list[index].order_details[0].status = 3;
-        this.setState({list});
-        message.success('确认收货，已完成订单！');
       }
+      message.error(error.service_error_message);
     });
   }
 

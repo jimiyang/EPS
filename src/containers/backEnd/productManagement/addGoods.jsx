@@ -46,27 +46,27 @@ class Add extends Component {
       return false;
     }
     window.api('goods.getgoodsdetail', {id: this.props.location.query.id}).then((res) => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      const pid = res.goods_category_id === '' ? 0 : res.goods_category_id;
+      const params = {
+        goods_name: res.goods_name,
+        goods_bar_no: res.goods_bar_no,
+        goods_category_id: pid,
+        cost_price: res.cost_price,
+        sale_price: res.sale_price,
+        is_post: res.is_post,
+        goods_details: res.goods_details,
+        id: res.id,
+        goods_pic: res.goods_picture
+      };
+      const form = Object.assign(this.state.form, params);
+      this.setState({
+        form
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        const pid = res.goods_category_id === '' ? 0 : res.goods_category_id;
-        const params = {
-          goods_name: res.goods_name,
-          goods_bar_no: res.goods_bar_no,
-          goods_category_id: pid,
-          cost_price: res.cost_price,
-          sale_price: res.sale_price,
-          is_post: res.is_post,
-          goods_details: res.goods_details,
-          id: res.id,
-          goods_pic: res.goods_picture
-        };
-        const form = Object.assign(this.state.form, params);
-        this.setState({
-          form
-        });
       }
+      message.error(error.service_error_message);
     });
   }
   addtionProEvent = (e) => {

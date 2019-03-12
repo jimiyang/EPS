@@ -60,34 +60,34 @@ class OrderDetail extends Component {
       });
     });*/
     window.api('order.orderList', {order_no: id}).then((res) => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      const data = res.orders[0];
+      const goods = data.order_details[0];
+      const form = {
+        receiver: data.receiver,
+        mobile: data.mobile,
+        address: data.address,
+        post_code: data.post_code,
+        gmt_cashed: data.gmt_cashed, //付款时间
+        goods_name: goods.goods_name,
+        goods_bar_no: goods.goods_bar_no,
+        goods_category_name: goods.goods_category_name,
+        goods_sale_price: goods.goods_sale_price,
+        total_amt: goods.real_amt,
+        agent_name: goods.agent_name,
+        created_name: goods.created_name,
+        created_no: goods.created_no,
+        order_no: goods.order_no,
+        gmt_created: goods.gmt_created,
+        goods_qty: goods.goods_qty
+      };
+      this.setState({
+        form
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        const data = res.orders[0];
-        const goods = data.order_details[0];
-        const form = {
-          receiver: data.receiver,
-          mobile: data.mobile,
-          address: data.address,
-          post_code: data.post_code,
-          gmt_cashed: data.gmt_cashed, //付款时间
-          goods_name: goods.goods_name,
-          goods_bar_no: goods.goods_bar_no,
-          goods_category_name: goods.goods_category_name,
-          goods_sale_price: goods.goods_sale_price,
-          total_amt: goods.real_amt,
-          agent_name: goods.agent_name,
-          created_name: goods.created_name,
-          created_no: goods.created_no,
-          order_no: goods.order_no,
-          gmt_created: goods.gmt_created,
-          goods_qty: goods.goods_qty
-        };
-        this.setState({
-          form
-        });
       }
+      message.error(error.service_error_message);
     });
   }
   render() {

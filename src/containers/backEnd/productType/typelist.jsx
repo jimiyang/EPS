@@ -57,31 +57,31 @@ class ProductType extends Component {
   //商品类型查询接口
   loadList = () => {
     window.api('goods.getcategorylist', this.state.search).then((res) => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
-        this.setState({redirect: true});
-      } else {
-        const productTypeData = res.goods_category_list;
-        const arr = [];
-        if (productTypeData.length > 0) {
-          productTypeData.map(item => {
-            if (item.superior_id === 0) {
-              arr.push({
-                goods_category_name: item.goods_category_name,
-                id: item.id,
-                superior_id: item.superior_id,
-                children: this.getChildData(productTypeData, item.id)
-              });
-            }
-          });
-          this.setState({
-            treeData: productTypeData
-          });
-        }
+      const productTypeData = res.goods_category_list;
+      const arr = [];
+      if (productTypeData.length > 0) {
+        productTypeData.map(item => {
+          if (item.superior_id === 0) {
+            arr.push({
+              goods_category_name: item.goods_category_name,
+              id: item.id,
+              superior_id: item.superior_id,
+              children: this.getChildData(productTypeData, item.id)
+            });
+          }
+        });
         this.setState({
-          productTypeData: arr
+          treeData: productTypeData
         });
       }
+      this.setState({
+        productTypeData: arr
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      message.error(error.service_error_message);
     });
   }
   editEvent = (id) => {
@@ -92,13 +92,13 @@ class ProductType extends Component {
   }
   delEvent = (id) => {
     window.api('goods.delcategory', {id}).then((res) => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      message.success(res.service_error_message);
+      this.loadList();
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        message.success(res.service_error_message);
-        this.loadList();
       }
+      message.error(error.service_error_message);
     });
   }
   cancelEvent = () => {
@@ -129,13 +129,13 @@ class ProductType extends Component {
         });
         Object.assign(this.state.formParams, {superior_id: pid});
         window.api('goods.addcategory', this.state.formParams).then((res) => {
-          if (res.service_error_code === 'EPS000000801') {
-            message.error(res.service_error_message);
+          message.success(res.service_error_message);
+          this.loadList();
+        }).catch((error) => {
+          if (error.service_error_code === 'EPS000000801') {
             this.setState({redirect: true});
-          } else {
-            message.success(res.service_error_message);
-            this.loadList();
           }
+          message.error(error.service_error_message);
         });
       }
     });

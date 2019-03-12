@@ -56,19 +56,19 @@ class GenerateOrder extends Component {
         };
         window.localStorage.setItem('orderInfo', JSON.stringify(values));
         window.api('order.createorder', params).then(res => {
-          if (res.service_error_code === 'EPS000000801') {
-            message.error(res.service_error_message);
+          const info = {
+            order_no: res.order_no,
+            real_amt: res.real_amt,
+            total_amt: res.total_amt,
+            address: res.address,
+            goods_name: this.state.info.name
+          };
+          this.props.history.push('/cashier', {info});
+        }).catch((error) => {
+          if (error.service_error_code === 'EPS000000801') {
             this.setState({redirect: true});
-          } else {
-            const info = {
-              order_no: res.order_no,
-              real_amt: res.real_amt,
-              total_amt: res.total_amt,
-              address: res.address,
-              goods_name: this.state.info.name
-            };
-            this.props.history.push('/cashier', {info});
           }
+          message.error(error.service_error_message);
         });
       }
     });
@@ -139,7 +139,7 @@ class GenerateOrder extends Component {
                     initialValue: consignee ? consignee.mobile : '',
                     rules: [
                       {required: true, message: '请输入手机号码'},
-                      {pattern: /^1\d{10}$/, message: '请输入正确的手机号码'}
+                      {pattern: /^^1(3|4|5|7|8|9)\d{9}$/, message: '请输入正确的手机号码'}
                     ]
                   }
                 )(<Input placeholder="请输入手机号码" />)
@@ -161,7 +161,7 @@ class GenerateOrder extends Component {
                 }
               </Form.Item>
               <Form.Item className="submitButton">
-                <Button type="primary" size="lager" htmlType="submit">提交订单</Button>
+                <Button type="primary" size="large" htmlType="submit">提交订单</Button>
               </Form.Item>
             </Form>
           </div>

@@ -53,13 +53,11 @@ class ProductList extends Component {
       this.setState({
         goodsList: rs.goods_list
       });
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
-        });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
       }
-      message.error(error);
+      message.error(error.service_error_message);
     });
   }
   selTap = (index) => {
@@ -88,13 +86,11 @@ class ProductList extends Component {
     window.api('goods.modgoods', params).then(rs => {
       message.success(rs.service_error_message);
       this.loadList(this.state.search);
-    }).catch(error => {
-      if (error === '用户信息失效，请重新登录') {
-        this.setState({
-          redirect: true
-        });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
       }
-      message.error(error);
+      message.error(error.service_error_message);
     });
   }
   selNameEvent = (value) => {
@@ -115,17 +111,17 @@ class ProductList extends Component {
       return false;
     }
     window.api('goods.getgoodslist', form).then(res => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      const node = res.goods_list.map((item) => ({
+        name: `${item.goods_name}`
+      }));
+      this.setState({
+        productNameData: value ? node : []
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        const node = res.goods_list.map((item) => ({
-          name: `${item.goods_name}`
-        }));
-        this.setState({
-          productNameData: value ? node : []
-        });
       }
+      message.error(error.service_error_message);
     });
   }
   selGoodsNameEvent = (value) => {

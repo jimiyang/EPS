@@ -67,12 +67,12 @@ class SearchDetail extends Component {
     sortWay ? params.sort_way = sortWay : null;
     searchContent ? params.goods_name = searchContent : null;
     window.api('goods.getgoodslist', params).then(res => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      res.goods_list.length > 0 ? this.setState({list: res.goods_list, total: res.total_page}) : this.setState({list: []});
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        res.goods_list.length > 0 ? this.setState({list: res.goods_list, total: res.total_page}) : this.setState({list: []});
       }
+      message.error(error.service_error_message);
     });
   }
 

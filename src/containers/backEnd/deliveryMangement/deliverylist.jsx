@@ -57,27 +57,27 @@ class DeliveryList extends Component {
     let firstOrdernum = '';
     let lastOrdernum = '';
     window.api('order.orderList', params).then(res => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
-        this.setState({redirect: true});
-      } else {
-        if (res.orders.length > 0) {
-          lastOrdernum = res.orders[res.orders.length - 1].order_no;
-          firstOrdernum = res.orders[0].order_no;
-          this.setState({
-            isHide: false
-          });
-        } else {
-          this.setState({
-            isHide: true
-          });
-        }
+      if (res.orders.length > 0) {
+        lastOrdernum = res.orders[res.orders.length - 1].order_no;
+        firstOrdernum = res.orders[0].order_no;
         this.setState({
-          orderListData: res.orders,
-          firstOrdernum,
-          lastOrdernum
+          isHide: false
+        });
+      } else {
+        this.setState({
+          isHide: true
         });
       }
+      this.setState({
+        orderListData: res.orders,
+        firstOrdernum,
+        lastOrdernum
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      message.error(error.service_error_message);
     });
   }
   selTap = (index) => {
@@ -107,13 +107,13 @@ class DeliveryList extends Component {
         ids: detail.id
       };
       window.api('order.send', params).then((res) => {
-        if (res.service_error_code === 'EPS000000801') {
-          message.error(res.service_error_message);
+        list[index].status = 2;
+        this.setState({orderListData: list});
+      }).catch((error) => {
+        if (error.service_error_code === 'EPS000000801') {
           this.setState({redirect: true});
-        } else {
-          list[index].status = 2;
-          this.setState({orderListData: list});
         }
+        message.error(error.service_error_message);
       });
       return false;
     }
@@ -175,16 +175,16 @@ class DeliveryList extends Component {
       ids: this.state.ids
     };
     window.api('order.send', params).then((res) => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      message.success(res.service_error_message);
+      this.loadList(this.state.search);
+      this.setState({
+        expressVisible: false
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        message.success(res.service_error_message);
-        this.loadList(this.state.search);
-        this.setState({
-          expressVisible: false
-        });
       }
+      message.error(error.service_error_message);
     });
     //this.loadList(this.state.search);
   }

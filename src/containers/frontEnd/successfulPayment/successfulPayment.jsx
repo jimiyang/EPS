@@ -38,12 +38,12 @@ class SearchDetail extends Component {
       order_no: orderNo,
     };
     window.api('order.orderList', params).then(res => {
-      if (res.service_error_code === 'EPS000000801') {
-        message.error(res.service_error_message);
+      this.setState({detail: res.orders[0]});
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
-      } else {
-        this.setState({detail: res.orders[0]});
       }
+      message.error(error.service_error_message);
     });
   }
 
