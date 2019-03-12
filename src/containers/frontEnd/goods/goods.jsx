@@ -12,7 +12,11 @@ export default class Goods extends Component {
   }
 
   componentWillMount() {
-    this.getHomepage();
+    if (window.localStorage.getItem('PKEY')) {
+      this.getHomepage();
+    } else {
+      this.props.history.push('/login');
+    }
   }
 
   // 首页信息
