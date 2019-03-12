@@ -238,7 +238,7 @@ class ProductList extends Component {
               <Input suffix={<Icon type="search" className="certain-category-icon" />} />
             </AutoComplete>
           </li>
-          <li className="items"><label>商品条形码：</label>
+          <li className="items"><label style={{width: '150px'}}>商品条形码：</label>
             <Input value={this.state.goods_bar_no} onChange={this.changeBarEvent} placeholder="请输入商品条形码" />
           </li>
           <li className="items"><label>商品类型：</label>
