@@ -116,7 +116,6 @@ class OrderList extends Component {
   pay = (index) => {
     const {list} = this.state;
     const detail = list[index].order_details[0];
-    console.log(list, index);
     const info = {
       order_no: detail.order_no,
       real_amt: detail.real_amt,
@@ -124,7 +123,6 @@ class OrderList extends Component {
       address: list[index].address,
       goods_name: detail.goods_name
     };
-    console.log(info);
     this.props.history.push('/cashier', {info});
   }
 
