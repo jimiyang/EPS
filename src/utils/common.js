@@ -14,7 +14,7 @@ const utils = {
     return code.toUpperCase();
   },
   loginOut(obj) {
-    if (window.localStorage.getItem('checkLogin') === null) {
+    if (window.localStorage.getItem('headParams') === null) {
       //msg.error('请重新登录！');
       obj.props.history.push({pathname: '/login'});
       return false;

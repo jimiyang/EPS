@@ -52,7 +52,6 @@ class Login extends Component {
       partner_id: res.partner_id,
     };
     window.localStorage.setItem('headParams', JSON.stringify(headParams));
-    window.localStorage.setItem('checkLogin', '100');
     if (res.identity === 0) {
       this.props.history.push({pathname: '/main'});
     } else {

@@ -30,7 +30,8 @@ class ProductType extends Component {
       defaultExpandAllRows: true, //是否默认展开树形结构
       productTypeData: [],
       treeData: [],
-      redirect: false
+      redirect: false,
+      isLoading: true
     };
   }
   componentWillMount() {
@@ -71,7 +72,8 @@ class ProductType extends Component {
           }
         });
         this.setState({
-          treeData: productTypeData
+          treeData: productTypeData,
+          isLoading: false
         });
       }
       this.setState({
@@ -82,6 +84,9 @@ class ProductType extends Component {
         this.setState({redirect: true});
       }
       message.error(error.service_error_message);
+      this.setState({
+        isLoading: false
+      });
     });
   }
   editEvent = (id) => {
@@ -211,7 +216,7 @@ class ProductType extends Component {
           </Form>
         </div>
         <div className="right">
-          <Table rowKey={record => record.id} defaultExpandAllRows={this.state.defaultExpandAllRows} columns={columns} dataSource={this.state.productTypeData} />
+          <Table isLoading={this.state.isLoading} rowKey={record => record.id} defaultExpandAllRows={this.state.defaultExpandAllRows} columns={columns} dataSource={this.state.productTypeData} />
         </div>
       </div>
     );

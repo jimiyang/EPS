@@ -30,7 +30,8 @@ class ProductList extends Component {
       goods_name: '',
       goods_bar_no: '',
       goods_category_id: '',
-      redirect: false
+      redirect: false,
+      isLoading: true
     };
   }
   //数据加载，dom未初始化
@@ -51,13 +52,17 @@ class ProductList extends Component {
   loadList = (params) => {
     window.api('goods.getgoodslist', params).then(rs => {
       this.setState({
-        goodsList: rs.goods_list
+        goodsList: rs.goods_list,
+        isLoading: false
       });
     }).catch((error) => {
       if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
       }
       message.error(error.service_error_message);
+      this.setState({
+        isLoading: false
+      });
     });
   }
   selTap = (index) => {
@@ -258,6 +263,7 @@ class ProductList extends Component {
           pagination={this.state.search}
           className="table-box"
           rowKey={record => record.id}
+          loading={this.state.isLoading}
         />
       </div>
     );

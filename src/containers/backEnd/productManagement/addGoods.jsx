@@ -4,7 +4,8 @@ import {
   Input,
   Radio,
   Button,
-  message
+  message,
+  Spin
 } from 'antd';
 import {Redirect} from 'react-router';
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
@@ -28,7 +29,8 @@ class Add extends Component {
         goods_pic: require('../../../assets/backEnd/autoImg.jpg')//默认图片
       },
       redirect: false,
-      maxLength: 10
+      maxLength: 10,
+      isLoading: false
     };
   }
   componentWillMount() {
@@ -71,6 +73,9 @@ class Add extends Component {
   }
   addtionProEvent = (e) => {
     e.preventDefault();
+    this.setState({
+      isLoading: true
+    });
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const form = Object.assign(this.state.form, values);
@@ -194,138 +199,140 @@ class Add extends Component {
     }
     return (
       <div className="add-blocks">
-        <Form onSubmit={this.addtionProEvent} className="form" name="form" id="form">
-          <Form.Item
-            label="商品名称"
-          >
-            {getFieldDecorator(
-              'goods_name',
-              {
-                initialValue: this.state.form.goods_name || '',
-                rules: [{required: true, message: '请输入商品名称！'}]
+        <Spin spinning={this.state.isLoading}>
+          <Form onSubmit={this.addtionProEvent} className="form" name="form" id="form">
+            <Form.Item
+              label="商品名称"
+            >
+              {getFieldDecorator(
+                'goods_name',
+                {
+                  initialValue: this.state.form.goods_name || '',
+                  rules: [{required: true, message: '请输入商品名称！'}]
+                }
+              )(<Input placeholder="请输入商品名称" />)
               }
-            )(<Input placeholder="请输入商品名称" />)
-            }
-          </Form.Item>
-          <div className="content">
-            <div className="ant-form-item-label" style={{overflow: 'inherit'}}>
-              <label className="ant-form-item-required">商品条形码</label>
-            </div>
-            <div className="ant-form-item-control-wrapper" style={{width: '80%'}}>
-              <Input placeholder="请生成商品条形码" style={{width: '60%'}} disabled={this.state.disabled} value={this.state.form.goods_bar_no} />
-              <Button type="primary" onClick={this.getbarno.bind(this)}>生成条形码</Button>
-            </div>
-          </div>
-          <Form.Item
-            label="商品类型"
-          >
-            {getFieldDecorator(
-              'goods_category_id',
-              {
-                initialValue: this.state.form.goods_category_id || '',
-                rules: [
-                  {required: true, message: '请输入商品类型'}
-                ]
-              }
-            )(<TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.form.goods_category_id} />)
-            }
-          </Form.Item>
-          <Form.Item
-            label="商品成本价"
-          >
-            {getFieldDecorator(
-              'cost_price',
-              {
-                initialValue: this.state.form.cost_price || '',
-                rules: [
-                  {required: true, message: '请输入商品原价！'},
-                  {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
-                ]
-              }
-            )(<Input placeholder="请输入商品成本价" maxLength={this.state.maxLength} />)
-            }
-          </Form.Item>
-          <Form.Item
-            label="商品售价"
-          >
-            {getFieldDecorator(
-              'sale_price',
-              {
-                initialValue: this.state.form.sale_price || '',
-                rules: [
-                  {required: true, message: '请输入商品售价！'},
-                  {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
-                ]
-              }
-            )(<Input placeholder="请输入商品售价" maxLength={this.state.maxLength} />)
-            }
-          </Form.Item>
-          <Form.Item
-            label="是否需要发货"
-          >
-            <RadioGroup onChange={this.selIspostEvent} value={this.state.form.is_post}>
-              <Radio value={0}>是</Radio>
-              <Radio value={1}>否</Radio>
-            </RadioGroup>
-          </Form.Item>
-          <div className="content">
-            <div className="ant-form-item-label">
-              <label className="ant-form-item-required">商品图片</label>
-            </div>
-            <div className="col-md-6">
-              <input type="file" accept="image/jpg,image/jpeg,image/png,image/bmp" onChange={this.uploadImgEvent} ref="file" name="file" className="valid coverfile" />
-              <img src={this.state.form.goods_pic} className={`show-pic ${this.state.isShow === true ? 'hide' : null}`} />
-              <div className="ant-upload ant-upload-select ant-upload-select-picture-card upload-v-img adImgUrl">
-                <span className="rc-upload coverbutton" role="button">
-                  <i className="anticon anticon-plus">+</i>
-                  <div className="ant-upload-text">上传商品图</div>
-                </span>
+            </Form.Item>
+            <div className="content">
+              <div className="ant-form-item-label" style={{overflow: 'inherit'}}>
+                <label className="ant-form-item-required">商品条形码</label>
               </div>
-              <div className="ant-upload-list-item-info v-img-box ad_p_img">
-                <i className="icon-close anticon-delete voucherImgIcon" />
+              <div className="ant-form-item-control-wrapper" style={{width: '80%'}}>
+                <Input placeholder="请生成商品条形码" style={{width: '60%'}} disabled={this.state.disabled} value={this.state.form.goods_bar_no} />
+                <Button type="primary" onClick={this.getbarno.bind(this)}>生成条形码</Button>
               </div>
             </div>
-          </div>
-          <div className="content" style={{height: 400}}>
-            <div className="ant-form-item-label">
-              <label className="ant-form-item-required">商品详情</label>
+            <Form.Item
+              label="商品类型"
+            >
+              {getFieldDecorator(
+                'goods_category_id',
+                {
+                  initialValue: this.state.form.goods_category_id || '',
+                  rules: [
+                    {required: true, message: '请输入商品类型'}
+                  ]
+                }
+              )(<TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.form.goods_category_id} />)
+              }
+            </Form.Item>
+            <Form.Item
+              label="商品成本价"
+            >
+              {getFieldDecorator(
+                'cost_price',
+                {
+                  initialValue: this.state.form.cost_price || '',
+                  rules: [
+                    {required: true, message: '请输入商品原价！'},
+                    {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
+                  ]
+                }
+              )(<Input placeholder="请输入商品成本价" maxLength={this.state.maxLength} />)
+              }
+            </Form.Item>
+            <Form.Item
+              label="商品售价"
+            >
+              {getFieldDecorator(
+                'sale_price',
+                {
+                  initialValue: this.state.form.sale_price || '',
+                  rules: [
+                    {required: true, message: '请输入商品售价！'},
+                    {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
+                  ]
+                }
+              )(<Input placeholder="请输入商品售价" maxLength={this.state.maxLength} />)
+              }
+            </Form.Item>
+            <Form.Item
+              label="是否需要发货"
+            >
+              <RadioGroup onChange={this.selIspostEvent} value={this.state.form.is_post}>
+                <Radio value={0}>是</Radio>
+                <Radio value={1}>否</Radio>
+              </RadioGroup>
+            </Form.Item>
+            <div className="content">
+              <div className="ant-form-item-label">
+                <label className="ant-form-item-required">商品图片</label>
+              </div>
+              <div className="col-md-6">
+                <input type="file" accept="image/jpg,image/jpeg,image/png,image/bmp" onChange={this.uploadImgEvent} ref="file" name="file" className="valid coverfile" />
+                <img src={this.state.form.goods_pic} className={`show-pic ${this.state.isShow === true ? 'hide' : null}`} />
+                <div className="ant-upload ant-upload-select ant-upload-select-picture-card upload-v-img adImgUrl">
+                  <span className="rc-upload coverbutton" role="button">
+                    <i className="anticon anticon-plus">+</i>
+                    <div className="ant-upload-text">上传商品图</div>
+                  </span>
+                </div>
+                <div className="ant-upload-list-item-info v-img-box ad_p_img">
+                  <i className="icon-close anticon-delete voucherImgIcon" />
+                </div>
+              </div>
             </div>
-            <div>
-              <ReactQuill
-                placeholder="请输入商品描述详情"
-                theme="snow"
-                style={{width: 700, height: 300}}
-                value={this.state.form.goods_details}
-                onChange={this.handleChange}
-                modules={{
-                  toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['blockquote', 'code-block'],
-                    [{header: 1}, {header: 2}],
-                    [{list: 'ordered'}, {list: 'bullet'}],
-                    [{script: 'sub'}, {script: 'super'}],
-                    [{indent: '-1'}, {indent: '+1'}],
-                    [{direction: 'rtl'}],
-                    [{header: [1, 2, 3, 4, 5, 6, false]}],
-                    [{color: []}, {background: []}],
-                    [{font: []}],
-                    [{align: []}],
-                    ['link', 'image', 'video'],
-                    ['clean']
-                  ],
-                }}
-              />
+            <div className="content" style={{height: 400}}>
+              <div className="ant-form-item-label">
+                <label className="ant-form-item-required">商品详情</label>
+              </div>
+              <div>
+                <ReactQuill
+                  placeholder="请输入商品描述详情"
+                  theme="snow"
+                  style={{width: 700, height: 300}}
+                  value={this.state.form.goods_details}
+                  onChange={this.handleChange}
+                  modules={{
+                    toolbar: [
+                      ['bold', 'italic', 'underline', 'strike'],
+                      ['blockquote', 'code-block'],
+                      [{header: 1}, {header: 2}],
+                      [{list: 'ordered'}, {list: 'bullet'}],
+                      [{script: 'sub'}, {script: 'super'}],
+                      [{indent: '-1'}, {indent: '+1'}],
+                      [{direction: 'rtl'}],
+                      [{header: [1, 2, 3, 4, 5, 6, false]}],
+                      [{color: []}, {background: []}],
+                      [{font: []}],
+                      [{align: []}],
+                      ['link', 'image', 'video'],
+                      ['clean']
+                    ],
+                  }}
+                />
+              </div>
             </div>
-          </div>
-          <Form.Item>
-            <div className="g-tc">
-              <Button type="primary" htmlType="submit">保存</Button>
-              <Button style={{marginLeft: 8}} onClick={this.resetEvent}>
-                取消
-              </Button>
-            </div>
-          </Form.Item>
-        </Form>
+            <Form.Item>
+              <div className="g-tc">
+                <Button type="primary" htmlType="submit">保存</Button>
+                <Button style={{marginLeft: 8}} onClick={this.resetEvent}>
+                  取消
+                </Button>
+              </div>
+            </Form.Item>
+          </Form>
+        </Spin>
       </div>
     );
   }

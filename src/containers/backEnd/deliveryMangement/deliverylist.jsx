@@ -5,7 +5,8 @@ import {
   Button,
   DatePicker,
   Modal,
-  message
+  message,
+  Spin
 } from 'antd';
 import {Redirect} from 'react-router';
 import 'moment/locale/zh-cn';
@@ -42,7 +43,8 @@ class DeliveryList extends Component {
       firstOrdernum: '', //分页上一页所用的订单号
       lastOrdernum: '', //分页下一页所用的订单编号
       redirect: false,
-      text: '发货'
+      text: '发货',
+      isLoading: true
     };
   }
   componentWillMount() {
@@ -71,13 +73,15 @@ class DeliveryList extends Component {
       this.setState({
         orderListData: res.orders,
         firstOrdernum,
-        lastOrdernum
+        lastOrdernum,
+        isLoading: false
       });
     }).catch((error) => {
       if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
       }
       message.error(error.service_error_message);
+      this.setState({isLoading: false});
     });
   }
   selTap = (index) => {
@@ -305,59 +309,61 @@ class DeliveryList extends Component {
           </li>
           <li className="items"><Button type="primary" size="large" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
-        <div className="order-blocks">
-          <div className={`no-data ${this.state.isHide === false ? 'hide' : null}`}>
-            <img src={require('../../../assets/backEnd/nodata-ico.png')} />
-            <p>没有数据!</p>
-          </div>
-          <ul>
-            {
-              this.state.orderListData.map((item, index) => (
-                <li key={index} >
-                  <div className="order-title" onClick={this.openEvent.bind(this, index)}>
-                    <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
-                      <Icon type={this.state.index === index ? 'up' : 'down'} />
+        <Spin spinning={this.state.isLoading}>
+          <div className="order-blocks">
+            <div className={`no-data ${this.state.isHide === false ? 'hide' : null}`}>
+              <img src={require('../../../assets/backEnd/nodata-ico.png')} />
+              <p>没有数据!</p>
+            </div>
+            <ul>
+              {
+                this.state.orderListData.map((item, index) => (
+                  <li key={index} >
+                    <div className="order-title" onClick={this.openEvent.bind(this, index)}>
+                      <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
+                        <Icon type={this.state.index === index ? 'up' : 'down'} />
+                      </div>
+                      <span>{this.state.statusData[item.status]}</span>
+                      <span className="agentName">{item.agent_no}/{item.agent_name}</span>
+                      <span>订单号：{item.order_no}</span>
+                      <span>{item.gmt_created}</span>
                     </div>
-                    <span>{this.state.statusData[item.status]}</span>
-                    <span className="agentName">{item.agent_no}/{item.agent_name}</span>
-                    <span>订单号：{item.order_no}</span>
-                    <span>{item.gmt_created}</span>
-                  </div>
-                  {
-                    item.order_details.map((detail, idx) => (
-                      <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} key={idx}>
-                        <div className="items-3">
-                          <div className="left">
-                            <img src={detail.goods_pic} />
-                            <div className="title">
-                              <h1>商品名称：{detail.goods_name}</h1>
-                              <p>商品售价：¥{detail.goods_sale_price}</p>
-                              <p>商品类型：{detail.goods_category_name}</p>
+                    {
+                      item.order_details.map((detail, idx) => (
+                        <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} key={idx}>
+                          <div className="items-3">
+                            <div className="left">
+                              <img src={detail.goods_pic} />
+                              <div className="title">
+                                <h1>商品名称：{detail.goods_name}</h1>
+                                <p>商品售价：¥{detail.goods_sale_price}</p>
+                                <p>商品类型：{detail.goods_category_name}</p>
+                              </div>
+                            </div>
+                            <div className="button-items">
+                              <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
+                              <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id, detail.is_post, index, detail)}>{this.state.text}</Button>
                             </div>
                           </div>
-                          <div className="button-items">
-                            <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
-                            <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id, detail.is_post, index, detail)}>{this.state.text}</Button>
+                          <div className="items-1">
+                            <p><label>代理商账号：</label>{item.payer_account}</p>
+                            <p><label>数量：</label>{detail.goods_qty}</p>
+                            <p><label>合计：</label><em className="red">{detail.total_amt}</em></p>
+                            <p><label>收货地址：</label>{item.province}</p>
                           </div>
                         </div>
-                        <div className="items-1">
-                          <p><label>代理商账号：</label>{item.payer_account}</p>
-                          <p><label>数量：</label>{detail.goods_qty}</p>
-                          <p><label>合计：</label><em className="red">{detail.total_amt}</em></p>
-                          <p><label>收货地址：</label>{item.province}</p>
-                        </div>
-                      </div>
-                    ))
-                  }
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-        <div className={`pagetion ${this.state.isHide === true ? 'hide' : null}`}>
-          <span onClick={this.preEvent.bind(this)}>上一页</span>
-          <span onClick={this.nextEvent.bind(this)}>下一页</span>
-        </div>
+                      ))
+                    }
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <div className={`pagetion ${this.state.isHide === true ? 'hide' : null}`}>
+            <span onClick={this.preEvent.bind(this)}>上一页</span>
+            <span onClick={this.nextEvent.bind(this)}>下一页</span>
+          </div>
+        </Spin>
       </div>
     );
   }

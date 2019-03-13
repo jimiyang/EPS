@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  // baseURL: 'http://192.168.19.118:8000/eps/base/',
+  //baseURL: 'http://192.168.19.118:8000/eps/base/',
   baseURL: 'http://eps.liantuobank.com/eps/base/',
   timeout: 50000,
   withCredentials: true
@@ -24,10 +24,6 @@ instance.interceptors.response.use(
     } else {
       message.error(error);
     }*/
-    //if (window.localStorage.getItem('checkLogin') === null) {
-    //msg.error('您的登录已过期，请重新登录！');
-    //this.props.history.push({pathname: '/login'});
-    //}
   }
 );
 export default instance;
