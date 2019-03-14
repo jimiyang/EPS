@@ -60,7 +60,7 @@ class GenerateOrder extends Component {
             order_no: res.order_no,
             real_amt: res.real_amt,
             total_amt: res.total_amt,
-            address: res.address,
+            address: `${res.province} ${res.city} ${res.area} ${res.address}`,
             goods_name: this.state.info.name
           };
           this.props.history.push('/cashier', {info});
