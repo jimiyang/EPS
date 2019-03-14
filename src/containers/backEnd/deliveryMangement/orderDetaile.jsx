@@ -20,6 +20,9 @@ class OrderDetail extends Component {
         order_no: '',
         gmt_created: '',
         address: '',
+        province: '',
+        city: '',
+        area: '',
         receiver: '',
         mobile: '',
         post_code: '',
@@ -62,10 +65,14 @@ class OrderDetail extends Component {
     window.api('order.orderList', {order_no: id}).then((res) => {
       const data = res.orders[0];
       const goods = data.order_details[0];
+      console.log(data);
       const form = {
         receiver: data.receiver,
         mobile: data.mobile,
         address: data.address,
+        province: data.province,
+        city: data.city,
+        area: data.area,
         post_code: data.post_code,
         gmt_cashed: data.gmt_cashed, //付款时间
         goods_name: goods.goods_name,
@@ -134,7 +141,7 @@ class OrderDetail extends Component {
         </li>
         <li>
           <label>收货人地址：</label>
-          <div>{this.state.form.address}</div>
+          <div>{this.state.form.province}{this.state.form.city}{this.state.form.area}{this.state.form.address}</div>
         </li>
         <li>
           <label>联系人电话：</label>
