@@ -59,6 +59,7 @@ class OrderDetail extends Component {
       order_no: orderNo,
     };
     window.api('order.orderList', params).then(res => {
+      console.log(res);
       const status = res.orders[0].status;
       let step; // 0：等待付款，1：等待发货，2：等待收货，3：已完成，4：已取消（默认0）
       switch (status) {
