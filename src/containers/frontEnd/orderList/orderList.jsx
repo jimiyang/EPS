@@ -120,7 +120,7 @@ class OrderList extends Component {
       order_no: detail.order_no,
       real_amt: detail.real_amt,
       total_amt: detail.total_amt,
-      address: list[index].address,
+      address: `${list[index].province} ${list[index].city} ${list[index].area} ${list[index].address}`,
       goods_name: detail.goods_name
     };
     this.props.history.push('/cashier', {info});

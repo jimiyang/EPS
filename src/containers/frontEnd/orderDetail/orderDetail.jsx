@@ -120,7 +120,7 @@ class OrderDetail extends Component {
       order_no: order.order_no,
       real_amt: order.real_amt,
       total_amt: order.total_amt,
-      address: order.address,
+      address: `${order.province} ${order.city} ${order.area} ${order.address}`,
       goods_name: goods.goods_name
     };
     this.props.history.push('/cashier', {info});
@@ -188,7 +188,7 @@ class OrderDetail extends Component {
             </div>
             <div>
               <i>地址：</i>
-              <span className="address">{order.address}</span>
+              <span className="address">{order.province} {order.city} {order.area} {order.address}</span>
             </div>
             <div>
               <i>手机号码：</i>
