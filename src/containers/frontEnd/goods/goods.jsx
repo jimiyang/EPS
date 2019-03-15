@@ -10,17 +10,21 @@ export default class Goods extends Component {
       part: [], // 一级类的列表
       partList: [], // 类的商品列表
       redirect: false,
+      identity: false
     };
   }
   componentWillMount() {
-    if (window.common.loginOut(this)) {
-      if (window.localStorage.getItem('PKEY')) {
-        this.getHomepage();
-      } else {
-        this.props.history.push('/login');
-      }
+    if (window.localStorage.getItem('identity') === '0') {
+      this.setState({
+        identity: true
+      });
     } else {
-      message.error('登录信息失效，请重新登录');
+      const isLogin = window.common.loginOut(this);
+      if (isLogin) {
+        window.localStorage.getItem('PKEY') ? this.getHomepage() : this.props.history.push('/login');
+      } else {
+        message.error('登录信息失效，请重新登录');
+      }
     }
   }
   // 首页信息
@@ -50,6 +54,9 @@ export default class Goods extends Component {
     this.props.history.push('/goodsDetail', {id});
   }
   render() {
+    if (this.state.identity) {
+      return (<Redirect to="/main" />);
+    }
     if (this.state.redirect) {
       return (<Redirect to="/login" />);
     }
