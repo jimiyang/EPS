@@ -61,7 +61,7 @@ class SearchDetail extends Component {
             </div>
             <div className="address">
               <p>货物寄送至：</p>
-              <p>{detail.address}</p>
+              <p>{detail.province} {detail.city} {detail.area} {detail.address}</p>
             </div>
             <div className="link">
               <p>您可以查看：</p>
