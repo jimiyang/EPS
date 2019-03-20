@@ -1,9 +1,29 @@
-import axios from './api.js';
+import axios from 'axios';
 
-//通用接口
-function baseInstance(params) {
-  return (
-    axios.get('/login', {params}).then((response) => response)
-  );
-}
-export default {baseInstance};
+const instance = axios.create({
+  baseURL: 'http://192.168.19.118:8000/eps/base/',
+  //baseURL: 'http://eps.liantuobank.com/eps/base/',
+  timeout: 50000,
+  withCredentials: true
+});
+instance.interceptors.response.use(
+  res => {
+    const promise = new Promise((resolve, reject) => {
+      if (res.status === 200 && res.data.body.service_status === 'S' && res.data.head.visit_status === 'S') {
+        resolve(res.data.body);
+      } else {
+        reject(res.data.body);
+      }
+    });
+    return promise;
+  },
+  err => {
+    //const {data: {err: errnum, error}} = (err || {}).response;
+    /*if (errnum === 200 && error) {
+      message.success(error);
+    } else {
+      message.error(error);
+    }*/
+  }
+);
+export default instance;

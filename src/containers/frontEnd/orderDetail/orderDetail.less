@@ -5,16 +5,26 @@
     align-items: center;
     height: 125px;
     padding: 20px 0;
-    border: 1px solid #d7d7d7;
+    border-bottom: 1px solid #d7d7d7;
+    background: #fff;
+    border-radius:4px;
     .order {
-      width: 270px;
+      width: 350px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       border-right: 1px solid #d7d7d7;
-      p:first-of-type {
-        margin-bottom: 30px;
+      p {
+        margin: 5px 0;
+      }
+      button {
+        width: 64px;
+        height: 25px;
+        color: red;
+        background: #fff;
+        border: 1px solid red;
+        border-radius: 5px;
       }
     }
     .progress {
@@ -23,16 +33,19 @@
     }
   }
   section {
-    border: 1px solid #d7d7d7;
-    margin: 30px 0;
     display: flex;
     justify-content: space-between;
+    background: #fff;
     >div {
       padding: 0 15px;
       margin: 20px 0;
-      width: 400px;
-      border-left: 1px solid #000;
-      min-height: 265px;
+      width: 33.333333%;
+      border-left: 1px solid #eee;
+      h3{
+        i{
+          margin-right:10px;
+        }
+      }
       &:first-of-type {
         border: 0;
       }
@@ -41,11 +54,17 @@
       }
       div {
         font-size: 14px;
-        margin-top: 30px;
+        margin:20px 0;
         position: relative;
+        font-size:12px;
         p {
           float: left;
-          width: 100px;
+        }
+        i{
+          color: #999;
+        }
+        span{
+          color:#444;
         }
         .address {
           width: 270px;
@@ -56,6 +75,10 @@
       }
     }
   }
+  footer {
+    background: #fff;
+    margin-top:30px;
+  }
   .status {
     display: flex;
     justify-content: space-between;
@@ -64,10 +87,10 @@
     line-height: 40px;
     li {
       text-align: center;
+      font-size:12px;
     }
   }
   .content {
-    border: 1px solid #d7d7d7;
     border-top: 0;
     padding: 50px 0;
     display: flex;
@@ -75,10 +98,12 @@
     align-items: center;
     p {
       text-align: center;
+      font-size:13px;
     }
     .info {
       display: flex;
       justify-content: flex-start;
+      align-items:center;
       p {
         max-width: 300px;
         overflow: hidden;
@@ -87,8 +112,8 @@
       }
     }
     img {
-      width: 80px;
-      height: 80px;
+      width: 50px;
+      height: 50px;
       margin: 0 15px 0 30px
     }
     .operation {
@@ -109,14 +134,25 @@
     }
   }
   .content2 {
-    border: 1px solid #d7d7d7;
+    background:#fff;
     border-top: 0;
     padding: 10px 0;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: center;
+    border-top:1px dashed #eee;
     p {
-      padding: 20px 40px;
+      padding: 10px 40px;
+      font-size:13px;
     }
+    em{
+      font-size:12px;
+    }
+    span{
+      font-size:18px;
+    }
+  }
+  .ant-steps-horizontal:not(.ant-steps-label-vertical) .ant-steps-item-description {
+    max-width: 100px;
   }
 }

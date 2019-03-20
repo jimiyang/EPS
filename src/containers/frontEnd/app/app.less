@@ -2,9 +2,15 @@
   display: flex;
   align-items:center;
 }
+#app{
+  background:#f4f4f4;
+}
 .container{
   width:1200px;
   margin:0 auto;
+}
+.page > .container {
+  padding-top: 210px;
 }
 @barHeight:40px;
 @headerHeight:140px;
@@ -12,11 +18,38 @@
   display: inline-block;
 }
 .headers{
+  position: fixed;
+  top: 40px;
+  width: 100%;
   height:@headerHeight;
+  background:#fff;
+  z-index: 999;
+  overflow: hidden;
+  &-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
+    overflow: hidden;
+  }
+  &-menu {
+    margin-right: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    li {
+      padding: 0 20px;
+      cursor: pointer;
+    }
+    .isChecked {
+      color: #4386E9;
+    }
+  }
   &-order{
     background:#4386E9;
     padding:0 16px;
     line-height:@barHeight;
+    cursor: pointer;
     i{
       margin-right:5px;
       font-size:13px;
@@ -32,6 +65,7 @@
     &-nav{
       .flex();
       &>div{
+        cursor: pointer;
         font-size:12px;
         .inline-block();
         color:#fff;
@@ -71,6 +105,7 @@
     font-size:26px;
     width:220px;
     color:#4386E9;
+    cursor: pointer;
     .flex();
     i{
       font-size:44px;
@@ -82,7 +117,7 @@
 .nav{
   height:50px;
   margin-right:20px;
-  &>div{
+  &>li{
     display:inline-block;
     line-height:50px;
     padding:0 24px;
@@ -92,6 +127,9 @@
     &:hover{
       color:#4386E9;
     }
+  }
+  .isChecked {
+    color: #4386E9;
   }
 }
 .search{
@@ -109,4 +147,3 @@
   padding:40px 0;
   font-size:12px;
 }
-

@@ -1,173 +1,369 @@
 import React, {Component} from 'react';
-
 import {
   Icon,
   Input,
-  AutoComplete,
   Button,
   DatePicker,
-  Checkbox,
-  Pagination,
-  Table,
-  Popconfirm,
+  Modal,
   message,
-  Modal
+  Spin
 } from 'antd';
-
+import {Redirect} from 'react-router';
 import 'moment/locale/zh-cn';
-
 import moment from 'moment';
-
 import './delivery.css';
-
 import OrderDetaile from './orderDetaile';
+import SendDelivery from './sendDelivery';
 
 moment.locale('zh-cn');
-const {Option} = AutoComplete;
 class DeliveryList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      agentNumberData: [],
-      orderNumberData: [],
+      isActive: 0,
+      index: '',
+      isHide: false,
       detailVisible: false,
+      expressVisible: false,
+      menuData: ['全部订单', '待付款订单', '待发货订单', '待收货订单', '已完成订单', '已取消订单'],
+      statusData: ['待付款订单', '待发货订单', '待收货订单', '已完成订单', '已取消订单'],
+      expressName: '',
+      expressNo: '',
+      ids: '',
+      orderListData: [],
+      search: {
+        status: 0,
+        page_size: 10
+      },
+      orderNumber: '',
+      agentNo: '',
+      orderNo: '',
+      startTime: '',
+      endTime: '',
+      firstOrdernum: '', //分页上一页所用的订单号
+      lastOrdernum: '', //分页下一页所用的订单编号
+      redirect: false,
+      text: '发货',
+      isLoading: true
     };
   }
-  renderOption(item) {
-    return (
-      <Option key={item.name} text={item.name}>
-        {item.name}
-      </Option>
-    );
+  componentWillMount() {
+    //验证是否需要登录
+    if (window.common.loginOut(this)) {
+      this.loadList(this.state.search);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
-  orderDetailEvent = () => {
-    this.setState({
-      detailVisible: true
+  loadList = (params) => {
+    let firstOrdernum = '';
+    let lastOrdernum = '';
+    window.api('order.orderList', params).then(res => {
+      if (res.orders.length > 0) {
+        lastOrdernum = res.orders[res.orders.length - 1].order_no;
+        firstOrdernum = res.orders[0].order_no;
+        this.setState({
+          isHide: false
+        });
+      } else {
+        this.setState({
+          isHide: true
+        });
+      }
+      this.setState({
+        orderListData: res.orders,
+        firstOrdernum,
+        lastOrdernum,
+        isLoading: false
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      message.error(error.service_error_message);
+      this.setState({isLoading: false});
     });
   }
+  selTap = (index) => {
+    const params = Object.assign(this.state.search, {status: index});
+    this.setState({
+      isActive: index,
+      search: params
+    });
+    this.loadList(this.state.search);
+  }
+  orderDetailEvent = (value) => {
+    this.setState({
+      detailVisible: true,
+      orderNumber: value
+    });
+  }
+  sendDeliveryEvent = (number, id, isPost, index, detail) => {
+    //const index = (this.state.index === idx) ? '-1' : idx;
+    const list = this.state.orderListData;
+    if (isPost === 1) {
+      message.success('发货成功！');
+      this.setState({
+        text: '已发货'
+      });
+      const params = {
+        order_no: detail.order_no,
+        ids: detail.id
+      };
+      window.api('order.send', params).then((res) => {
+        list[index].status = 2;
+        this.setState({orderListData: list});
+      }).catch((error) => {
+        if (error.service_error_code === 'EPS000000801') {
+          this.setState({redirect: true});
+        }
+        message.error(error.service_error_message);
+      });
+      return false;
+    }
+    this.setState({
+      expressVisible: true,
+      orderNumber: number,
+      ids: id,
+      text: '发货'
+    });
+  }
+  closeEvent = () => {
+    this.setState({
+      expressVisible: false,
+      detailVisible: false
+    });
+  }
+  openEvent = (idx, number) => {
+    const index = (this.state.index === idx) ? '-1' : idx;
+    this.setState({
+      index
+    });
+    /*let str = '';
+    window.api('goods.goodsDetail', {order_no: number}).then(rs => {
+      if (rs.goods_detail.length > 0) {
+        this.state.orderDetailData.map(item => {
+          str += `${str}${item.goods_id},`;
+        });
+        this.setState({
+          orderDetailData: rs.goods_detail
+        });
+      }
+    }).catch(error => {
+      message.error(error);
+    });*/
+  }
+  selExpressNameEvent = (value) => {
+    this.setState({
+      expressName: value
+    });
+  }
+  orderNumberEvent = (value) => {
+    this.setState({
+      expressNo: value
+    });
+  }
+  sendEvent = () => {
+    if (this.state.expressName === '') {
+      message.error('请选择快递');
+      return false;
+    }
+    if (this.state.expressNo === '') {
+      message.error('请填写快递单号');
+      return false;
+    }
+    const params = {
+      order_no: this.state.orderNumber,
+      express_name: this.state.expressName,
+      express_no: this.state.expressNo,
+      ids: this.state.ids
+    };
+    window.api('order.send', params).then((res) => {
+      message.success(res.service_error_message);
+      this.loadList(this.state.search);
+      this.setState({
+        expressVisible: false
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      message.error(error.service_error_message);
+    });
+    //this.loadList(this.state.search);
+  }
+  agentEvent = (e) => {
+    this.setState({
+      agentNo: e.target.value
+    });
+  }
+  orderNumEvent = (e) => {
+    this.setState({
+      orderNo: e.target.value
+    });
+  }
+  startTimeEvent = (date, dateString) => {
+    this.setState({
+      startTime: dateString
+    });
+  }
+  entTimeEvent = (date, dateString) => {
+    this.setState({
+      endTime: dateString
+    });
+  }
+  searchEvent = () => {
+    const params = {};
+    if (this.state.agentNo !== '') {
+      Object.assign(params, this.state.search, {agent_no: this.state.agentNo});
+    }
+    if (this.state.orderNo !== '') {
+      Object.assign(params, this.state.search, {order_no: this.state.orderNo});
+    }
+    if (this.state.startTime !== '') {
+      Object.assign(params, this.state.search, {start_time: this.state.startTime});
+    }
+    if (this.state.endTime !== '' && this.state.startTime !== '') {
+      const startTime = (new Date(this.state.startTime)).getTime();
+      const endTime = (new Date(this.state.endTime)).getTime();
+      if (startTime > endTime) {
+        message.error('开始时间必须早于结束时间');
+        return;
+      }
+      Object.assign(params, this.state.search, {end_time: this.state.endTime});
+    } else if (this.state.endTime !== '' && this.state.startTime === '') {
+      message.error('请选择开始时间');
+    }
+    if (Object.keys(params).length === 0) {
+      Object.assign(params, this.state.search);
+    }
+    this.loadList(params);
+  }
+  //上一页
+  preEvent = () => {
+    const params = {
+      ...this.state.search,
+      previous: this.state.firstOrdernum
+    };
+    this.loadList(params);
+  }
+  //下一页
+  nextEvent = () => {
+    const params = {
+      ...this.state.search,
+      next: this.state.lastOrdernum
+    };
+    this.loadList(params);
+  }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <div className="delivery-blocks">
         <Modal
+          title="订单详情"
           visible={this.state.detailVisible}
           style={{width: '900px'}}
+          onCancel={this.closeEvent}
+          footer={
+            <Button type="primary" onClick={this.closeEvent.bind(this)}>确定</Button>
+          }
         >
-          <OrderDetaile />
+          <OrderDetaile order_no={this.state.orderNumber} />
+        </Modal>
+        <Modal
+          title="填写快递信息"
+          okText="提交"
+          cancelText="取消"
+          onOk={this.sendEvent}
+          onCancel={this.closeEvent}
+          visible={this.state.expressVisible}
+        >
+          <SendDelivery
+            selExpressNameEvent={this.selExpressNameEvent.bind(this)}
+            orderNumberEvent={this.orderNumberEvent}
+            id={this.state.id}
+            order_no={this.state.orderNumber}
+          />
         </Modal>
         <div className="nav-items">
           <div className="tap-items">
-            <span className="active">全部订单</span>|
-            <span>待发货的订单</span>|
-            <span>已发货的订单</span>|
-            <span>已完成的订单</span>|
-            <span>待付款的订单</span>|
-            <span>已取消的订单</span>
+            {
+              this.state.menuData.map((item, index) => <span key={index} onClick={this.selTap.bind(this, index)} className={this.state.isActive === index ? 'active' : ''}>{item}</span>)
+            }
           </div>
         </div>
         <ul className="search-blocks">
-          <li className="items"><label>代理商编号/名称：</label>
-            <AutoComplete
-              className="certain-category-search"
-              dropdownClassName="certain-category-search-dropdown"
-              dropdownMatchSelectWidth={false}
-              size="large"
-              style={{width: '100%'}}
-              dataSource={this.state.agentNumberData.map(this.renderOption)}
-              onBlur={this.handleNameSearch}
-              placeholder="请输入商品名称"
-              optionLabelProp="value"
-            >
-              <Input suffix={<Icon type="search" className="certain-category-icon" />} />
-            </AutoComplete>
+          <li className="items"><label style={{width: '150px'}}>代理商编号：</label>
+            <Input onChange={this.agentEvent} placeholder="请输入代理商编号" />
           </li>
           <li className="items"><label>订单号：</label>
-            <AutoComplete
-              className="certain-category-search"
-              dropdownClassName="certain-category-search-dropdown"
-              dropdownMatchSelectWidth={false}
-              size="large"
-              style={{width: '100%'}}
-              dataSource={this.state.orderNumberData.map(this.renderOption)}
-              onBlur={this.handleCodeSearch}
-              placeholder="请输入商品条形码"
-              optionLabelProp="value"
-            >
-              <Input suffix={<Icon type="search" className="certain-category-icon" />} />
-            </AutoComplete>
+            <Input onChange={this.orderNumEvent} placeholder="请输入订单号" />
           </li>
           <li className="items"><label>开始日期：</label>
-            <DatePicker />
+            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={this.startTimeEvent} />
           </li>
           <li className="items"><label>结束日期：</label>
-            <DatePicker />
+            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" onChange={this.entTimeEvent} />
           </li>
-          <li className="items"><Button type="primary">搜索</Button></li>
+          <li className="items"><Button type="primary" size="large" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
-        <div className="order-blocks">
-          <ul>
-            <li>
-              <div className="order-title">
-                <Icon type="down" />
-                <Checkbox />
-                <span>待发货</span>
-                <span>EW_N8484741367/刘玲一级代理商</span>
-                <span>订单号：0928213248</span>
-                <span>2018-12-21 06:12:22</span>
-                <Button type="primary" onClick={this.orderDetailEvent.bind(this)}>订单详情</Button>
-                <Button type="primary">发货</Button>
-              </div>
-              <div className="order-detaile">
-                <div className="items-1">
-                  <span>下单账号：dddddd</span>
-                  <span>数量：11111111</span>
-                  <span>合计：<em className="red">09999999</em></span>
-                </div>
-                <div className="items-2">收货地址：</div>
-                <div className="items-3">
-                  <Checkbox />
-                  <img src={require('../../../assets/bg.jpg')} />
-                  <div>
-                    <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>
-                    <p>¥344324321</p>
-                    <p>商品类型：哈哈哈哈哈</p>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div className="order-title">
-                <Icon type="down" />
-                <Checkbox />
-                <span>待发货</span>
-                <span>EW_N8484741367/刘玲一级代理商</span>
-                <span>订单号：0928213248</span>
-                <span>2018-12-21 06:12:22</span>
-                <Button type="primary">订单详情</Button>
-                <Button type="primary">发货</Button>
-              </div>
-              <div className="order-detaile">
-                <div className="items-1">
-                  <span>下单账号：dddddd</span>
-                  <span>数量：11111111</span>
-                  <span>合计：<em className="red">09999999</em></span>
-                </div>
-                <div className="items-2">收货地址：</div>
-                <div className="items-3">
-                  <Checkbox />
-                  <img src={require('../../../assets/bg.jpg')} />
-                  <div>
-                    <h1>恢复好后撒繁华的身份获得撒谎发的啥范德萨会发生</h1>
-                    <p>¥344324321</p>
-                    <p>商品类型：哈哈哈哈哈</p>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-          <div className="g-tc pagination">
-            <Pagination showSizeChanger defaultCurrent={1} total={100} />
+        <Spin spinning={this.state.isLoading}>
+          <div className="order-blocks">
+            <div className={`no-data ${this.state.isHide === false ? 'hide' : null}`}>
+              <img src={require('../../../assets/backEnd/nodata-ico.png')} />
+              <p>没有数据!</p>
+            </div>
+            <ul>
+              {
+                this.state.orderListData.map((item, index) => (
+                  <li key={index} >
+                    <div className="order-title" onClick={this.openEvent.bind(this, index)}>
+                      <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
+                        <Icon type={this.state.index === index ? 'up' : 'down'} />
+                      </div>
+                      <span>{this.state.statusData[item.status]}</span>
+                      <span className="agentName">{item.agent_no}/{item.agent_name}</span>
+                      <span>订单号：{item.order_no}</span>
+                      <span>{item.gmt_created}</span>
+                    </div>
+                    {
+                      item.order_details.map((detail, idx) => (
+                        <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} key={idx}>
+                          <div className="items-3">
+                            <div className="left">
+                              <img src={detail.goods_pic} />
+                              <div className="title">
+                                <h1>商品名称：{detail.goods_name}</h1>
+                                <p>商品售价：¥{detail.goods_sale_price}</p>
+                                <p>商品类型：{detail.goods_category_name}</p>
+                              </div>
+                            </div>
+                            <div className="button-items">
+                              <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
+                              <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id, detail.is_post, index, detail)}>{this.state.text}</Button>
+                            </div>
+                          </div>
+                          <div className="items-1">
+                            <p><label>代理商账号：</label>{item.payer_account}</p>
+                            <p><label>数量：</label>{detail.goods_qty}</p>
+                            <p><label>合计：</label><em className="red">{detail.total_amt}</em></p>
+                            <p><label>收货地址：</label>{item.province}{item.city}{item.area}{item.address}</p>
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </li>
+                ))
+              }
+            </ul>
           </div>
-        </div>
+          <div className={`pagetion ${this.state.isHide === true ? 'hide' : null}`}>
+            <span onClick={this.preEvent.bind(this)}>上一页</span>
+            <span onClick={this.nextEvent.bind(this)}>下一页</span>
+          </div>
+        </Spin>
       </div>
     );
   }

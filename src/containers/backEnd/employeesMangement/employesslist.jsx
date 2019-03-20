@@ -6,7 +6,8 @@ import {
   Input,
   Button,
   Table,
-  Modal
+  Modal,
+  message
 } from 'antd';
 
 import Detail from './detaile';
@@ -21,6 +22,12 @@ class EmployeesList extends Component {
       Data: [],
       visible: false
     };
+  }
+  componentWillMount() {
+    //验证是否需要登录
+    if (!window.common.loginOut(this)) {
+      message.error('登录信息失效，请重新登录');
+    }
   }
   renderOption(item) {
     return (
@@ -108,7 +115,7 @@ class EmployeesList extends Component {
             dropdownClassName="certain-category-search-dropdown"
             dropdownMatchSelectWidth={false}
             size="large"
-            style={{ width: '200px' }}
+            style={{width: '200px'}}
             dataSource={this.state.Data.map(this.renderOption)}
             onBlur={this.handleNameSearch}
             placeholder="请输入商品名称"

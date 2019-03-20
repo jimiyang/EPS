@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-
 import {
   Icon,
   Input,
@@ -7,13 +6,11 @@ import {
   Button,
   Table,
   Popconfirm,
-  message,
-  Modal
+  message
 } from 'antd';
-
+import {Redirect} from 'react-router';
 import './list.css';
-
-import Tree from './treeMenu';//树形结构商品类型
+import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 const {Option} = AutoComplete;
 class ProductList extends Component {
@@ -21,87 +18,151 @@ class ProductList extends Component {
     super(props);
     this.state = {
       isActive: 0,
-      typeTitle: '',
-      visible: false,
       productNameData: [], ///商品名称数据
-      barCodeData: [], //条形码数据
+      menuData: ['出售中的商品', '已下架的商品'],
+      statusTxt: '下架',
+      statusCon: '是否确定要下架此产品？',
       search: {
-        total: 3,
-        defaultCurrent: 1,
-        pageSize: 2,
-        showSizeChanger: true,
-        typeValue: ''
-      }
+        page_size: 10,
+        status: 0
+      },
+      goodsList: [],
+      goods_name: '',
+      goods_bar_no: '',
+      goods_category_id: '',
+      redirect: false,
+      isLoading: true
     };
   }
   //数据加载，dom未初始化
-  componentWillMount() {}
-  searchName = () => {
+  componentWillMount() {
+    if (window.common.loginOut(this)) {
+      this.loadList(this.state.search);
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
   }
-  selTap = (index) => {
-    this.setState({
-      isActive: index
-    });
-  }
-  selType = () => {
-    this.setState({
-      visible: true
-    });
-  }
-  //编辑
-  edit = (item) => {
-    this.props.history.push({pathname: '/addPro', query: {id: item.goods_bar_no}});
-  }
-  //下架
-  confirm = (item) => {
-    message.success('下架成功！');
-  }
-  cancel = () => {
-    message.error('已取消！');
-  }
-  renderOption(item) {
+  renderOption(item, index) {
     return (
-      <Option key={item.name} text={item.name}>
+      <Option key={index} text={item.name}>
         {item.name}
       </Option>
     );
   }
+  loadList = (params) => {
+    window.api('goods.getgoodslist', params).then(rs => {
+      this.setState({
+        goodsList: rs.goods_list,
+        isLoading: false
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      message.error(error.service_error_message);
+      this.setState({
+        isLoading: false
+      });
+    });
+  }
+  selTap = (index) => {
+    const form = Object.assign(this.state.search, {status: index});
+    const statusTxt = index !== 0 ? '出售' : '下架';
+    const statusCon = index !== 0 ? '是否确定要出售此产品？' : '是否确定要下架此产品？';
+    this.setState({
+      isActive: index,
+      search: form,
+      statusTxt,
+      statusCon
+    });
+    this.loadList(form);
+  }
+  //编辑
+  edit = (item) => {
+    this.props.history.push({pathname: '/main/addGoods', query: {id: item.id}});
+  }
+  //是否下架或重新出售
+  confirm = (item) => {
+    const status = item.status === 0 ? 1 : 0;
+    const params = {
+      id: item.id,
+      status
+    };
+    window.api('goods.modgoods', params).then(rs => {
+      message.success(rs.service_error_message);
+      this.loadList(this.state.search);
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      message.error(error.service_error_message);
+    });
+  }
+  selNameEvent = (value) => {
+    this.setState({
+      goods_name: value
+    });
+  }
   //商品名称模糊搜索
   handleNameSearch = (value) => {
-    const data = [
-      {name: '上海银行', code: 141},
-      {name: '中国银行', code: 142},
-      {name: '北京银行', code: 143}
-    ];
-    const node = data.map((item, idx) => ({
-      name: `${item.name}/${item.code}`
-    }));
     this.setState({
-      productNameData: value ? node : [],
+      goods_name: value
+    });
+    const form = {
+      goods_name: value,
+      ...this.state.search
+    };
+    if (!value) {
+      return false;
+    }
+    window.api('goods.getgoodslist', form).then(res => {
+      const node = res.goods_list.map((item) => ({
+        name: `${item.goods_name}`
+      }));
+      this.setState({
+        productNameData: value ? node : []
+      });
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      message.error(error.service_error_message);
     });
   }
-  //商品条形码模糊搜索
-  handleCodeSearch = (value) => {
-    // console.log(value);
-  }
-  handleOk = () => {
+  selGoodsNameEvent = (value) => {
     this.setState({
-      typeValue: this.state.typeTitle,
-      visible: false
+      goods_name: value
     });
   }
-  handleCancel = () => {
+  changeBarEvent = (e) => {
     this.setState({
-      visible: false
+      goods_bar_no: e.target.value
     });
   }
-  changeHandler = (key, e) => {
+  selParentEvent = (value) => {
     this.setState({
-      typeTitle: e.node.props.title
+      goods_category_id: value
     });
+  }
+  //列表查询
+  searchEvent = () => {
+    const params = {};
+    if (this.state.goods_name !== '') {
+      Object.assign(params, this.state.search, {goods_name: this.state.goods_name});
+    }
+    if (this.state.goods_bar_no !== '') {
+      Object.assign(params, this.state.search, {goods_bar_no: this.state.goods_bar_no});
+    }
+    if (this.state.goods_category_id !== '') {
+      Object.assign(params, this.state.search, {goods_category_id: this.state.goods_category_id});
+    }
+    if (Object.keys(params).length === 0) {
+      Object.assign(params, this.state.search);
+    }
+    this.loadList(params);
   }
   addProduct = () => {
-    this.props.history.push({pathname: '/addPro'});
+    this.props.history.push({pathname: '/main/addGoods'});
   }
   render() {
     const columns = [
@@ -126,7 +187,15 @@ class ProductList extends Component {
         dataIndex: 'goods_bar_no'
       },
       {
-        title: '已卖出数量',
+        title: '商品状态',
+        key: 'status',
+        dataIndex: 'status',
+        render: (status) => (
+          <span>{status === 1 ? '已下架' : '出售中'}</span>
+        ),
+      },
+      {
+        title: '已售数量',
         key: 'sell_out',
         dataIndex: 'sell_out'
       },
@@ -138,60 +207,27 @@ class ProductList extends Component {
           <div className="opearte-blocks">
             <span className="ml10" onClick={() => this.edit(record)}>编辑</span>
             <Popconfirm
-              title="是否确定下架此产品?"
+              title={this.state.statusCon}
               onConfirm={() => this.confirm(record)}
-              onCancel={() => this.cancel()}
               okText="是"
               cancelText="否"
             >
-              <span className="ml10">下架</span>
+              <span className="ml10">{this.state.statusTxt}</span>
             </Popconfirm>
           </div>
         )
       }
     ];
-    const data = [
-      {
-        key: 1,
-        goods_name: '联富通',
-        goods_category_name: '软件',
-        sale_price: '999999',
-        goods_bar_no: '2004903625979',
-        sell_out: '99999999'
-      },
-      {
-        key: 2,
-        goods_name: '联富通1',
-        goods_category_name: '软件',
-        sale_price: '999999',
-        goods_bar_no: '2004903625979',
-        sell_out: '5555'
-      },
-      {
-        key: 2,
-        goods_name: '联富通1',
-        goods_category_name: '软件',
-        sale_price: '999999',
-        goods_bar_no: '2004903625979',
-        sell_out: '5555'
-      }
-    ];
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
       <div className="product-blocks">
-        <Modal
-          title="请选择商品类型"
-          okText="确定"
-          cancelText="取消"
-          visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          <Tree onSelect={this.changeHandler} />
-        </Modal>
         <div className="nav-items">
           <div className="tap-items">
-            <span className={this.state.isActive === 0 ? 'active' : ''} onClick={this.selTap.bind(this, 0)}>出售中的商品</span>|
-            <span className={this.state.isActive === 1 ? 'active' : ''} onClick={this.selTap.bind(this, 1)}>已下架的商品</span>
+            {
+              this.state.menuData.map((item, index) => <span key={index} onClick={this.selTap.bind(this, index)} className={this.state.isActive === index ? 'active' : ''}>{item}</span>)
+            }
           </div>
           <Button type="primary" onClick={this.addProduct.bind(this)}>新增商品</Button>
         </div>
@@ -202,44 +238,32 @@ class ProductList extends Component {
               dropdownClassName="certain-category-search-dropdown"
               dropdownMatchSelectWidth={false}
               size="large"
-              style={{ width: '100%' }}
+              style={{width: '100%'}}
               dataSource={this.state.productNameData.map(this.renderOption)}
               onBlur={this.handleNameSearch}
               placeholder="请输入商品名称"
-              optionLabelProp="value"
+              optionLabelProp="text"
+              onSelect={this.selGoodsNameEvent}
+              onChange={this.selNameEvent}
             >
               <Input suffix={<Icon type="search" className="certain-category-icon" />} />
             </AutoComplete>
           </li>
-          <li className="items"><label>商品条形码：</label>
-            <AutoComplete
-              className="certain-category-search"
-              dropdownClassName="certain-category-search-dropdown"
-              dropdownMatchSelectWidth={false}
-              size="large"
-              style={{ width: '100%' }}
-              dataSource={this.state.barCodeData.map(this.renderOption)}
-              onBlur={this.handleCodeSearch}
-              placeholder="请输入商品条形码"
-              optionLabelProp="value"
-            >
-              <Input suffix={<Icon type="search" className="certain-category-icon" />} />
-            </AutoComplete>
+          <li className="items"><label style={{width: '150px'}}>商品条形码：</label>
+            <Input value={this.state.goods_bar_no} onChange={this.changeBarEvent} placeholder="请输入商品条形码" />
           </li>
           <li className="items"><label>商品类型：</label>
-            <Input
-              placeholder="请选择商品类型"
-              onClick={this.selType.bind(this)}
-              value={this.state.typeValue}
-            />
+            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.goods_category_id} />
           </li>
-          <li className="items"><Button type="primary">搜索</Button></li>
+          <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)} size="large">搜索</Button></li>
         </ul>
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={this.state.goodsList}
           pagination={this.state.search}
           className="table-box"
+          rowKey={record => record.id}
+          loading={this.state.isLoading}
         />
       </div>
     );

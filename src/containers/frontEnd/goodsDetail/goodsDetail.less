@@ -1,10 +1,11 @@
-#commoditiesDetail {
+#goodsDetail {
   .sale {
     height: 350px;
     display: flex;
     justify-content: center;
-    border: 1px solid #d7d7d7;
+    border-radius:4px;
     padding: 0 25px;
+    background:#fff;
     .poster {
       img {
         width: 300px;
@@ -26,20 +27,21 @@
       >div {
         display: flex;
         justify-content: flex-start;
-        padding-left: 15px;
         p:first-of-type {
           padding-right: 10px;
         }
       }
       .price {
-        height: 40px;
-        background: #e4e4e4;
         p {
           line-height: 40px;
+          font-size:30px;
           &:last-of-type {
             color: #fc3339;
             font-size: 18px;
           }
+        }
+        em{
+          font-size:12px;
         }
       }
       .address {
@@ -53,12 +55,15 @@
         }
       }
       .count {
+        margin-top: 20px;
         height: 60px;
         display: flex;
         justify-content: flex-start;
         align-items: center;
+        font-size:12px;
       }
       button {
+        margin-top: 60px;
         width: 140px;
         height: 40px;
         border: 0;
@@ -66,24 +71,19 @@
         color: #fff;
         font-size: 18px;
         border-radius: 5px;
-        margin-top: 20px;
         margin-left: 15px;
-        cursor: pointer;
-        &:focus {
-          outline: none;
-        }
       }
     }
   }
   .detail {
     margin-top: 30px;
+    background:#fff;
     .title {
       background: #e4e4e4;
       line-height: 40px;
       padding-left: 15px;
     }
     .content {
-      border: 1px solid #d7d7d7;
       border-top: 0;
       padding: 50px;
     }

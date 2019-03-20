@@ -1,56 +1,72 @@
 import React, {Component} from 'react';
-
-import {Layout, Menu, message} from 'antd';
-
+import {Layout, Menu, Upload, message, Icon} from 'antd';
 import {
   BrowserRouter as Router,
   Route,
   Link,
 } from 'react-router-dom';
+import {Redirect} from 'react-router';
+import './main.less';
 
-import './main.css';
-
-import List from '../productManagement/list';
-
-import DeliveryList from '../deliveryMangement/deliverylist';
-
-import TypeList from '../productType/typelist';
-
-import AddPro from '../productManagement/addPro';
-
-//const SubMenu = Menu.SubMenu;
-const {SubMenu} = Menu;
 const {
   Header, Sider, Content,
 } = Layout;
-
 class Main extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      redirect: false,
+      login_name: ''
+    };
+  }
   componentWillMount() {
     //验证是否需要登录
-    window.common.loginOut(this, message);
+    if (window.common.loginOut(this)) {
+      if (JSON.parse(window.localStorage.getItem('headParams')) !== null) {
+        this.setState({
+          login_name: JSON.parse(window.localStorage.getItem('headParams')).login_name
+        });
+      }
+    } else {
+      message.error('登录信息失效，请重新登录');
+    }
+  }
+  loginOutEvent = () => {
+    window.api('eps.logout', {login_name: this.state.login_name}).then(res => {
+      if (res.service_status === 'S') {
+        this.props.history.push({pathname: '/login'});
+      }
+    }).catch((error) => {
+      if (error.service_error_code === 'EPS000000801') {
+        this.setState({redirect: true});
+      }
+      message.error(error.service_error_message);
+    });
+    window.localStorage.clear();
   }
   render() {
+    if (this.state.redirect) {
+      return (<Redirect to="/login" />);
+    }
     return (
-      <Layout className="main-blocks">
-        <Header>
-          采购平台-管理后台
-          <div>
-            <Link to="/login">退出登录</Link>
+      <Layout>
+        <Header className="header">
+          <div className="header-logo">联拓富新零售赋能平台</div>
+          <div className="header-person">
+            <label>当前用户：{this.state.login_name}</label>
+            <span onClick={this.loginOutEvent}>退出登录</span>
           </div>
         </Header>
         <Layout>
           <Sider>
-            <Menu mode="inline">
-              <Menu.Item key="1"><Link to="/list">商品管理</Link></Menu.Item>
-              <Menu.Item key="2"><Link to="/deliverylist">发货订单管理</Link></Menu.Item>
-              <Menu.Item key="3"><Link to="/typelist">商品类型管理</Link></Menu.Item>
+            <Menu mode="inline" style={{height: '100%', borderRight: 0}}>
+              <Menu.Item key="1"><Link to="/main/list"><Icon type="appstore" />商品管理</Link></Menu.Item>
+              <Menu.Item key="2"><Link to="/main/deliverylist"><Icon type="folder" />发货订单管理</Link></Menu.Item>
+              <Menu.Item key="3"><Link to="/main/typelist"><Icon type="project" />商品类型管理</Link></Menu.Item>
             </Menu>
           </Sider>
           <Content className="main-content">
-            <Route path="/list" component={List} />
-            <Route path="/deliverylist" component={DeliveryList} />
-            <Route path="/typelist" component={TypeList} />
-            <Route path="/addPro" component={AddPro} />
+            <div style={{margin: 24, padding: 20, background: '#fff'}}>{this.props.children}</div>
           </Content>
         </Layout>
       </Layout>
@@ -58,4 +74,3 @@ class Main extends Component {
   }
 }
 export default Main;
-

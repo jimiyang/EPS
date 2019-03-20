@@ -1,32 +1,34 @@
-import axios from 'axios';
-import {message} from 'antd';
-
-const instance = axios.create({
-  baseURL: '/api',
-  timeout: 1000,
-  withCredentials: true,
-  headers: {'content-type': 'application/x-www-form-urlencoded'}
-});
-
-//const tid = localStorage.getItem('tid');
-//axios.defaults.headers.tid = tid || ''; // axios headers token
-instance.interceptors.response.use(
-  res => res,
-  err => {
-    const {data: {err: errnum, error}} = (err || {}).response;
-    if (errnum === 200 && error) {
-      message.success(error);
-    } else {
-      message.error(error);
-    }
-    /*if (err.response.status === 401) {
-      message.info('您的登录已过期，请重新登录');
-      setTimeout(() => {
-        history.replace('/login');
-        localStorage.removeItem('tid');
-        window.location.reload();
-      }, 600);
-    }*/
+import axios from './instance';
+import getSign from './sign/sign';
+import aes from './aes/public';
+//通用接口
+function baseInstance(service, params) {
+  const localStorage = window.localStorage;
+  let headParams = {};
+  if (service === 'eps.login') {
+    headParams = params;
+  } else {
+    headParams = JSON.parse(localStorage.getItem('headParams'));
+    headParams.partner_id = aes.Decrypt(headParams.partner_id);
+    const signParams = {
+      service,
+      ...headParams,
+      ...params,
+    };
+    headParams = {
+      ...headParams,
+      ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY')))
+    };
   }
-);
-export default instance;
+  const form = {
+    head: {
+      service,
+      ...headParams
+    },
+    body: params
+  };
+  return (
+    axios.post('gateway.in', form).then((response) => response)
+  );
+}
+export default {baseInstance};

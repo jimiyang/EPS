@@ -13,11 +13,43 @@ const utils = {
     }
     return code.toUpperCase();
   },
-  loginOut(obj, msg) {
-    if (window.localStorage.getItem('checkLogin') === null) {
-      msg.error('登录已超时，请重新登录！');
+  loginOut(obj) {
+    if (window.localStorage.getItem('headParams') === null) {
+      //msg.error('请重新登录！');
       obj.props.history.push({pathname: '/login'});
+      return false;
+      //return false;
     }
-  }
+    return true;
+  },
+  beforeUpload(file, msg) { //上传图片之前判断图片大小
+    const typeArr = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmg'];
+    let isJPG = 'image/jpeg';
+    typeArr.map(item => {
+      if (item === file.type) {
+        isJPG = item;
+      }
+    });
+    if (!isJPG) {
+      msg.error(`请上传${isJPG}格式图片！`);
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      msg.error('请上传小于2MB的图片!');
+    }
+    return isJPG && isLt2M;
+  },
+  getQueryString(url) {
+    const str = url.split('?');
+    const arr = str[1].split('&');
+    const obj = {};
+    for (let i = 0; i < arr.length; i++) {
+      const num = arr[i].indexOf('=');
+      if (num > 0) {
+        obj[arr[i].substring(0, num)] = arr[i].substr(num + 1);
+      }
+    }
+    return obj;
+  },
 };
 export default utils;
