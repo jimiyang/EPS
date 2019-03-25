@@ -45,6 +45,11 @@ class Main extends Component {
     window.localStorage.clear();
   }
   render() {
+    const menuData = [
+      {name: '商品管理', url: '/main/list', icon: 'appstore'},
+      {name: '发货订单管理', url: '/main/deliverylist', icon: 'folder'},
+      {name: '商品类型管理', url: '/main/typelist', icon: 'project'}
+    ];
     if (this.state.redirect) {
       return (<Redirect to="/login" />);
     }
@@ -60,9 +65,13 @@ class Main extends Component {
         <Layout>
           <Sider>
             <Menu mode="inline" style={{height: '100%', borderRight: 0}}>
-              <Menu.Item key="1"><Link to="/main/list"><Icon type="appstore" />商品管理</Link></Menu.Item>
-              <Menu.Item key="2"><Link to="/main/deliverylist"><Icon type="folder" />发货订单管理</Link></Menu.Item>
-              <Menu.Item key="3"><Link to="/main/typelist"><Icon type="project" />商品类型管理</Link></Menu.Item>
+              {
+                menuData.map((item, index) => (
+                  (
+                    <Menu.Item key={index}><Link to={item.url}><Icon type={item.icon} />{item.name}</Link></Menu.Item>
+                  )
+                ))
+              }
             </Menu>
           </Sider>
           <Content className="main-content">
