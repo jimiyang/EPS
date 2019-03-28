@@ -48,7 +48,10 @@ class Main extends Component {
     const menuData = [
       {name: '商品管理', url: '/main/list', icon: 'appstore'},
       {name: '发货订单管理', url: '/main/deliverylist', icon: 'folder'},
-      {name: '商品类型管理', url: '/main/typelist', icon: 'project'}
+      {name: '商品类型管理', url: '/main/typelist', icon: 'project'},
+      {name: '品牌管理', url: '/main/brandlist', icon: 'cluster'},
+      {name: '库存管理', url: '/main/inventorylist', icon: 'shop'},
+      {name: '设备管理', url: '/main/facilitylist', icon: 'robot'}
     ];
     if (this.state.redirect) {
       return (<Redirect to="/login" />);

@@ -5,7 +5,8 @@ import {
   Radio,
   Button,
   message,
-  Spin
+  Spin,
+  Select
 } from 'antd';
 import {Redirect} from 'react-router';
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
@@ -15,6 +16,7 @@ import api from '../../../api/api';
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 const RadioGroup = Radio.Group;
+const Option = Select.Option;
 class Add extends Component {
   constructor(props) {
     super(props);
@@ -26,8 +28,17 @@ class Add extends Component {
         is_post: 0,
         goods_details: '',
         goods_category_id: '',
-        goods_pic: require('../../../assets/backEnd/autoImg.jpg')//默认图片
+        cost_price: '',
+        sale_price: '',
+        goods_pic: require('../../../assets/backEnd/autoImg.jpg'), //默认图片require('../../../assets/backEnd/autoImg.jpg')
+        pay_type: 0, //付款方式
+        is_attribute: '', //选择商品属性
+        is_self: 0, //是否自营
+        rebate_type: 0, //返佣方式
       },
+      is_hardwarestate: false, //判断是否选择的硬件，显示硬件的条件
+      is_selfstate: false, //判断商品属性是软件，是否显示自营、非自营
+      //is_rebeatstate: false, //选择业绩返佣，显示返佣条件
       redirect: false,
       maxLength: 10,
       isLoading: false
@@ -73,20 +84,12 @@ class Add extends Component {
   }
   addtionProEvent = (e) => {
     e.preventDefault();
-    this.setState({
-      isLoading: true
-    });
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const form = Object.assign(this.state.form, values);
         this.setState({
-          form,
-          isLoading: false
+          form
         });
-        if (this.state.form.goods_bar_no === '') {
-          message.error('请生成商品条形码');
-          return false;
-        }
         if (this.state.form.goods_pic === '/static/img/autoImg.fdadbc7.jpg') {
           message.error('请上传商品图片');
           return false;
@@ -171,6 +174,9 @@ class Add extends Component {
       this.setState({
         form
       });
+      this.props.form.setFieldsValue({
+        goods_bar_no: rs.barNo
+      });
     }).catch(error => {
       message.error(error);
     });
@@ -189,6 +195,45 @@ class Add extends Component {
   }
   selIspostEvent = (e) => {
     const form = Object.assign(this.state.form, {is_post: e.target.value});
+    this.setState({
+      form
+    });
+  }
+  //选择付款方式
+  selpayTypeEvent = (e) => {
+    const form = Object.assign(this.state.form, {pay_type: e.target.value});
+    this.setState({
+      form
+    });
+  }
+  //选择商品属性
+  selAttributeEvent = (e) => {
+    let hardwarestate = '';
+    let selfstate = '';
+    let rebatetype = '';
+    if (e.target.value === 0) {
+      hardwarestate = true;
+      selfstate = false;
+    } else {
+      hardwarestate = false;
+      selfstate = true;
+      rebatetype = 0;
+    }
+    const form = Object.assign(this.state.form, {is_attribute: e.target.value, rebate_type: rebatetype});
+    this.setState({
+      form,
+      is_hardwarestate: hardwarestate,
+      is_selfstate: selfstate
+    });
+  }
+  selSelfEvent = (e) => {
+    const form = Object.assign(this.state.form, {is_self: e.target.value});
+    this.setState({
+      form
+    });
+  }
+  selRebateEvent = (e) => {
+    const form = Object.assign(this.state.form, {rebate_type: e.target.value});
     this.setState({
       form
     });
@@ -214,15 +259,19 @@ class Add extends Component {
               )(<Input placeholder="请输入商品名称" />)
               }
             </Form.Item>
-            <div className="content">
-              <div className="ant-form-item-label" style={{overflow: 'inherit'}}>
-                <label className="ant-form-item-required">商品条形码</label>
-              </div>
-              <div className="ant-form-item-control-wrapper" style={{width: '80%'}}>
-                <Input placeholder="请生成商品条形码" style={{width: '60%'}} disabled={this.state.disabled} value={this.state.form.goods_bar_no} />
-                <Button type="primary" onClick={this.getbarno.bind(this)}>生成条形码</Button>
-              </div>
-            </div>
+            <Form.Item
+              label="商品条形码"
+            >
+              {getFieldDecorator(
+                'goods_bar_no',
+                {
+                  initialValue: this.state.form.goods_bar_no || '',
+                  rules: [{required: true, message: '请输入商品名称！'}]
+                }
+              )(<Input placeholder="请生成商品条形码" style={{width: '60%'}} disabled={this.state.disabled} />)
+              }
+              <Button type="primary" onClick={this.getbarno.bind(this)}>生成条形码</Button>
+            </Form.Item>
             <Form.Item
               label="商品类型"
             >
@@ -238,19 +287,35 @@ class Add extends Component {
               }
             </Form.Item>
             <Form.Item
+              label="商品品牌"
+            >
+              {getFieldDecorator(
+                'goods_category_id',
+                {
+                  initialValue: this.state.form.goods_category_id || '',
+                  rules: [
+                    {required: true, message: '请选择商品品牌'}
+                  ]
+                }
+              )(<Select style={{width: '60%'}}>
+                <Option value="lucy">Lucy</Option>
+              </Select>)
+              }
+            </Form.Item>
+            <Form.Item
               label="商品成本价"
             >
               {getFieldDecorator(
                 'cost_price',
                 {
-                  initialValue: `${this.state.form.cost_price}` || '',
+                  initialValue: `${this.state.form.cost_price}`,
                   rules: [
                     {required: true, message: '请输入商品成本价！'},
                     {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
                   ]
                 }
               )(<Input placeholder="请输入商品成本价" maxLength={this.state.maxLength} />)
-              }
+              }元
             </Form.Item>
             <Form.Item
               label="商品售价"
@@ -258,14 +323,112 @@ class Add extends Component {
               {getFieldDecorator(
                 'sale_price',
                 {
-                  initialValue: `${this.state.form.sale_price}` || '',
+                  initialValue: `${this.state.form.sale_price}`,
                   rules: [
                     {required: true, message: '请输入商品售价！'},
                     {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
                   ]
                 }
               )(<Input placeholder="请输入商品售价" maxLength={this.state.maxLength} />)
-              }
+              }元
+            </Form.Item>
+            <Form.Item
+              label="付款方式"
+            >
+              <RadioGroup onChange={this.selpayTypeEvent} value={this.state.form.pay_type}>
+                <Radio value={0}>冻结</Radio>
+                <Radio value={1}>扣款</Radio>
+              </RadioGroup>
+            </Form.Item>
+            <Form.Item
+              label="选择商品属性"
+            >
+              <RadioGroup onChange={this.selAttributeEvent} value={this.state.form.is_attribute}>
+                <Radio value={0}>硬件</Radio>
+                <Radio value={1}>软件</Radio>
+              </RadioGroup>
+            </Form.Item>
+            <Form.Item
+              label="选择返佣方式"
+              className={this.state.is_hardwarestate === true ? null : 'hide'}
+            >
+              <RadioGroup onChange={this.selRebateEvent} value={this.state.form.rebate_type}>
+                <Radio value={0}>激活返佣</Radio>
+                <Radio value={1}>业余返佣</Radio>
+              </RadioGroup>
+            </Form.Item>
+            <Form.Item
+              label="商品激活价格"
+              className={this.state.is_hardwarestate === true ? null : 'hide'}
+            >
+              {getFieldDecorator(
+                'sale_price',
+                {
+                  initialValue: `${this.state.form.sale_price}`,
+                  rules: [
+                    {required: true, message: '请输入商品激活价格！'},
+                    {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
+                  ]
+                }
+              )(<Input placeholder="请输入商品激活价格" maxLength={this.state.maxLength} />)
+              }元
+            </Form.Item>
+            <Form.Item
+              label="商品返佣价格"
+              className={this.state.is_hardwarestate === true ? null : 'hide'}
+            >
+              {getFieldDecorator(
+                'sale_price',
+                {
+                  initialValue: `${this.state.form.sale_price}`,
+                  rules: [
+                    {required: true, message: '请输入商品返佣价格！'},
+                    {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
+                  ]
+                }
+              )(<Input placeholder="请输入商品返佣价格" maxLength={this.state.maxLength} />)
+              }元
+            </Form.Item>
+            <Form.Item
+              label="返佣设备个数"
+              className={this.state.is_hardwarestate === true ? null : 'hide'}
+            >
+              {getFieldDecorator(
+                'sale_price',
+                {
+                  initialValue: `${this.state.form.sale_price}`,
+                  rules: [
+                    {required: true, message: '请输入商品返佣设备个数！'},
+                    {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
+                  ]
+                }
+              )(<Input placeholder="请输入商品返佣设备个数" maxLength={this.state.maxLength} />)
+              }元
+            </Form.Item>
+            <Form.Item
+              label="返佣条件"
+              className={this.state.form.rebate_type === 1 ? null : 'hide'}
+            >
+              交易额满
+              {getFieldDecorator(
+                'rebeat_conditions',
+                {
+                  rules: [
+                    {required: true, message: '请输入交易额！'},
+                    {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
+                  ]
+                }
+              )(<Input style={{width: '200px'}} placeholder="精确到小数点后两位" />)
+              }元
+            </Form.Item>
+            <Form.Item
+              label="是否为自营"
+              className={this.state.is_selfstate === true ? null : 'hide'}
+            >
+              <RadioGroup onChange={this.selSelfEvent} value={this.state.form.is_self}>
+                <Radio value={0}>自营</Radio>
+                <Radio value={1}>非自营</Radio>
+              </RadioGroup>
             </Form.Item>
             <Form.Item
               label="是否需要发货"

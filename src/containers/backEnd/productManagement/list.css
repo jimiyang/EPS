@@ -4,6 +4,12 @@
     justify-content: space-between;
     align-items: center;
 }
+.product-blocks .img-ico{
+    vertical-align: middle;
+    margin-right:10px;
+    width:60px;
+    height:60px;
+}
 .product-blocks .nav-items .tap-items span{
     display: inline-block;font-size:14px;padding:10px 20px;border-bottom: 2px solid transparent;
     position: relative; top:1px; cursor: pointer;
@@ -18,7 +24,8 @@
     text-align: center;margin-right:10px;display: flex;justify-content: space-between;
     align-items: center;
 }
-.product-blocks li.items input{height:40px;line-height:40px;}
+.product-blocks li.items input,.product-blocks li.items .ant-input{height:32px;line-height:32px;}
+.ant-select-selection{height:32px;}
 .product-blocks li label{display:inline-block;width:100px;}
 .product-blocks li input{text-align: left;}
 .product-blocks li .search-list{position: relative;}
@@ -32,11 +39,12 @@
     right: 0;
     border: 1px solid #000;
 }
-.product-blocks li .ant-select-selection--single{height: 40px;}
-.product-blocks li  .ant-select-selection__rendered{line-height: 40px;}
+.product-blocks li .ant-select-selection--single{height: 32px;}
+.product-blocks li  .ant-select-selection__rendered{line-height: 32px;}
 .ml10{margin:0 10px;}
 .opearte-blocks span{cursor: pointer; color:#1890ff;}
 .product-blocks .table-box{margin-top:30px;}
+.add-blocks .hide{display: none!important;}
 .add-blocks .form .ant-form-item{display: flex;}
 .add-blocks .form .ant-form-item .ant-form-item-control-wrapper{width: 80%;}
 .add-blocks .ant-form-item-label label{display: inline-block;width:120px;}

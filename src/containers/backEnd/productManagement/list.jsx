@@ -44,7 +44,7 @@ class ProductList extends Component {
   }
   renderOption(item, index) {
     return (
-      <Option key={index} text={item.name}>
+      <Option key={item.name} text={item.name}>
         {item.name}
       </Option>
     );
@@ -169,7 +169,13 @@ class ProductList extends Component {
       {
         title: '商品名称',
         key: 'goods_name',
-        dataIndex: 'goods_name'
+        dataIndex: '',
+        render: (record) => (
+          <span>
+            <img src={record.goods_picture} className="img-ico" />
+            {record.goods_name}
+          </span>
+        )
       },
       {
         title: '商品类型',
@@ -185,6 +191,11 @@ class ProductList extends Component {
         title: '商品条形码',
         key: 'goods_bar_no',
         dataIndex: 'goods_bar_no'
+      },
+      {
+        title: '库存',
+        key: 'goods_sum',
+        dataIndex: 'goods_sum'
       },
       {
         title: '商品状态',
@@ -255,7 +266,7 @@ class ProductList extends Component {
           <li className="items"><label>商品类型：</label>
             <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.goods_category_id} />
           </li>
-          <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)} size="large">搜索</Button></li>
+          <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
         <Table
           columns={columns}
