@@ -15,7 +15,7 @@ class Add extends Component {
     super(props);
     this.state = {
       disabled: true,
-      isShow: true,
+      isShow: true, // 显示商品图片 false显示
       form: {
         goods_name: '', // 商品名称
         goods_category_id: '', // 商品类别ID
@@ -38,6 +38,9 @@ class Add extends Component {
         use_third_channel: '', // 是否调用第三方接口 1 是 2 否
         third_channel_id: '', // 第三方通道主键id
         channel_flag: '', // 接口厂商标识 1 MYBANK
+        // edit
+        sell_out: '', // 销售量
+        status: '', // 商品状态
       },
       //is_rebeatstate: false, //选择业绩返佣，显示返佣条件
       redirect: false,
@@ -123,10 +126,8 @@ class Add extends Component {
 
   // 编辑时初始化表格
   initForm = () => {
-    if (!this.props.location.query) {
-      return false;
-    }
-    window.api('goods.getgoodsdetail', {id: this.props.location.query.id}).then((res) => {
+    if (!this.props.location.state.id) return false;
+    window.api('goods.getgoodsdetail', {id: this.props.location.state.id}).then((res) => {
       const pid = res.goods_category_id === '' ? 0 : res.goods_category_id;
       const params = {
         goods_name: res.goods_name,
@@ -137,10 +138,25 @@ class Add extends Component {
         is_post: res.is_post,
         goods_details: res.goods_details,
         id: res.id,
-        goods_pic: res.goods_picture
+        goods_pic: res.goods_picture,
+        goods_brand_name: res.goods_brand_name,
+        goods_brand_id: res.goods_brand_id,
+        goods_property: res.goods_property,
+        self_support: res.self_support,
+        pay_type: res.pay_type,
+        return_com_type: res.return_com_type,
+        return_com_con: res.return_com_con,
+        return_com_price: res.return_com_price,
+        return_device_num: res.return_device_num,
+        goods_activate_price: res.return_device_num,
+        use_third_channel: res.use_third_channel,
+        third_channel_id: res.third_channel_id,
+        channel_flag: res.channel_flag,
+        sell_out: res.channel_flag,
+        status: res.channel_flag,
       };
       const form = Object.assign(this.state.form, params);
-      this.setState({form});
+      this.setState({form, isShow: false});
     }).catch((error) => {
       if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
@@ -199,7 +215,7 @@ class Add extends Component {
         }
         let params = Object.assign(form, otherParams);
         params = utils.dealElement(params);
-        const url = !this.props.location.query ? 'goods.addgoods' : 'goods.modgoods';
+        const url = form.id ? 'goods.modgoods' : 'goods.addgoods';
         window.api(url, params).then((res) => {
           if (res.service_error_code === 'EPS000000801') {
             message.error(res.service_error_message);
@@ -215,8 +231,7 @@ class Add extends Component {
 
   // 关闭添加/编辑商品
   resetEvent = () => {
-    console.log(this.state.form);
-    // this.props.history.push({pathname: '/main/list'});
+    this.props.history.goBack(1);
   }
 
   // 改变表单选项

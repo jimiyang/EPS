@@ -33,7 +33,7 @@ export default class Goods extends Component {
       const info = res.hot_category;
       const part = [];
       const partList = [];
-      info.forEach((item, index) => {
+      info.forEach((item) => {
         part.push(item);
         partList.push(item.goods);
       });

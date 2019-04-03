@@ -111,61 +111,27 @@ class ProductList extends Component {
     });
   }
 
-  // 商品名称模糊搜索
-  handleNameSearch = (value) => {
-    const form = {
-      goods_name: value,
-      ...this.state.search
-    };
-    if (!value) return;
-    window.api('goods.getgoodslist', form).then(res => {
-      let node = [];
-      if (res.good_list.length > 0) {
-        node = res.goods_list.map((item) => ({
-          name: `${item.goods_name}`
-        }));
-      }
-      this.setState({productNameData: node, goods_name: value});
-    }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
-      message.error(error.service_error_message);
-    });
-  }
-
-  // 选择缓存中的商品名称
-  selGoodsNameEvent = (value) => {
-    this.setState({goods_name: value});
-  }
-
-  // 双向绑定输入的条形码条形码
-  changeBarEvent = (e) => {
-    this.setState({goods_bar_no: e.target.value});
-  }
-
-  // 选择商品类型，获取id
-  selParentEvent = (value) => {
-    this.setState({goods_category_id: value});
+  // 获取搜索信息
+  getSearchInfo(type, value) {
+    if (type === 'goods_bar_no') {
+      this.setState({[type]: value.target.value});
+      return;
+    }
+    this.setState({[type]: value});
   }
 
   //列表查询
   searchEvent = () => {
-    const params = {};
+    const params = this.state.search;
     // eslint-disable-next-line camelcase
     const {goods_name, goods_bar_no, goods_category_id} = this.state;
-    Object.assign(params, this.state.search, {goods_name, goods_bar_no, goods_category_id});
+    Object.assign(params, {goods_name, goods_bar_no, goods_category_id});
     this.loadList(params);
   }
 
-  // 跳转到添加商品页面
-  addProduct = () => {
-    this.props.history.push({pathname: '/main/addGoods'});
-  }
-
-  // 跳转到编辑页面
-  edit = (item) => {
-    this.props.history.push({pathname: '/main/addGoods', query: {id: item.id}});
+  // 跳转到添加/编辑商品页面
+  addProduct = (id) => {
+    this.props.history.push('/main/addGoods', {id});
   }
 
   render() {
@@ -220,7 +186,7 @@ class ProductList extends Component {
         key: 'operation',
         render: (record) => (
           <div className="opearte-blocks">
-            <span className="ml10" onClick={() => this.edit(record)}>编辑</span>
+            <span className="ml10" onClick={() => this.addProduct(record.id)}>编辑</span>
             <Popconfirm
               title={this.state.statusCon}
               onConfirm={() => this.confirm(record)}
@@ -244,7 +210,7 @@ class ProductList extends Component {
               this.state.menuData.map((item, index) => <span key={index} onClick={this.selTap.bind(this, index)} className={this.state.isActive === index ? 'active' : ''}>{item}</span>)
             }
           </div>
-          <Button type="primary" onClick={this.addProduct.bind(this)}>新增商品</Button>
+          <Button type="primary" onClick={this.addProduct.bind(this, 0)}>新增商品</Button>
         </div>
         <ul className="search-blocks">
           <li className="items"><label>商品名称：</label>
@@ -255,20 +221,20 @@ class ProductList extends Component {
               size="large"
               style={{width: '100%'}}
               dataSource={this.state.productNameData.map(this.renderOption)}
-              onBlur={this.handleNameSearch}
+              onBlur={this.getSearchInfo.bind(this, 'goods_name')}
               placeholder="请输入商品名称"
               optionLabelProp="text"
-              onSelect={this.selGoodsNameEvent}
-              onChange={this.selGoodsNameEvent}
+              onSelect={this.getSearchInfo.bind(this, 'goods_name')}
+              onChange={this.getSearchInfo.bind(this, 'goods_name')}
             >
               <Input suffix={<Icon type="search" className="certain-category-icon" />} />
             </AutoComplete>
           </li>
           <li className="items"><label style={{width: '150px'}}>商品条形码：</label>
-            <Input value={this.state.goods_bar_no} onChange={this.changeBarEvent} placeholder="请输入商品条形码" />
+            <Input value={this.state.goods_bar_no} onChange={this.getSearchInfo.bind(this, 'goods_bar_no')} placeholder="请输入商品条形码" />
           </li>
           <li className="items"><label>商品类型：</label>
-            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.goods_category_id} productTypeData={this.state.treeData} />
+            <TreeMenu selParentEvent={this.getSearchInfo.bind(this, 'goods_category_id')} parent_id={this.state.goods_category_id} productTypeData={this.state.treeData} />
           </li>
           <li className="items"><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
         </ul>
