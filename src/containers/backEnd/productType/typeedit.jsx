@@ -26,29 +26,19 @@ class TypeEdit extends Component {
 
   componentWillMount() {
     if (window.common.loginOut(this)) {
-      this.setState({parent_id: this.props.selfId, treeData: this.props.treeData});
+      this.setState({treeData: this.props.treeData, parent_id: this.props.editInfo.id, form: this.props.editInfo});
     } else {
       message.error('登录信息失效，请重新登录');
-    }
-  }
-
-  componentWillReceiveProps(props) {
-    if (props.treeData === undefined) {
-      this.setState({parent_id: props.parent_id});
-    } else {
-      this.setState({treeData: props.treeData, parent_id: props.parent_id});
     }
   }
 
   // 变更分类
   modifyEvent = (e) => {
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
+    this.props.form.validateFields((err) => {
       if (!err) {
-        const form = Object.assign(this.state.form, values);
-        window.api('goods.modcategory', form).then((res) => {
+        window.api('goods.modcategory', this.state.form).then((res) => {
           message.success(res.service_error_message);
-          //this.props.onSelectRefresh();
           this.props.modifyEvent(e);
         }).catch((error) => {
           if (error.service_error_code === 'EPS000000801') {
@@ -60,28 +50,21 @@ class TypeEdit extends Component {
     });
   }
 
-  //
+  // 获取修改后的类型名称
   categoryNameEvent = (e) => {
     const form = Object.assign({}, this.state.form, {goods_category_name: e.target.value});
     this.setState({form});
   }
 
-
+  // 获取当前选择类型的id（编辑时类型无法更改）
   selParentEvent = (value) => {
-    const pid = value === '' ? 0 : value;
-    const form = Object.assign({}, this.state.form, {superior_id: pid});
-    this.setState({
-      form,
-      parent_id: value
-    });
+    this.setState({parent_id: value});
   }
 
   render() {
     const {treeData, redirect, form} = this.state;
-    if (redirect) {
-      return (<Redirect to="/login" />);
-    }
     const {getFieldDecorator} = this.props.form;
+    if (redirect) return (<Redirect to="/login" />);
     return (
       <div className="typeedit-blocks">
         <Form onSubmit={this.modifyEvent} className="form" name="form">
@@ -104,7 +87,7 @@ class TypeEdit extends Component {
           </Form.Item>
           <Form.Item>
             <div className="button-blocks">
-              <Button type="primary" htmlType="submit" onClick={this.props.onClick}>保存</Button>
+              <Button type="primary" htmlType="submit">保存</Button>
               <Button onClick={this.props.onClick}>取消</Button>
             </div>
           </Form.Item>

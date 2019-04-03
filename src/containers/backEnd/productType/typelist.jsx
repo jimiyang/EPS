@@ -24,8 +24,12 @@ class ProductType extends Component {
         page_size: 100,
         current_page: 1
       },
+      editInfo: {
+        id: null,
+        goods_category_name: null,
+        superior_id: null,
+      },
       parent_id: '', //类别父级id
-      selfId: '', //类别自身id
       visible: false,
       defaultExpandAllRows: true, //是否默认展开树形结构
       productTypeData: [],
@@ -125,15 +129,24 @@ class ProductType extends Component {
   }
 
   // 编辑
-  editEvent = (id) => {
-    this.setState({visible: true, selfId: id});
+  editEvent = (item) => {
+    const editInfo = {
+      goods_category_name: item.goods_category_name,
+      id: item.id,
+      superior_id: item.superior_id
+    };
+    this.setState({editInfo, visible: true});
   }
 
   // 取消
   cancelEvent = () => {
-    this.setState({
-      visible: false
-    });
+    this.setState({visible: false});
+    this.loadList();
+  }
+
+  // 编辑保存后触发
+  modifyEvent = (e) => {
+    this.setState({visible: false});
     this.loadList();
   }
 
@@ -151,10 +164,6 @@ class ProductType extends Component {
     }, () => {
       this.loadList();
     });
-  }
-
-  modifyEvent = (e) => {
-    this.loadList();
   }
 
   // 重置
@@ -179,7 +188,7 @@ class ProductType extends Component {
       key: 'operation',
       render: (record) => (
         <div className="opearte-blocks">
-          <span className="ml10" onClick={() => this.editEvent(record.id)}>编辑</span>
+          <span className="ml10" onClick={() => this.editEvent(record)}>编辑</span>
           <Popconfirm title="是否要删除此分类?" onConfirm={() => this.delEvent(record.id)} onCancel={this.cancelEvent} okText="确定" cancelText="取消">
             <span className="ml10">删除</span>
           </Popconfirm>
@@ -188,7 +197,7 @@ class ProductType extends Component {
     }];
     const {getFieldDecorator} = this.props.form;
     const {
-      visible, selfId, formParams, redirect, treeData, isLoading, defaultExpandAllRows, productTypeData
+      visible, formParams, redirect, treeData, isLoading, defaultExpandAllRows, productTypeData, editInfo
     } = this.state;
     if (redirect) {
       return (<Redirect to="/login" />);
@@ -203,7 +212,7 @@ class ProductType extends Component {
           visible={visible}
           footer={null}
         >
-          <TypeEdit selfId={selfId} treeData={treeData} onClick={this.cancelEvent.bind(this)} modifyEvent={this.modifyEvent} />
+          <TypeEdit editInfo={editInfo} treeData={treeData} onClick={this.cancelEvent.bind(this)} modifyEvent={this.modifyEvent} />
         </Modal> : null}
         <div className="left">
           <Form onSubmit={this.addTypeEvent} className="form" name="form">

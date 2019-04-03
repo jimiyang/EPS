@@ -99,10 +99,7 @@ class ProductList extends Component {
   // 是否下架或重新出售
   confirm = (item) => {
     const status = item.status === 0 ? 1 : 0;
-    const params = {
-      id: item.id,
-      status
-    };
+    const params = {id: item.id, status};
     window.api('goods.modgoods', params).then(rs => {
       message.success(rs.service_error_message);
       this.loadList(this.state.search);

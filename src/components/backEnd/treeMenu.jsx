@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {TreeSelect, message} from 'antd';
+import {TreeSelect} from 'antd';
 
 //商品类型模版
 const TreeNode = TreeSelect.TreeNode;
@@ -9,23 +9,16 @@ class TreeMenu extends Component {
     this.state = {
       parent_id: 0,
       treeData: [],
-      disabled: false
+      disabled: false,
     };
   }
 
   componentWillMount() {
-    this.setState({
-      parent_id: this.props.parent_id,
-      disabled: this.props.disabled,
-    });
+    this.setState({parent_id: this.props.parent_id, disabled: this.props.disabled, treeData: this.props.productTypeData});
   }
 
   componentWillReceiveProps(props) {
-    if (props.productTypeData === undefined) {
-      this.setState({parent_id: props.parent_id});
-    } else {
-      this.setState({treeData: props.productTypeData, parent_id: props.parent_id});
-    }
+    this.setState({treeData: props.productTypeData, disabled: this.props.disabled, parent_id: props.parent_id});
   }
 
   // 层级改变的change事件

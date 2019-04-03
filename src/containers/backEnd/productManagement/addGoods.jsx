@@ -1,18 +1,11 @@
 import React, {Component} from 'react';
-import {
-  Form,
-  Input,
-  Radio,
-  Button,
-  message,
-  Spin,
-  Select
-} from 'antd';
+import { Form, Input, Radio, Button, message, Spin, Select } from 'antd';
 import {Redirect} from 'react-router';
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
 import 'react-quill/dist/quill.snow.css'; // ES6
 import './list.css';
 import api from '../../../api/api';
+import utils from '../../../utils/common';
 import TreeMenu from '../../../components/backEnd/treeMenu';//商品类型模版
 
 const RadioGroup = Radio.Group;
@@ -89,10 +82,43 @@ class Add extends Component {
     });
   }
 
+  // 获取第三方列表
   getThirdChannelList = () => {
     window.api('goods.getthirdchannellist').then(res => {
       this.setState({thirdChannelList: res.goods_third_channel_list});
     });
+  }
+
+  //生成条形码
+  getbarno = () => {
+    api.baseInstance('goods.getbarno', {}).then((rs) => {
+      const form = Object.assign(this.state.form, {goods_bar_no: rs.barNo});
+      this.setState({form});
+      this.props.form.setFieldsValue({goods_bar_no: rs.barNo});
+    }).catch(error => {
+      message.error(error.service_error_message);
+    });
+  }
+
+  // 上传图片
+  uploadImgEvent = (e) => {
+    e.preventDefault();
+    const info = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(info);
+    const flag = window.common.beforeUpload(info, message); //上传之前判断图片大小
+    const _this = this;
+    if (flag === true) {
+      reader.onload = function (ev) {
+        const params = {pic_name: info.name, goods_pic: this.result};
+        api.baseInstance('eps.upload', params).then(rs => {
+          const form = Object.assign(_this.state.form, {goods_pic: rs.pic_path});
+          _this.setState({form, isShow: false});
+        }).catch(error => {
+          message.error(error);
+        });
+      };
+    }
   }
 
   // 编辑时初始化表格
@@ -129,6 +155,26 @@ class Add extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const form = Object.assign(this.state.form, values);
+        if (form.goods_property) {
+          if (Number(form.goods_property) === 1) {
+            if (!form.return_com_type) {
+              message.error('请选择返佣方式');
+              return;
+            } else if (!form.use_third_channel) {
+              message.error('请选择是否需要调用第三方接口');
+              return;
+            }
+          } else if (Number(form.goods_property) === 2) {
+            // eslint-disable-next-line no-lonely-if
+            if (!form.self_support) {
+              message.error('请选择该商品是否为自营');
+              return;
+            }
+          }
+        } else {
+          message.error('请选择商品属性');
+          return;
+        }
         if (form.goods_pic === '/static/img/autoImg.fdadbc7.jpg') {
           message.error('请上传商品图片');
           return false;
@@ -151,29 +197,18 @@ class Add extends Component {
             item.id === form.third_channel_id ? otherParams.channel_flag = item.channel_flag : null;
           });
         }
-        const params = Object.assign(form, otherParams);
-        console.log(params, otherParams);
-        if (!this.props.location.query) {
-          // window.api('goods.addgoods', params).then((res) => {
-          //   if (res.service_error_code === 'EPS000000801') {
-          //     message.error(res.service_error_message);
-          //     this.setState({redirect: true});
-          //   } else {
-          //     message.success(res.service_error_message);
-          //     this.props.history.push({pathname: '/main/list'});
-          //   }
-          // });
-        } else {
-          window.api('goods.modgoods', params).then((res) => {
-            if (res.service_error_code === 'EPS000000801') {
-              message.error(res.service_error_message);
-              this.setState({redirect: true});
-            } else {
-              message.success(res.service_error_message);
-              this.props.history.push({pathname: '/main/list'});
-            }
-          });
-        }
+        let params = Object.assign(form, otherParams);
+        params = utils.dealElement(params);
+        const url = !this.props.location.query ? 'goods.addgoods' : 'goods.modgoods';
+        window.api(url, params).then((res) => {
+          if (res.service_error_code === 'EPS000000801') {
+            message.error(res.service_error_message);
+            this.setState({redirect: true});
+          } else {
+            message.success(res.service_error_message);
+            this.props.history.push({pathname: '/main/list'});
+          }
+        });
       }
     });
   }
@@ -184,33 +219,6 @@ class Add extends Component {
     // this.props.history.push({pathname: '/main/list'});
   }
 
-  // 上传图片
-  uploadImgEvent = (e) => {
-    e.preventDefault();
-    const info = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(info);
-    const flag = window.common.beforeUpload(info, message); //上传之前判断图片大小
-    const _this = this;
-    if (flag === true) {
-      reader.onload = function (ev) {
-        const params = {
-          pic_name: info.name,
-          goods_pic: this.result
-        };
-        api.baseInstance('eps.upload', params).then(rs => {
-          const form = Object.assign(_this.state.form, {goods_pic: rs.pic_path});
-          _this.setState({
-            form,
-            isShow: false
-          });
-        }).catch(error => {
-          message.error(error);
-        });
-      };
-    }
-  }
-
   // 改变表单选项
   changeForm = (type, value) => {
     let form = this.state.form;
@@ -218,11 +226,33 @@ class Add extends Component {
       case 'goods_category_id':
         this.props.form.setFieldsValue({goods_category_id: value});
         break;
+      case 'return_com_type':
+        if (Number(value.target.value) === 1) {
+          form = Object.assign(form, {return_com_con: ''});
+        }
+        value = value.target.value;
+        break;
+      case 'use_third_channel':
+        if (Number(value.target.value) === 2) {
+          form = Object.assign(form, {channel_flag: '', third_channel_id: ''});
+        }
+        value = value.target.value;
+        break;
       case 'goods_property':
         if (Number(value.target.value) === 1) { // 硬件
-          form = Object.assign(form, {self_support: null});
+          form = Object.assign(form, {self_support: ''});
         } else {
-          form = Object.assign(form, {return_com_type: null, use_third_channel: null});
+          const change = {
+            return_com_type: '',
+            return_com_con: '',
+            return_com_price: '',
+            return_device_num: '',
+            goods_activate_price: '',
+            use_third_channel: '',
+            channel_flag: '',
+            third_channel_id: '',
+          };
+          form = Object.assign(form, change);
         }
         value = value.target.value;
         break;
@@ -234,17 +264,6 @@ class Add extends Component {
     }
     form = Object.assign(form, {[type]: value});
     this.setState({form});
-  }
-
-  //生成条形码
-  getbarno = () => {
-    api.baseInstance('goods.getbarno', {}).then((rs) => {
-      const form = Object.assign(this.state.form, {goods_bar_no: rs.barNo});
-      this.setState({form});
-      this.props.form.setFieldsValue({goods_bar_no: rs.barNo});
-    }).catch(error => {
-      message.error(error.service_error_message);
-    });
   }
 
   render() {
