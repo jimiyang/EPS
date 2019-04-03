@@ -1,74 +1,43 @@
 import React, {Component} from 'react';
+import {TreeSelect, message} from 'antd';
 
-import {
-  TreeSelect,
-  message
-} from 'antd';
 //商品类型模版
 const TreeNode = TreeSelect.TreeNode;
-function LoadTreeChildren(id) {
-  this.state.treeData.map((childData, i) => {
-    if (id === childData.superior_id) {
-      return (<TreeNode value={childData.id} title={childData.goods_category_name} key={childData.id}>
-        LoadTreeChildren(id)
-      </TreeNode>);
-    }
-  });
-}
 class TreeMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      form: {
-        id: '',
-        goods_category_name: '',
-        superior_id: ''
-      },
       parent_id: 0,
       treeData: [],
       disabled: false
     };
   }
+
   componentWillMount() {
     this.setState({
       parent_id: this.props.parent_id,
       disabled: this.props.disabled,
     });
-    this.loadTreeList();
   }
+
   componentWillReceiveProps(props) {
     if (props.productTypeData === undefined) {
-      this.loadTreeList();
+      this.setState({parent_id: props.parent_id});
     } else {
-      this.setState({
-        treeData: props.productTypeData
-      });
+      this.setState({treeData: props.productTypeData, parent_id: props.parent_id});
     }
-    this.setState({
-      parent_id: props.parent_id
-    });
   }
-  loadTreeList = () => {
-    window.api('goods.getcategorylist', {}).then((rs) => {
-      let productTypeData = [];
-      productTypeData = rs.goods_category_list;
-      if (productTypeData.length > 0) {
-        this.setState({
-          treeData: productTypeData
-        });
-      }
-    }).catch(error => {
-      message.error(error);
-    });
-  }
+
+  // 层级改变的change事件
   selParentEvent = (value) => {
-    const form = Object.assign({}, this.state.form, {superior_id: value});
-    this.setState({
-      form,
-      parent_id: value
+    let hierarchy = 0;
+    this.state.treeData.forEach(item => {
+      item.id === value ? hierarchy = item.goods_category_hierarchy : null;
     });
-    this.props.selParentEvent(value);
+    this.setState({parent_id: value});
+    this.props.selParentEvent(value, hierarchy);
   }
+
   render() {
     return (
       <div className="typeedit-blocks">
@@ -76,7 +45,7 @@ class TreeMenu extends Component {
           dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
           placeholder="请选择父级目录"
           treeDefaultExpandAll
-          onChange={this.selParentEvent}
+          onSelect={this.selParentEvent}
           value={this.state.parent_id}
           disabled={this.state.disabled}
         >

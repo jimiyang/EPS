@@ -65,7 +65,6 @@ class OrderDetail extends Component {
     window.api('order.orderList', {order_no: id}).then((res) => {
       const data = res.orders[0];
       const goods = data.order_details[0];
-      console.log(data);
       const form = {
         receiver: data.receiver,
         mobile: data.mobile,

@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
-import {Button, Input, Select, Form} from 'antd';
+import {Button, Input, Select, Form, message} from 'antd';
+import {Redirect} from 'react-router';
+import utils from '../../../utils/common';
 import './style.less';
 
 const Option = Select.Option;
@@ -7,51 +9,56 @@ class AddBrand extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      redirect: false,
       name: '',
-      status: 0,
-      selfid: '',
-      isadd: 0 //0是新增1是编辑
+      editStatus: '1',
+      selfId: '',
+      isAdd: 0 //0是新增1是编辑
     };
   }
   componentWillMount() {
-    this.setState({
-      selfid: this.props.selfid,
-      isadd: this.props.is_add
-    });
-    this.initForm();
+    this.setState({...this.props.editInfo, isAdd: this.props.isAdd});
   }
+
   componentWillReceiveProps(props) {
-    this.setState({
-      selfid: props.selfid,
-      isadd: this.props.is_add
-    });
-    //console.log(props.selfId);
-    //console.log(this.props.is_add);
+    this.setState({...props.editInfo, isAdd: props.isAdd});
   }
-  initForm = () => {
-    if (!this.state.selfid) {
-      return false;
-    }
-  }
-  selStatusEvent = (value) => {
-    console.log(value);
-  }
+
+  // 添加/编辑品牌
   addtionBrandEvent = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log(values);
-        if (this.state.isadd === 0) {
-          console.log('这是新增');
+        if (this.state.isAdd === 0) {
+          window.api('eps.creategoodsbrand', values).then(() => {
+            this.props.addtionBrandEvent();
+          }).catch((error) => {
+            if (error.service_error_code === 'EPS000000801') {
+              this.setState({redirect: true});
+            }
+            message.error(error.service_error_message);
+          });
         } else {
-          console.log('这是编辑');
+          values.id = this.state.selfId;
+          if (values.brand_name === this.state.name) values.brand_name = '';
+          values = utils.dealElement(values);
+          window.api('eps.modgoodsbrand', values).then(() => {
+            this.props.addtionBrandEvent();
+          }).catch((error) => {
+            if (error.service_error_code === 'EPS000000801') {
+              this.setState({redirect: true});
+            }
+            message.error(error.service_error_message);
+          });
         }
-        this.props.addtionBrandEvent(e);
       }
     });
   }
+
   render() {
+    if (this.state.redirect) return (<Redirect to="/login" />);
     const {getFieldDecorator} = this.props.form;
+    const {name, editStatus} = this.state;
     return (
       <div className="add-blocks">
         <Form onSubmit={this.addtionBrandEvent} className="form" name="form" id="form">
@@ -61,7 +68,7 @@ class AddBrand extends Component {
             {getFieldDecorator(
               'brand_name',
               {
-                initialValue: this.state.name || '',
+                initialValue: name || '',
                 rules: [
                   {required: true, message: '请输入品牌名称'}
                 ],
@@ -75,11 +82,11 @@ class AddBrand extends Component {
             {getFieldDecorator(
               'brand_status',
               {
-                initialValue: this.state.status || '0'
+                initialValue: editStatus || '1'
               }
-            )(<Select style={{width: '80%'}} onChange={this.selStatusEvent}>
-              <Option value="0">启用</Option>
-              <Option value="1">禁用</Option>
+            )(<Select style={{width: '80%'}}>
+              <Option value="1">启用</Option>
+              <Option value="2">禁用</Option>
             </Select>)
             }
           </Form.Item>

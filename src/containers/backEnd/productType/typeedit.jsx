@@ -19,34 +19,28 @@ class TypeEdit extends Component {
         superior_id: ''
       },
       parent_id: 0,
-      disabled: true
+      disabled: true,
+      treeData: null,
     };
   }
-  //react 父组件传值给子组件，子组件定义一个变量来接收props值，所传的值在父组件中更改赋值，子组件中如何同步更新
-  componentWillReceiveProps(props) {
-    this.getTypeById(props.selfId);
-  }
+
   componentWillMount() {
     if (window.common.loginOut(this)) {
-      this.getTypeById(this.props.selfId);
+      this.setState({parent_id: this.props.selfId, treeData: this.props.treeData});
     } else {
       message.error('登录信息失效，请重新登录');
     }
   }
-  getTypeById = (sId) => {
-    window.api('goods.getcategorylist', {id: sId}).then(res => {
-      const pid = res.goods_category_list[0].superior_id === 0 ? '' : res.goods_category_list[0].superior_id;
-      this.setState({
-        form: res.goods_category_list[0],
-        parent_id: pid,
-      });
-    }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
-      message.error(error.service_error_message);
-    });
+
+  componentWillReceiveProps(props) {
+    if (props.treeData === undefined) {
+      this.setState({parent_id: props.parent_id});
+    } else {
+      this.setState({treeData: props.treeData, parent_id: props.parent_id});
+    }
   }
+
+  // 变更分类
   modifyEvent = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -65,12 +59,14 @@ class TypeEdit extends Component {
       }
     });
   }
+
+  //
   categoryNameEvent = (e) => {
     const form = Object.assign({}, this.state.form, {goods_category_name: e.target.value});
-    this.setState({
-      form
-    });
+    this.setState({form});
   }
+
+
   selParentEvent = (value) => {
     const pid = value === '' ? 0 : value;
     const form = Object.assign({}, this.state.form, {superior_id: pid});
@@ -79,8 +75,10 @@ class TypeEdit extends Component {
       parent_id: value
     });
   }
+
   render() {
-    if (this.state.redirect) {
+    const {treeData, redirect, form} = this.state;
+    if (redirect) {
       return (<Redirect to="/login" />);
     }
     const {getFieldDecorator} = this.props.form;
@@ -93,7 +91,7 @@ class TypeEdit extends Component {
             {getFieldDecorator(
               'goods_category_name',
               {
-                initialValue: this.state.form.goods_category_name || '',
+                initialValue: form.goods_category_name || '',
                 rules: [{required: true, message: '类别名称'}]
               }
             )(<Input onChange={this.categoryNameEvent} />)
@@ -102,7 +100,7 @@ class TypeEdit extends Component {
           <Form.Item
             label="所属目录"
           >
-            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} disabled={this.state.disabled} />
+            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} productTypeData={treeData} disabled={this.state.disabled} />
           </Form.Item>
           <Form.Item>
             <div className="button-blocks">
