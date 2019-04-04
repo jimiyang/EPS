@@ -54,12 +54,9 @@ export default class Goods extends Component {
     this.props.history.push('/goodsDetail', {id});
   }
   render() {
-    if (this.state.identity) {
-      return (<Redirect to="/main" />);
-    }
-    if (this.state.redirect) {
-      return (<Redirect to="/login" />);
-    }
+    const {identity, redirect} = this.state;
+    if (identity) return (<Redirect to="/main" />);
+    if (redirect) return (<Redirect to="/login" />);
     const {part, partList} = this.state;
     return (
       <div className="sku">

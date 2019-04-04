@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Form, Input, Radio, Button, message, Spin, Select } from 'antd';
+import {Form, Input, Radio, Button, message, Spin, Select} from 'antd';
 import {Redirect} from 'react-router';
 import ReactQuill from 'react-quill';//富文本编辑器(react-quill)
 import 'react-quill/dist/quill.snow.css'; // ES6
@@ -20,7 +20,7 @@ class Add extends Component {
         goods_name: '', // 商品名称
         goods_category_id: '', // 商品类别ID
         goods_bar_no: '', // 商品条形码
-        is_post: 1, // 是否需要发货
+        is_post: 0, // 是否需要发货
         sale_price: '', // 商品售价
         cost_price: '', // 商品成本
         goods_pic: require('../../../assets/backEnd/autoImg.jpg'), // 默认商品图片require('../../../assets/backEnd/autoImg.jpg')
@@ -54,42 +54,25 @@ class Add extends Component {
 
   componentWillMount() {
     if (window.common.loginOut(this)) {
-      this.getCategoryList();
-      this.getBrandList();
-      this.getThirdChannelList();
-      this.initForm();
+      // 获取商品类型，商品品牌，第三方厂商
+      Promise.all([window.api('goods.getcategorylist', {}), window.api('eps.getgoodsbrand', {page_size: 100}), window.api('goods.getthirdchannellist')]).then(res => {
+        res[2].goods_third_channel_list.forEach(item => {
+          item.id = Number(item.id);
+        });
+        res[1].goods_brand_list.forEach(item => {
+          item.id = Number(item.id);
+        });
+        this.setState({treeData: res[0].goods_category_list, brandsList: res[1].goods_brand_list, thirdChannelList: res[2].goods_third_channel_list});
+        this.initForm();
+      }).catch(err => {
+        if (err.service_error_code === 'EPS000000801') {
+          this.setState({redirect: true});
+        }
+        message.error(err.service_error_message);
+      });
     } else {
       message.error('登录信息失效，请重新登录');
     }
-  }
-
-  // 获取分类列表
-  getCategoryList = () => {
-    window.api('goods.getcategorylist', {}).then((rs) => {
-      this.setState({treeData: rs.goods_category_list});
-    }).catch(error => {
-      message.error(error.service_error_message);
-    });
-  }
-
-  // 获取品牌列表
-  getBrandList = () => {
-    const params = {page_size: 100};
-    window.api('eps.getgoodsbrand', params).then(res => {
-      this.setState({brandsList: res.goods_brand_list});
-    }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
-      message.error(error.service_error_message);
-    });
-  }
-
-  // 获取第三方列表
-  getThirdChannelList = () => {
-    window.api('goods.getthirdchannellist').then(res => {
-      this.setState({thirdChannelList: res.goods_third_channel_list});
-    });
   }
 
   //生成条形码
@@ -112,7 +95,7 @@ class Add extends Component {
     const flag = window.common.beforeUpload(info, message); //上传之前判断图片大小
     const _this = this;
     if (flag === true) {
-      reader.onload = function (ev) {
+      reader.onload = function () {
         const params = {pic_name: info.name, goods_pic: this.result};
         api.baseInstance('eps.upload', params).then(rs => {
           const form = Object.assign(_this.state.form, {goods_pic: rs.pic_path});
@@ -128,33 +111,10 @@ class Add extends Component {
   initForm = () => {
     if (!this.props.location.state.id) return false;
     window.api('goods.getgoodsdetail', {id: this.props.location.state.id}).then((res) => {
-      const pid = res.goods_category_id === '' ? 0 : res.goods_category_id;
-      const params = {
-        goods_name: res.goods_name,
-        goods_bar_no: res.goods_bar_no,
-        goods_category_id: pid,
-        cost_price: res.cost_price,
-        sale_price: res.sale_price,
-        is_post: res.is_post,
-        goods_details: res.goods_details,
-        id: res.id,
-        goods_pic: res.goods_picture,
-        goods_brand_name: res.goods_brand_name,
-        goods_brand_id: res.goods_brand_id,
-        goods_property: res.goods_property,
-        self_support: res.self_support,
-        pay_type: res.pay_type,
-        return_com_type: res.return_com_type,
-        return_com_con: res.return_com_con,
-        return_com_price: res.return_com_price,
-        return_device_num: res.return_device_num,
-        goods_activate_price: res.return_device_num,
-        use_third_channel: res.use_third_channel,
-        third_channel_id: res.third_channel_id,
-        channel_flag: res.channel_flag,
-        sell_out: res.channel_flag,
-        status: res.channel_flag,
-      };
+      let params = {...res};
+      params.goods_pic = res.goods_picture;
+      params.goods_picture = null;
+      params = utils.dealElement(params);
       const form = Object.assign(this.state.form, params);
       this.setState({form, isShow: false});
     }).catch((error) => {
@@ -172,7 +132,7 @@ class Add extends Component {
       if (!err) {
         const form = Object.assign(this.state.form, values);
         if (form.goods_property) {
-          if (Number(form.goods_property) === 1) {
+          if (Number(form.goods_property) === 2) {
             if (!form.return_com_type) {
               message.error('请选择返佣方式');
               return;
@@ -180,7 +140,7 @@ class Add extends Component {
               message.error('请选择是否需要调用第三方接口');
               return;
             }
-          } else if (Number(form.goods_property) === 2) {
+          } else if (Number(form.goods_property) === 1) {
             // eslint-disable-next-line no-lonely-if
             if (!form.self_support) {
               message.error('请选择该商品是否为自营');
@@ -231,7 +191,7 @@ class Add extends Component {
 
   // 关闭添加/编辑商品
   resetEvent = () => {
-    this.props.history.goBack(1);
+    this.props.history.goBack();
   }
 
   // 改变表单选项
@@ -254,7 +214,7 @@ class Add extends Component {
         value = value.target.value;
         break;
       case 'goods_property':
-        if (Number(value.target.value) === 1) { // 硬件
+        if (Number(value.target.value) === 2) { // 硬件
           form = Object.assign(form, {self_support: ''});
         } else {
           const change = {
@@ -336,7 +296,7 @@ class Add extends Component {
               {getFieldDecorator(
                 'goods_brand_id',
                 {
-                  initialValue: form.goods_brand_name || '',
+                  initialValue: form.goods_brand_id || '',
                   rules: [
                     {required: true, message: '请选择商品品牌'}
                   ]
@@ -356,7 +316,7 @@ class Add extends Component {
               {getFieldDecorator(
                 'cost_price',
                 {
-                  initialValue: `${form.cost_price}`,
+                  initialValue: `${form.cost_price}` || '',
                   rules: [
                     {required: true, message: '请输入商品成本价！'},
                     {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
@@ -371,7 +331,7 @@ class Add extends Component {
               {getFieldDecorator(
                 'sale_price',
                 {
-                  initialValue: `${form.sale_price}`,
+                  initialValue: `${form.sale_price}` || '',
                   rules: [
                     {required: true, message: '请输入商品售价！'},
                     {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
@@ -392,19 +352,19 @@ class Add extends Component {
               label="选择商品属性"
             >
               <RadioGroup onChange={this.changeForm.bind(this, 'goods_property')} value={form.goods_property}>
-                <Radio value={1}>硬件</Radio>
-                <Radio value={2}>软件</Radio>
+                <Radio value={1}>软件</Radio>
+                <Radio value={2}>硬件</Radio>
               </RadioGroup>
             </Form.Item>
             {
-              Number(form.goods_property) === 1 ?
+              Number(form.goods_property) === 2 ?
                 (<div>
                   <Form.Item
                     label="选择返佣方式"
                   >
                     <RadioGroup onChange={this.changeForm.bind(this, 'return_com_type')} value={form.return_com_type}>
                       <Radio value={1}>激活返佣</Radio>
-                      <Radio value={2}>业余返佣</Radio>
+                      <Radio value={2}>业绩返佣</Radio>
                     </RadioGroup>
                   </Form.Item>
                   <Form.Item
@@ -413,7 +373,7 @@ class Add extends Component {
                     {getFieldDecorator(
                       'goods_activate_price',
                       {
-                        initialValue: `${form.goods_activate_price}`,
+                        initialValue: `${form.goods_activate_price}` || '',
                         rules: [
                           {required: true, message: '请输入商品激活价格！'},
                           {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
@@ -428,7 +388,7 @@ class Add extends Component {
                     {getFieldDecorator(
                       'return_com_price',
                       {
-                        initialValue: `${form.return_com_price}`,
+                        initialValue: `${form.return_com_price}` || '',
                         rules: [
                           {required: true, message: '请输入商品返佣价格！'},
                           {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
@@ -443,7 +403,7 @@ class Add extends Component {
                     {getFieldDecorator(
                       'return_device_num',
                       {
-                        initialValue: `${form.return_device_num}`,
+                        initialValue: `${form.return_device_num}` || '',
                         rules: [
                           {required: true, message: '请输入商品返佣设备个数！'},
                           {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
@@ -460,6 +420,7 @@ class Add extends Component {
                       {getFieldDecorator(
                         'return_com_con',
                         {
+                          initialValue: `${form.return_com_con}` || '',
                           rules: [
                             {required: true, message: '请输入交易额！'},
                             {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
@@ -503,7 +464,7 @@ class Add extends Component {
                 : null
             }
             {
-              Number(form.goods_property) === 2 ? <Form.Item
+              Number(form.goods_property) === 1 ? <Form.Item
                 label="是否为自营"
               >
                 <RadioGroup onChange={this.changeForm.bind(this, 'self_support')} value={form.self_support}>
@@ -516,8 +477,8 @@ class Add extends Component {
               label="是否需要发货"
             >
               <RadioGroup onChange={this.changeForm.bind(this, 'is_post')} value={form.is_post}>
-                <Radio value={1}>是</Radio>
-                <Radio value={2}>否</Radio>
+                <Radio value={0}>是</Radio>
+                <Radio value={1}>否</Radio>
               </RadioGroup>
             </Form.Item>
             <div className="content">
