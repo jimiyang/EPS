@@ -62,7 +62,7 @@ class BrandList extends Component {
         page_size: 10,
         current: Number(currentPage),
         total: Number(res.total_result),
-        onClick: this.changePage
+        onChange: this.changePage
       };
       this.setState({brandsList: res.goods_brand_list, pagination, currentPage});
     }).catch((error) => {
@@ -144,9 +144,7 @@ class BrandList extends Component {
   }
 
   render() {
-    if (this.state.redirect) {
-      return (<Redirect to="/login" />);
-    }
+    if (this.state.redirect) return (<Redirect to="/login" />);
     const {
       isAdd, editInfo, addvisible, brandsList, pagination, brandStatus, brandNameData, isLoading
     } = this.state;

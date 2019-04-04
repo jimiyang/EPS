@@ -196,6 +196,8 @@ class Add extends Component {
 
   // 改变表单选项
   changeForm = (type, value) => {
+    if (value === undefined) return;
+    value = value.replace(/\s/g, '');
     let form = this.state.form;
     switch (type) {
       case 'goods_category_id':
@@ -287,7 +289,7 @@ class Add extends Component {
                     {required: true, message: '请选择商品类型'}
                   ]
                 }
-              )(<TreeMenu selParentEvent={this.changeForm.bind(this, 'goods_category_id')} parent_id={form.goods_category_id} productTypeData={treeData} />)
+              )(<TreeMenu selParentEvent={this.changeForm.bind(this, 'goods_category_id')} parent_id={form.goods_category_id} treeData={treeData} />)
               }
             </Form.Item>
             <Form.Item

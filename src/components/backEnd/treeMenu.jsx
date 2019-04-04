@@ -14,11 +14,11 @@ class TreeMenu extends Component {
   }
 
   componentWillMount() {
-    this.setState({parent_id: this.props.parent_id, disabled: this.props.disabled, treeData: this.props.productTypeData});
+    this.setState({parent_id: this.props.parent_id, disabled: this.props.disabled, treeData: this.props.treeData});
   }
 
   componentWillReceiveProps(props) {
-    this.setState({treeData: props.productTypeData, disabled: this.props.disabled, parent_id: props.parent_id});
+    this.setState({treeData: props.treeData, disabled: this.props.disabled, parent_id: props.parent_id});
   }
 
   // 层级改变的change事件

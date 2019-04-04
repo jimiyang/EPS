@@ -83,7 +83,7 @@ class TypeEdit extends Component {
           <Form.Item
             label="所属目录"
           >
-            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} productTypeData={treeData} disabled={this.state.disabled} />
+            <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} treeData={treeData} disabled={this.state.disabled} />
           </Form.Item>
           <Form.Item>
             <div className="button-blocks">

@@ -29,28 +29,23 @@ class AddBrand extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        let url = '';
         if (this.state.isAdd === 0) {
-          window.api('eps.creategoodsbrand', values).then(() => {
-            this.props.addtionBrandEvent();
-          }).catch((error) => {
-            if (error.service_error_code === 'EPS000000801') {
-              this.setState({redirect: true});
-            }
-            message.error(error.service_error_message);
-          });
+          url = 'eps.creategoodsbrand';
         } else {
           values.id = this.state.selfId;
+          url = 'eps.modgoodsbrand';
           if (values.brand_name === this.state.name) values.brand_name = '';
           values = utils.dealElement(values);
-          window.api('eps.modgoodsbrand', values).then(() => {
-            this.props.addtionBrandEvent();
-          }).catch((error) => {
-            if (error.service_error_code === 'EPS000000801') {
-              this.setState({redirect: true});
-            }
-            message.error(error.service_error_message);
-          });
         }
+        window.api(url, values).then(() => {
+          this.props.addtionBrandEvent();
+        }).catch((error) => {
+          if (error.service_error_code === 'EPS000000801') {
+            this.setState({redirect: true});
+          }
+          message.error(error.service_error_message);
+        });
       }
     });
   }

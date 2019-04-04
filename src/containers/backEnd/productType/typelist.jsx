@@ -67,20 +67,20 @@ class ProductType extends Component {
   //商品类型查询接口
   loadList = () => {
     window.api('goods.getcategorylist', this.state.search).then((res) => {
-      const productTypeData = res.goods_category_list;
+      const treeData = res.goods_category_list;
       const arr = [];
-      if (productTypeData.length > 0) {
-        productTypeData.forEach(item => {
+      if (treeData.length > 0) {
+        treeData.forEach(item => {
           if (item.superior_id === 0) {
             arr.push({
               goods_category_name: item.goods_category_name,
               id: item.id,
               superior_id: item.superior_id,
-              children: this.getChildData(productTypeData, item.id)
+              children: this.getChildData(treeData, item.id)
             });
           }
         });
-        this.setState({treeData: productTypeData, isLoading: false, productTypeData: arr});
+        this.setState({treeData, isLoading: false, productTypeData: arr});
       } else {
         this.setState({productTypeData: arr});
       }
@@ -230,7 +230,7 @@ class ProductType extends Component {
             </Form.Item>
             <p>父级分类目录</p>
             <Form.Item>
-              <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} productTypeData={treeData} />
+              <TreeMenu selParentEvent={this.selParentEvent.bind(this)} parent_id={this.state.parent_id} treeData={treeData} />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">添加</Button>

@@ -73,7 +73,7 @@ class ProductList extends Component {
         page_size: 10,
         current: Number(currentPage),
         total: Number(rs.total_result),
-        onClick: this.changePage
+        onChange: this.changePage
       };
       this.setState({goodsList: rs.goods_list, isLoading: false, pagination});
     }).catch((error) => {
@@ -99,7 +99,7 @@ class ProductList extends Component {
       goods_brand_id: undefined,
       goods_category_id: '',
     });
-    await this.loadList(1, index);
+    this.loadList(1, index);
   }
 
   // 是否下架或重新出售
@@ -119,6 +119,8 @@ class ProductList extends Component {
 
   // 获取搜索信息
   getSearchInfo(type, value) {
+    if (value === undefined) return;
+    value = value.replace(/\s/g, '');
     if (type === 'goods_bar_no') {
       this.setState({[type]: value.target.value});
       return;
@@ -126,13 +128,9 @@ class ProductList extends Component {
     this.setState({[type]: value});
   }
 
-  //列表查询
-  searchEvent = () => {
-    this.loadList(1, this.state.status);
-  }
-
-  // 改变页码
+  // 按条件获取列表
   changePage = (page) => {
+    page = page === 0 ? 1 : page;
     this.loadList(page, this.state.status);
   }
 
@@ -243,7 +241,7 @@ class ProductList extends Component {
             <Input value={this.state.goods_bar_no} onChange={this.getSearchInfo.bind(this, 'goods_bar_no')} placeholder="请输入商品条形码" />
           </li>
           <li className="items category"><label>商品类型：</label>
-            <TreeMenu style={{flex: 1}} selParentEvent={this.getSearchInfo.bind(this, 'goods_category_id')} parent_id={this.state.goods_category_id} productTypeData={this.state.treeData} />
+            <TreeMenu style={{flex: 1}} selParentEvent={this.getSearchInfo.bind(this, 'goods_category_id')} parent_id={this.state.goods_category_id} treeData={this.state.treeData} />
           </li>
           <li className="items"><label>商品品牌：</label>
             <Select style={{flex: 1}} value={this.state.goods_brand_id} placeholder="请选择商品品牌" onChange={this.getSearchInfo.bind(this, 'goods_brand_id')} allowClear={allowClear}>
@@ -254,7 +252,7 @@ class ProductList extends Component {
               }
             </Select>
           </li>
-          <li className="items" style={{width: '100px'}}><Button type="primary" onClick={this.searchEvent.bind(this)}>搜索</Button></li>
+          <li className="items" style={{width: '100px'}}><Button type="primary" onClick={this.changePage.bind(this, 0)}>搜索</Button></li>
         </ul>
         <Table
           columns={columns}
