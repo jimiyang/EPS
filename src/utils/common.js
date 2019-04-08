@@ -51,5 +51,17 @@ const utils = {
     }
     return obj;
   },
+  // 删除对象里的空值
+  dealElement(obj) {
+    const param = {};
+    if (obj === null || obj === undefined || obj === '') return param;
+    /* eslint-disable */
+    for (let key in obj ) {
+      if (obj[key] !== null && obj[key] !== undefined && obj[key] !== '') {
+        param[key] = obj[key];
+      }
+    }
+    return param;
+  }
 };
 export default utils;
