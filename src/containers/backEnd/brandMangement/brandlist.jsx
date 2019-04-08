@@ -66,9 +66,7 @@ class BrandList extends Component {
       };
       this.setState({brandsList: res.goods_brand_list, pagination, currentPage});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
@@ -127,9 +125,7 @@ class BrandList extends Component {
       message.success(tip);
       this.getBrandList(this.state.currentPage);
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }

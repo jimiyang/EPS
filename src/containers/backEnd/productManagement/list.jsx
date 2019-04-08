@@ -77,9 +77,7 @@ class ProductList extends Component {
       };
       this.setState({goodsList: rs.goods_list, isLoading: false, pagination});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
       this.setState({isLoading: false});
     });
@@ -110,9 +108,7 @@ class ProductList extends Component {
       message.success(rs.service_error_message);
       this.loadList(this.state.pagination.current, this.state.status);
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
@@ -120,7 +116,7 @@ class ProductList extends Component {
   // 获取搜索信息
   getSearchInfo(type, value) {
     if (value === undefined) return;
-    value = value.replace(/\s/g, '');
+    value = utils.deleteBlank(value);
     if (type === 'goods_bar_no') {
       this.setState({[type]: value.target.value});
       return;

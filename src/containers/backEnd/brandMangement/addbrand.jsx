@@ -41,9 +41,7 @@ class AddBrand extends Component {
         window.api(url, values).then(() => {
           this.props.addtionBrandEvent();
         }).catch((error) => {
-          if (error.service_error_code === 'EPS000000801') {
-            this.setState({redirect: true});
-          }
+          error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
           message.error(error.service_error_message);
         });
       }

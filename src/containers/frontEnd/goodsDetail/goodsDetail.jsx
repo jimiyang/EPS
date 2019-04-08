@@ -45,9 +45,7 @@ class GoodsDetail extends Component {
       res.sale_price = (res.sale_price).toFixed(2);
       this.setState({detail: res});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
@@ -62,21 +60,22 @@ class GoodsDetail extends Component {
           <div className="poster">
             <img src={detail.goods_picture} />
           </div>
-          <div className="info">
+          <div className="orderInfo">
             <h3>{detail.goods_name}</h3>
             <div className="price">
               <p><em>￥</em>{detail.sale_price}</p>
             </div>
-            {/* <div className="address">
-              <p>发货地：</p>
-              <p>{detail.address}</p>
+            <div className="info">
+              <p>运费：免运费</p>
               <p>24小时发货</p>
-            </div> */}
+              <p>销量：{detail.sell_out}</p>
+            </div>
             <div className="count">
               <p>数量：</p>
               <div>
-                <InputNumber min={1} max={999} defaultValue={1} onChange={this.changeCount} />
+                <InputNumber min={1} max={detail.goods_num} defaultValue={1} onChange={this.changeCount} />
               </div>
+              <p className="stock">剩余：{detail.goods_num}</p>
             </div>
             <button onClick={this.toOrder}>立即购买</button>
           </div>

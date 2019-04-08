@@ -25,7 +25,7 @@ class GenerateOrder extends Component {
     }
   }
 
-  // 提交表单
+  // 创建订单
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -36,11 +36,7 @@ class GenerateOrder extends Component {
         }
         const orderNo = `${moment().format('YYYYMMDDHHmmssSSS')}${random}`;
         const price = (this.state.info.count * Number(this.state.info.price)).toFixed(2);
-        const goods = JSON.stringify([{
-          goods_id: this.state.info.id,
-          goods_qty: this.state.info.count,
-          total_amt: price
-        }]);
+        const goods = JSON.stringify([{goods_id: this.state.info.id, goods_qty: this.state.info.count, total_amt: price}]);
         const params = {
           order_no: orderNo,
           total_amt: price,

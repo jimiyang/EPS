@@ -62,6 +62,12 @@ const utils = {
       }
     }
     return param;
+  },
+  // 删除字符串的空格
+  deleteBlank(string) {
+    const reg = /\s/g;
+    if (Object.prototype.toString.call(string) === '[object String]' && reg.test(string)) string = string.replace(/\s/g, '');
+    return string;
   }
 };
 export default utils;

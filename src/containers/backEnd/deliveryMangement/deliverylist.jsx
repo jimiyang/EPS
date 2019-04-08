@@ -77,9 +77,7 @@ class DeliveryList extends Component {
         isLoading: false
       });
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
       this.setState({isLoading: false});
     });
@@ -114,9 +112,7 @@ class DeliveryList extends Component {
         list[index].status = 2;
         this.setState({orderListData: list});
       }).catch((error) => {
-        if (error.service_error_code === 'EPS000000801') {
-          this.setState({redirect: true});
-        }
+        error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
         message.error(error.service_error_message);
       });
       return false;
@@ -185,9 +181,7 @@ class DeliveryList extends Component {
         expressVisible: false
       });
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
     //this.loadList(this.state.search);
