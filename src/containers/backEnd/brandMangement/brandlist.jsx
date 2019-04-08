@@ -93,7 +93,9 @@ class BrandList extends Component {
     });
   }
   selStatusEvent = (value) => {
-    console.log(value);
+    this.setState({
+      brand_status: value
+    });
   }
   startTimeEvent = (date, dateString) => {
     this.setState({
