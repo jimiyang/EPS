@@ -1,0 +1,35 @@
+.facility-blocks {
+    .nav-items{
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .tap-items span{
+            display: inline-block;font-size:14px;padding:10px 20px;border-bottom: 2px solid transparent;
+            position: relative; top:1px; cursor: pointer;
+        }
+        span.active{
+            border-bottom: 2px solid #1890ff;color: #1890ff;
+        }
+    }
+    .search-blocks{
+        display: flex;align-items: center;flex-wrap:wrap;margin-top:10px;margin-bottom:10px;
+        li.items{
+            display: flex;align-items: center;margin:10px 10px;
+            .ant-input{
+                height: 32px;line-height:32px;
+            }
+        }
+    }
+    table{
+        .red{color:#f00;}
+        .green{color:#009933;}
+    }
+    .detail-items{
+        display: flex;align-items: center;flex-wrap: wrap;
+        li{
+            width:50%;margin-bottom:10px;justify-content: flex-start;display:flex;align-items:center;
+            label{display: inline-block;padding-right: 10px;text-align: right;width:180px}
+        }
+    }
+}

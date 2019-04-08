@@ -18,6 +18,9 @@ import List from '../containers/backEnd/productManagement/list';
 import DeliveryList from '../containers/backEnd/deliveryMangement/deliverylist';
 import TypeList from '../containers/backEnd/productType/typelist';
 import addGoods from '../containers/backEnd/productManagement/addGoods';
+import brandList from '../containers/backEnd/brandMangement/brandlist';//品牌管理列表
+import inventoryList from '../containers/backEnd/inventoryMangement/inventorylist';//库存管理列表
+import facilityList from '../containers/backEnd/facilityMangement/facilitylist';//设备管理列表
 import NotFound from '../containers/404';
 
 import goods from '../containers/frontEnd/goods/goods';
@@ -49,6 +52,9 @@ const Root = () => (
             <Route exact path="/main/deliverylist" component={DeliveryList} />
             <Route exact path="/main/typelist" component={TypeList} />
             <Route exact path="/main/addGoods" component={addGoods} />
+            <Route exact path="/main/brandlist" component={brandList} />
+            <Route exact path="/main/inventorylist" component={inventoryList} />
+            <Route exact path="/main/facilitylist" component={facilityList} />
             <Redirect to="/main/list" />
             <Route path="*" component={NotFound} />
           </Router>
