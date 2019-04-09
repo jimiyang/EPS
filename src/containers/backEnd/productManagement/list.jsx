@@ -120,7 +120,8 @@ class ProductList extends Component {
   // 获取搜索信息
   getSearchInfo(type, value) {
     if (value === undefined) return;
-    value = value.replace(/\s/g, '');
+    //value = value.replace(/\s/g, '');
+    if (Object.prototype.toString.call(value) === '[Object String]' && value.test(/\s/g)) value = value.replace(/\s/g, '');
     if (type === 'goods_bar_no') {
       this.setState({[type]: value.target.value});
       return;

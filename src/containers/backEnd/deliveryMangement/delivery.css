@@ -59,7 +59,7 @@ font-size:14px;
     width:200px;display: inline-block;text-align: left;
 }
 .delivery-blocks .order-blocks .order-detaile{
-    font-size:14px;
+    font-size:14px;display: flex;justify-content: space-between;align-items: center;
 }
 .delivery-blocks .order-blocks .order-detaile .items-1{
   padding:10px 0;font-size:14px;margin-left:30px;
@@ -79,22 +79,22 @@ font-size:14px;
     display: flex; margin-right:20px;
     font-size:14px;margin-top: 10px;
     margin-left:20px;justify-content: space-between;
-    align-items:flex-start;
+    align-items:center;
 }
+.delivery-blocks .order-blocks .order-detaile .item-3 .items-con{margin:0 20px;}
 .delivery-blocks .order-blocks  .item-3 button{margin-right:20px;}
 .delivery-blocks .order-blocks{margin-top:30px;margin-bottom:30px;}
 .delivery-blocks .order-blocks  .arrow-ico{cursor: pointer;}
-.delivery-blocks .order-blocks .order-detaile .items-3 .left{
-    display: flex;
+.delivery-blocks .order-blocks .order-detaile .order-content{
+    display: flex;align-items: center;justify-content: space-between;
 }
 .delivery-blocks .order-blocks .button-items{
-   width:40%;text-align: right;
+   text-align: right;margin-right:10px;
 }
 .delivery-blocks .order-blocks .items-3 .button-items button{
     margin-left:30px;
 }
 .delivery-blocks .order-detaile .items-3 .ant-checkbox-wrapper{line-height:100px;}
-.delivery-blocks .order-detaile .items-3 .title{padding-top:10px;}
 .delivery-blocks .order-detaile .items-3 h1{font-size:16px; padding-bottom:20px;}
 .delivery-blocks .order-detaile .items-3 p{padding-bottom:20px;}
 .delivery-blocks .order-detaile .items-3 img{
@@ -108,13 +108,23 @@ font-size:14px;
 }
 .hide{display: none;}
 .delivery-blocks .express-items li{
-    display: flex;justify-content: flex-start;align-items: center;
     margin-bottom:20px;
+}
+.delivery-blocks .express-items li h1{padding-bottom:10px;}
+.delivery-blocks .express-items li .flex-blocks{
+    display: flex;justify-content: flex-start;align-items: center;margin-bottom:10px;
 }
 .delivery-blocks .express-items li label{
     display: inline-block;width:100px;
 }
-.delivery-blocks .express-items li .ant-select, input{width:100%;}
+.delivery-blocks .express-items li .ant-select, input{width:50%;}
+.delivery-blocks .express-items .flex-blocks{
+    display: flex;justify-content: space-between;align-items: center;
+}
+.delivery-blocks .express-items img{
+    width:60px;height:60px;margin-right:10px;
+}
+.delivery-blocks .express-items .ant-table-tbody > tr > td{vertical-align: middle;}
 .pagetion{
     text-align:center;font-size:12px;color:#1890ff;
 }

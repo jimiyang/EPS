@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://192.168.19.118:8000/eps/base/',
+  baseURL: '',
   // baseURL: 'http://eps.liantuobank.com/eps/base/',
   timeout: 50000,
   withCredentials: true

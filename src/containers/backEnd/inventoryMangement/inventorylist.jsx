@@ -102,7 +102,8 @@ class InventoryList extends Component {
   // 获取搜索信息
   getSearchInfo(type, value) {
     if (value === undefined) return;
-    value = value.replace(/\s/g, '');
+    //value = value.replace(/\s/g, '');
+    if (Object.prototype.toString.call(value) === '[Object String]' && value.test(/\s/g)) value = value.replace(/\s/g, '');
     this.setState({[type]: value});
   }
 

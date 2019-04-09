@@ -90,9 +90,9 @@ class AddSN extends Component {
     if (redirect) return (<Redirect to="/login" />);
     return (
       <div className="sn-blocks">
-        <ul>
-          <li className="items"><label>商品名称</label>
-            <Select value={id} placeholder="请选择商品" onChange={this.getSearchInfo.bind(this, 'id')} allowClear={allowClear}>
+        <ul className="list">
+          <li className="items"><label>商品名称：</label>
+            <Select className="select" value={id} placeholder="请选择商品" onChange={this.getSearchInfo.bind(this, 'id')} allowClear={allowClear}>
               {
                 goodsList.map((item, index) => (
                   <Option value={item.id} key={index}>{item.goods_name}</Option>
@@ -101,7 +101,10 @@ class AddSN extends Component {
             </Select>
           </li>
           <li>
-            <input type="file" onChange={this.getFile} />
+            <label>选择文件：</label>
+            <div className="file">点击上传文件
+              <input type="file" onChange={this.getFile} />
+            </div>
           </li>
           <li>
             <Button type="primary" onClick={this.addtionBrandEvent}>添加</Button>
