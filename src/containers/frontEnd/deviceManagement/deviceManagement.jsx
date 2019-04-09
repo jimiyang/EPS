@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Pagination, Input, message, Modal, Empty, Select} from 'antd';
+import {Pagination, Input, message, Modal, Empty, Select, Button} from 'antd';
 import {Redirect} from 'react-router';
 import './deviceManagement.less';
 import utils from '../../../utils/common';
+import Detail from '../../backEnd/facilityMangement/facilitydetail';
 
 const Option = Select.Option;
 const Search = Input.Search;
@@ -10,9 +11,12 @@ const Search = Input.Search;
 class DeviceManagement extends Component {
   state = {
     visible: false, // 是否显示modal
+    confirmLoading: false,
+    ModalText: '确认解除绑定当前设备？',
+    isvisible: false, // 显示详情弹窗
     list: [], // 设备列表
     total: 0, // 总条目数
-    confirmLoading: false,
+    deviceId: null, // 选中的设备id
     currentPage: 1,
     searchType: undefined, // 搜索类型
     searchContent: '', // 搜索内容
@@ -51,16 +55,6 @@ class DeviceManagement extends Component {
     this.getDeviceList(page);
   }
 
-  // 打开取消窗口
-  showModal = () => {
-    this.setState({visible: true});
-  }
-
-  // 关闭取消窗口
-  handleCancel = () => {
-    this.setState({visible: false});
-  }
-
   // 搜索订单
   searchDevice = async (value) => {
     const {searchType} = this.state;
@@ -79,13 +73,27 @@ class DeviceManagement extends Component {
   }
 
   // 打开详情
-  openDetail = () => {
-    console.log(1);
+  openDetail = (id) => {
+    this.setState({deviceId: id, isvisible: true});
+  }
+
+  // 控制弹窗
+  changeModal(type, role) {
+    if (type === 'cancel') {
+      role === 'detail' ? this.setState({isvisible: false}) : this.setState({visible: false});
+    } else {
+      role === 'detail' ? this.setState({isvisible: true}) : this.setState({visible: true});
+    }
+  }
+
+  // 解绑
+  unbind() {
+    console.log('我要解绑了');
   }
 
   render() {
     const {
-      redirect, list, currentPage, visible, ModalText, confirmLoading, total
+      redirect, list, currentPage, visible, ModalText, confirmLoading, total, isvisible, deviceId
     } = this.state;
     if (redirect) return (<Redirect to="/login" />);
     return (
@@ -152,14 +160,14 @@ class DeviceManagement extends Component {
                     <p hidden={!item.bind_merchant_code}>{item.bind_merchant_code}/{item.bind_merchant_name}</p>
                   </div>
                   {
-                    item.activate_status === '1' ? <p>未激活</p> : <p>{item.activate_status === '2' ? '激活中' : '未激活'}</p>
+                    item.activate_status === '1' ? <p>未激活</p> : <p>{item.activate_status === '2' ? '激活中' : '已激活'}</p>
                   }
                   <div className="operation">
                     {
                       item.bind_status === '1' ? (
                         <div>
-                          <p onClick={this.openDetail.bind(this)}>详情</p>
-                          <p>解绑</p>
+                          <p onClick={this.openDetail.bind(this, item.id)}>详情</p>
+                          <p onClick={this.changeModal.bind(this, 'open')}>解绑</p>
                         </div>
                       ) : null
                     }
@@ -186,11 +194,22 @@ class DeviceManagement extends Component {
         <div>
           <Modal
             visible={visible}
-            onOk={this.cancelOrder}
+            onOk={this.unbind}
             confirmLoading={confirmLoading}
-            onCancel={this.handleCancel}
+            onCancel={this.changeModal.bind(this, 'cancel')}
           >
             <p>{ModalText}</p>
+          </Modal>
+          <Modal
+            title="详情"
+            visible={isvisible}
+            onCancel={this.changeModal.bind(this, 'cancel', 'detail')}
+            width="800px"
+            footer={
+              <Button onClick={this.changeModal.bind(this, 'cancel', 'detail')}>关闭</Button>
+            }
+          >
+            <Detail id={deviceId} />
           </Modal>
         </div>
       </div>

@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {message} from 'antd';
 import {Redirect} from 'react-router';
 import './style.less';
 
@@ -9,29 +8,63 @@ class FacilityDetail extends Component {
     this.state = {
       form: {
         goods_name: '',
-        goods_status: '',
-        angent_code: 'EW3243432432423432',
-        angent_name: '菲菲食品城',
-        bind_time: '',
-        core_code: '',
-        core_name: '',
-        decoding_time: '',
-        shop_code: '',
-        shop_name: '',
-        activation_status: '',
+        bind_status: '',
+        agent_no: '',
+        agent_name: '',
+        bind_date: '',
+        bind_core_merchant_code: '',
+        bind_core_merchant_name: '',
+        unbind_date: '',
+        bind_merchant_name: '',
+        bind_merchant_code: '',
+        activate_status: '',
         order_no: '',
-        activation_time: '',
-        sn_code: '',
-        price: '',
+        activate_date: '',
+        device_sn: '',
+        ctivate_price: '',
         buy_price: '',
-        creat_time: ''
+        gmt_created: ''
       },
       redirect: false,
     };
   }
-  componentWillMount() {}
+  componentWillMount() {
+    this.initForm(this.props.id);
+  }
   componentWillReceiveProps(props) {
-    //this.loadList(props.id);
+    this.initForm(props.id);
+  }
+  getState(status) {
+    switch (status) {
+      case 0:
+        return '未绑定';
+      case 1:
+        return '已绑定';
+      case 2:
+        return '已解绑';
+      default:
+        return '未绑定';
+    }
+  }
+  getActivate(status) {
+    switch (status) {
+      case 0:
+        return '未激活';
+      case 1:
+        return '激活中';
+      case 2:
+        return '激活失败';
+      default:
+        return '未激活';
+    }
+  }
+  initForm(id) {
+    window.api('eps.getordergoodsmanager', {id}).then(rs => {
+      //console.log();
+      this.setState({
+        form: rs.order_goods_manager_list[0]
+      });
+    });
   }
   render() {
     if (this.state.redirect) {
@@ -46,19 +79,19 @@ class FacilityDetail extends Component {
           </li>
           <li>
             <label>商品绑定状态：</label>
-            <div>{this.state.form.goods_status}</div>
+            <div>{this.getState(this.state.form.bind_status)}</div>
           </li>
           <li>
             <label>所属代理商编号/名称：</label>
-            <div>{this.state.form.angent_code}/{this.state.form.angent_name}</div>
+            <div className={!this.state.form.agent_no ? 'hide' : null}>{this.state.form.agent_no}/{this.state.form.agent_name}</div>
           </li>
           <li>
             <label>商品绑定时间：</label>
-            <div>{this.state.form.bind_time}</div>
+            <div>{this.state.form.bind_date}</div>
           </li>
           <li>
             <label>所属核心商户编号/名称：</label>
-            <div>{this.state.form.core_code}/{this.state.form.core_name}</div>
+            <div className={!this.state.form.core_code ? 'hide' : null}>{this.state.form.core_code}/{this.state.form.core_name}</div>
           </li>
           <li>
             <label>商品解绑时间：</label>
@@ -66,11 +99,11 @@ class FacilityDetail extends Component {
           </li>
           <li>
             <label>绑定门店编号/门店名称：</label>
-            <div>{this.state.form.shop_code}/{this.state.form.shop_name}</div>
+            <div className={!this.state.form.bind_core_merchant_code ? 'hide' : null}>{this.state.form.bind_core_merchant_code}/{this.state.form.bind_core_merchant_name}</div>
           </li>
           <li>
             <label>商品激活状态：</label>
-            <div>{this.state.form.activation_status}</div>
+            <div>{this.getActivate(this.state.form.activate_status)}</div>
           </li>
           <li>
             <label>订单编号：</label>
@@ -78,15 +111,15 @@ class FacilityDetail extends Component {
           </li>
           <li>
             <label>商品激活时间：</label>
-            <div>{this.state.form.activation_time}</div>
+            <div>{this.state.form.activate_date}</div>
           </li>
           <li>
             <label>商品sn码：</label>
-            <div>{this.state.form.sn_code}</div>
+            <div>{this.state.form.device_sn}</div>
           </li>
           <li>
             <label>商品激活价格：</label>
-            <div>{this.state.form.price}</div>
+            <div>{this.state.form.activate_price}</div>
           </li>
           <li>
             <label>商品购买价格：</label>
@@ -94,7 +127,7 @@ class FacilityDetail extends Component {
           </li>
           <li>
             <label>创建时间：</label>
-            <div>{this.state.form.creat_time}</div>
+            <div>{this.state.form.gmt_created}</div>
           </li>
         </ul>
       </div>

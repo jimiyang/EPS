@@ -55,7 +55,7 @@ class Add extends Component {
   componentWillMount() {
     if (window.common.loginOut(this)) {
       // 获取商品类型，商品品牌，第三方厂商
-      Promise.all([window.api('goods.getcategorylist', {}), window.api('eps.getgoodsbrand', {page_size: 100}), window.api('goods.getthirdchannellist')]).then(res => {
+      Promise.all([window.api('goods.getcategorylist', {}), window.api('eps.getgoodsbrand', {brand_status: 1, page_size: 100}), window.api('goods.getthirdchannellist')]).then(res => {
         res[2].goods_third_channel_list.forEach(item => {
           item.id = Number(item.id);
         });
@@ -348,18 +348,36 @@ class Add extends Component {
             <Form.Item
               label="付款方式"
             >
-              <RadioGroup onChange={this.changeForm.bind(this, 'pay_type')} value={form.pay_type}>
+              {getFieldDecorator(
+                'pay_type',
+                {
+                  initialValue: form.pay_type || '',
+                  rules: [
+                    {required: true, message: '请付款方式！'}
+                  ]
+                }
+              )(<RadioGroup onChange={this.changeForm.bind(this, 'pay_type')}>
                 <Radio value={1}>扣款</Radio>
                 <Radio value={2}>冻结</Radio>
-              </RadioGroup>
+              </RadioGroup>)
+              }
             </Form.Item>
             <Form.Item
               label="选择商品属性"
             >
-              <RadioGroup onChange={this.changeForm.bind(this, 'goods_property')} value={form.goods_property}>
+              {getFieldDecorator(
+                'goods_property',
+                {
+                  initialValue: form.goods_property || '',
+                  rules: [
+                    {required: true, message: '请选择商品属性！'}
+                  ]
+                }
+              )(<RadioGroup onChange={this.changeForm.bind(this, 'goods_property')}>
                 <Radio value={1}>软件</Radio>
                 <Radio value={2}>硬件</Radio>
-              </RadioGroup>
+              </RadioGroup>)
+              }
             </Form.Item>
             {
               Number(form.goods_property) === 2 ?
@@ -367,10 +385,20 @@ class Add extends Component {
                   <Form.Item
                     label="选择返佣方式"
                   >
-                    <RadioGroup onChange={this.changeForm.bind(this, 'return_com_type')} value={form.return_com_type}>
-                      <Radio value={1}>激活返佣</Radio>
-                      <Radio value={2}>业绩返佣</Radio>
-                    </RadioGroup>
+                    {
+                      getFieldDecorator(
+                        'return_com_type',
+                        {
+                          initialValue: form.return_com_type || '',
+                          rules: [
+                            {required: true, message: '请选择返佣方式！'}
+                          ]
+                        }
+                      )(<RadioGroup onChange={this.changeForm.bind(this, 'return_com_type')}>
+                        <Radio value={1}>激活返佣</Radio>
+                        <Radio value={2}>业绩返佣</Radio>
+                      </RadioGroup>)
+                    }
                   </Form.Item>
                   <Form.Item
                     label="商品激活价格"
@@ -472,19 +500,37 @@ class Add extends Component {
               Number(form.goods_property) === 1 ? <Form.Item
                 label="是否为自营"
               >
-                <RadioGroup onChange={this.changeForm.bind(this, 'self_support')} value={form.self_support}>
+                {getFieldDecorator(
+                  'self_support',
+                  {
+                    initialValue: form.self_support || '',
+                    rules: [
+                      {required: true, message: '请选择是否为自营'}
+                    ]
+                  },
+                )(<RadioGroup onChange={this.changeForm.bind(this, 'self_support')}>
                   <Radio value={1}>自营</Radio>
                   <Radio value={2}>非自营</Radio>
-                </RadioGroup>
+                </RadioGroup>)
+                }
               </Form.Item> : null
             }
             <Form.Item
               label="是否需要发货"
             >
-              <RadioGroup onChange={this.changeForm.bind(this, 'is_post')} value={form.is_post}>
+              {getFieldDecorator(
+                'is_post',
+                {
+                  initialValue: form.is_post || '',
+                  rules: [
+                    {required: true, message: '请选择是否发货'}
+                  ]
+                },
+              )(<RadioGroup onChange={this.changeForm.bind(this, 'is_post')}>
                 <Radio value={0}>是</Radio>
                 <Radio value={1}>否</Radio>
-              </RadioGroup>
+              </RadioGroup>)
+              }
             </Form.Item>
             <div className="content">
               <div className="ant-form-item-label">

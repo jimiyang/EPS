@@ -1,4 +1,20 @@
 const utils = {
+  getDate(time, flag) {
+    const date = new Date(time);
+    const y = date.getFullYear();
+    let m = date.getMonth() + 1;
+    m = m < 10 ? (`0${m}`) : m;
+    let d = date.getDate();
+    d = d < 10 ? (`0${d}`) : d;
+    let h = date.getHours();
+    h = h < 10 ? (`0${h}`) : h;
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
+    minute = minute < 10 ? (`0${minute}`) : minute;
+    second = second < 10 ? (`0${second}`) : second;
+    const str = flag ? `${y}-${m}-${d}  ${h}:${minute}:${second}` : `${m}月${d}日  ${h}:${minute} `;
+    return str;
+  },
   //获取验证码
   createCode() {
     let code = '';
@@ -12,6 +28,18 @@ const utils = {
       code += random[index];
     }
     return code.toUpperCase();
+  },
+  getRequestNo(m) {
+    let num = '';
+    for (let i = 0; i < m; i++) {
+      const val = parseInt(Math.random() * 10, 10);
+      if (i === 0 && val === 0) {
+        i--;
+        break;
+      }
+      num += val;
+    }
+    return num;
   },
   loginOut(obj) {
     if (window.localStorage.getItem('headParams') === null) {

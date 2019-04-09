@@ -96,32 +96,11 @@ class DeliveryList extends Component {
       orderNumber: value
     });
   }
-  sendDeliveryEvent = (number, id, isPost, index, detail) => {
+  sendDeliveryEvent = (orderno) => {
     //const index = (this.state.index === idx) ? '-1' : idx;
-    const list = this.state.orderListData;
-    if (isPost === 1) {
-      message.success('发货成功！');
-      this.setState({
-        text: '已发货'
-      });
-      const params = {
-        order_no: detail.order_no,
-        ids: detail.id
-      };
-      window.api('order.send', params).then((res) => {
-        list[index].status = 2;
-        this.setState({orderListData: list});
-      }).catch((error) => {
-        error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
-        message.error(error.service_error_message);
-      });
-      return false;
-    }
     this.setState({
       expressVisible: true,
-      orderNumber: number,
-      ids: id,
-      text: '发货'
+      orderNumber: orderno
     });
   }
   closeEvent = () => {
@@ -159,7 +138,23 @@ class DeliveryList extends Component {
       expressNo: value
     });
   }
+  checkGoodsEvent = (selectedRowKeys, selectedRows) => {
+    console.log(selectedRows);
+    const ids = [];
+    if (selectedRows.length > 0) {
+      selectedRows.map(item => {
+        ids.push(item.id);
+      });
+      this.setState({
+        ids: ids.join(',')
+      });
+    }
+  }
   sendEvent = () => {
+    if (this.state.ids === '') {
+      message.error('请选择发货商品');
+      return false;
+    }
     if (this.state.expressName === '') {
       message.error('请选择快递');
       return false;
@@ -174,7 +169,9 @@ class DeliveryList extends Component {
       express_no: this.state.expressNo,
       ids: this.state.ids
     };
+    console.log(params);
     window.api('order.send', params).then((res) => {
+      console.log(res);
       message.success(res.service_error_message);
       this.loadList(this.state.search);
       this.setState({
@@ -184,7 +181,6 @@ class DeliveryList extends Component {
       error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
-    //this.loadList(this.state.search);
   }
   agentEvent = (e) => {
     this.setState({
@@ -273,12 +269,13 @@ class DeliveryList extends Component {
           onOk={this.sendEvent}
           onCancel={this.closeEvent}
           visible={this.state.expressVisible}
+          width="800px"
         >
           <SendDelivery
             selExpressNameEvent={this.selExpressNameEvent.bind(this)}
             orderNumberEvent={this.orderNumberEvent}
-            id={this.state.id}
             order_no={this.state.orderNumber}
+            checkGoodsEvent={this.checkGoodsEvent}
           />
         </Modal>
         <div className="nav-items">
@@ -309,7 +306,16 @@ class DeliveryList extends Component {
               <img src={require('../../../assets/backEnd/nodata-ico.png')} />
               <p>没有数据!</p>
             </div>
-            <ul>
+            <ul className={this.state.isHide === false ? null : 'hide'}>
+              <li>
+                <div className="order-title">
+                  <span>商品</span>
+                  <span>数量</span>
+                  <span>下单时间</span>
+                  <span>实付金额</span>
+                  <span>操作</span>
+                </div>
+              </li>
               {
                 this.state.orderListData.map((item, index) => (
                   <li key={index} >
@@ -317,37 +323,33 @@ class DeliveryList extends Component {
                       <div className="arrow-ico" onClick={this.openEvent.bind(this, index)}>
                         <Icon type={this.state.index === index ? 'up' : 'down'} />
                       </div>
-                      <span>{this.state.statusData[item.status]}</span>
                       <span className="agentName">{item.agent_no}/{item.agent_name}</span>
                       <span>订单号：{item.order_no}</span>
-                      <span>{item.gmt_created}</span>
+                      <span>{this.state.statusData[item.status]}</span>
+                      <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
                     </div>
-                    {
-                      item.order_details.map((detail, idx) => (
-                        <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')} key={idx}>
-                          <div className="items-3">
-                            <div className="left">
-                              <img src={detail.goods_pic} />
-                              <div className="title">
-                                <h1>商品名称：{detail.goods_name}</h1>
-                                <p>商品售价：¥{detail.goods_sale_price}</p>
-                                <p>商品类型：{detail.goods_category_name}</p>
+                    <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')}>
+                      <div className="goods-con">
+                        {
+                          item.order_details.map((detail, idx) => (
+                            <div key={idx}>
+                              <div className="order-content">
+                                <div className="items-3">
+                                  <img src={detail.goods_pic} />
+                                  <div className="items-con">商品名称：{detail.goods_name}</div>
+                                  <div className="items-con">数量：{detail.goods_qty}</div>
+                                  <div className="items-con">创建时间：{item.gmt_created}</div>
+                                  <div className="items-con">￥{detail.goods_sale_price}</div>
+                                </div>
                               </div>
                             </div>
-                            <div className="button-items">
-                              <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
-                              <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail.id, detail.is_post, index, detail)}>{this.state.text}</Button>
-                            </div>
-                          </div>
-                          <div className="items-1">
-                            <p><label>代理商账号：</label>{item.payer_account}</p>
-                            <p><label>数量：</label>{detail.goods_qty}</p>
-                            <p><label>合计：</label><em className="red">{detail.total_amt}</em></p>
-                            <p><label>收货地址：</label>{item.province}{item.city}{item.area}{item.address}</p>
-                          </div>
-                        </div>
-                      ))
-                    }
+                          ))
+                        }
+                      </div>
+                      <div className="button-items">
+                        <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no)}>{this.state.text}</Button>
+                      </div>
+                    </div>
                   </li>
                 ))
               }
