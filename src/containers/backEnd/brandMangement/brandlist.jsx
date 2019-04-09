@@ -70,42 +70,10 @@ class BrandList extends Component {
       message.error(error.service_error_message);
     });
   }
-<<<<<<< HEAD
-  selbrandsNameEvent = (value) => {
-    this.setState({
-      brand_name: value
-    });
-  }
-  selStatusEvent = (value) => {
-    this.setState({
-      brand_status: value
-    });
-  }
-  startTimeEvent = (date, dateString) => {
-    this.setState({
-      startTime: dateString
-    });
-  }
-  entTimeEvent = (date, dateString) => {
-    this.setState({
-      endTime: dateString
-    });
-  }
-  searchEvent = () => {
-    console.log('search');
-  }
-  //新增商品
-  addBrand = () => {
-    this.setState({
-      addvisible: true,
-      is_add: 0 //0为新增页面
-    });
-=======
 
   // 改变页码
   changePage = (page) => {
     this.getBrandList(page);
->>>>>>> 5bec86bd3bd75b59b744fc20dc794c13ea33d025
   }
 
   // 绑定数据

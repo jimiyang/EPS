@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Tabs, Input, message, Modal, Empty} from 'antd';
+import {Pagination, Tabs, Input, message, Modal, Empty} from 'antd';
 import {Redirect} from 'react-router';
 import './deviceManagement.less';
 
@@ -10,20 +10,33 @@ class DeviceManagement extends Component {
   state = {
     visible: false, // 是否显示modal
     list: [], // 设备列表
+    total: 0, // 总条目数
     confirmLoading: false,
+    currentPage: 1,
   }
 
   componentWillMount() {
     if (window.common.loginOut(this)) {
-      console.log('deviceManagement');
+      this.getDeviceList(this.state.currentPage);
     } else {
       message.error('登录信息失效，请重新登录');
     }
   }
 
   // 获取设备列表
-  getDeviceList = () => {
+  getDeviceList = (page) => {
+    const params = {
+      page_size: 10,
+      current_page: page,
+    };
+    window.api('eps.getordergoodsmanager', params).then(res => {
+      console.log(res);
+      this.setState({list: res.order_goods_manager_list, total: res.total_result});
+    });
+  }
 
+  changePage = (page) => {
+    this.getDeviceList(page);
   }
 
   // 打开取消窗口
@@ -38,7 +51,7 @@ class DeviceManagement extends Component {
 
   render() {
     const {
-      redirect, list, loadMore, loadText, visible, confirmLoading, ModalText
+      redirect, list, currentPage, visible, ModalText, confirmLoading, total
     } = this.state;
     if (redirect) return (<Redirect to="/login" />);
     return (
@@ -61,11 +74,31 @@ class DeviceManagement extends Component {
             <li style={{width: '120px'}}>激活状态</li>
             <li style={{width: '120px'}}>操作</li>
           </ul>
+          {/* <ul>
+            {
+              list.map((item, index) => (
+                <li>
+                  <img src={item.} alt=""/>
+                </li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+              ))
+            }
+          </ul> */}
         </section>
-        <section className="pagination" hidden={list.length === 0}>
-          {
-            loadMore ? <button onClick={this.getDeviceList.bind(this)}>{loadText}</button> : <button>{loadText}</button>
-          }
+        <section className="pagination" hidden={Number(total) === 0}>
+          <Pagination
+            showQuickJumper
+            showSizeChange
+            current={currentPage}
+            defaultCurrent={1}
+            defaultPageSize={10}
+            total={total}
+            onChange={this.changePage}
+          />
         </section>
         <section className="default" hidden={list.length > 0}>
           <Empty />
