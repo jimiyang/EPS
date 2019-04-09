@@ -23,6 +23,10 @@ class GoodsDetail extends Component {
   // 跳转到生成订单页
   toOrder = () => {
     const {detail} = this.state;
+    if (Number(detail.goods_num === 0)) {
+      message.error('商品库存为0，暂时无法购买');
+      return;
+    }
     const goodsDetail = {
       img: detail.goods_picture,
       count: this.state.count,
@@ -35,6 +39,10 @@ class GoodsDetail extends Component {
 
   // 改变购买数量
   changeCount = (value) => {
+    if (value === 0) {
+      message.error('商品数量不能为0');
+      return;
+    }
     this.setState({count: value});
   }
 

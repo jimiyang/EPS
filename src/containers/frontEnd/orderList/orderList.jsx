@@ -5,7 +5,6 @@ import utils from '../../../utils/common';
 import './orderList.less';
 
 const Option = Select.Option;
-
 const TabPane = Tabs.TabPane;
 const Search = Input.Search;
 
@@ -191,7 +190,7 @@ class OrderList extends Component {
                     <li style={{width: '120px'}}>数量</li>
                     <li style={{width: '120px'}}>实付款</li>
                     <li style={{width: '100px'}}>
-                      <Select className="statusSelect" defaultValue="全部状态" value={status} onChange={this.changeStatus.bind(this)}>
+                      <Select className="statusSelect" defaultValue="全部状态" onChange={this.changeStatus.bind(this)}>
                         {
                           statusList.map((item2, index2) => (
                             <Option className="statusOption" value={index2} key={index2}>{item2}</Option>

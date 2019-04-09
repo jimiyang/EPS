@@ -1,24 +1,72 @@
 #deviceManagement {
+  font-size: 14px;
   .top {
     border-bottom: 1px solid #d7d7d7;
     padding-bottom: 15px;
+    display: flex;
+    justify-content: flex-end;
     margin: 15px;
     .searchInput {
       width: 300px;
       margin-right: 15px;
     }
-    display: flex;
-    justify-content: flex-end;
   }
   .content {
+    .statusSelect {
+      width: 100px;
+      border: 0;
+    }
+    .ant-select-selection {
+      background: #e4e4e4;
+      border: 0;
+      box-shadow: none;
+    }
     .status {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: #e4e4e4;
-      line-height: 40px;
+      line-height: 50px;
       li {
+        width: 120px;
         text-align: center;
+      }
+      .coreCode {
+        width: 185px;
+        p {
+          line-height: 20px;
+        }
+      }
+    }
+    .deviceList {
+      li {
+        height: 150px;
+        width: 100%;
+        background: #fff;
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &:first-of-type {
+          margin-top: 15px;
+        }
+        >p, div {
+          width: 120px;
+          text-align: center;
+        }
+        .operation {
+          div {
+            display: flex;
+            justify-content: center;
+          }
+          p:first-of-type {
+            margin-right: 20px;
+          }
+          p {
+            color: #1890ff;
+            cursor: pointer;
+          }
+        }
       }
     }
   }
