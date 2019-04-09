@@ -463,10 +463,19 @@ class Add extends Component {
                   <Form.Item
                     label="调用第三方接口"
                   >
-                    <RadioGroup onChange={this.changeForm.bind(this, 'use_third_channel')} value={form.use_third_channel}>
+                    {getFieldDecorator(
+                      'use_third_channel',
+                      {
+                        initialValue: `${form.use_third_channel}` || '',
+                        rules: [
+                          {required: true, message: '请选择是否调用第三方接口！'},
+                        ]
+                      }
+                    )(<RadioGroup onChange={this.changeForm.bind(this, 'use_third_channel')}>
                       <Radio value={1}>是</Radio>
                       <Radio value={2}>否</Radio>
-                    </RadioGroup>
+                    </RadioGroup>)
+                    }
                   </Form.Item>
                   {
                     Number(form.use_third_channel) === 1 ? <Form.Item
