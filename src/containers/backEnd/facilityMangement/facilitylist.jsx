@@ -3,6 +3,7 @@ import {AutoComplete, Select, Button, Input, Icon, Table, message, Popconfirm, M
 import {Redirect} from 'react-router';
 import './style.less';
 import Detail from './facilitydetail';
+import api2 from '../../../api/api2';
 
 const Option = Select.Option;
 class FacilityList extends Component {
@@ -22,7 +23,6 @@ class FacilityList extends Component {
       merchantCode: '',
       search: {
         page_size: 10,
-        current_page: 1
       },
       facilityData: []
     };
@@ -42,7 +42,7 @@ class FacilityList extends Component {
       ...this.state.search
     };
     window.api('eps.getordergoodsmanager', params).then(rs => {
-      console.log(rs.order_goods_manager_list);
+      //console.log(rs.order_goods_manager_list);
       this.setState({facilityData: rs.order_goods_manager_list});
     }).catch((error) => {
       if (error.service_error_code === 'EPS000000801') {
@@ -51,6 +51,11 @@ class FacilityList extends Component {
       message.error(error.service_error_message);
       this.setState({isLoading: false});
     });
+  }
+  // 按条件改变页面
+  changePage = (page) => {
+    page = page === 0 ? 1 : page;
+    this.getStorageList(page, this.state.goodsProperty);
   }
   getState(status) {
     switch (status) {
@@ -98,7 +103,7 @@ class FacilityList extends Component {
     });
   }
   decodingEvent = (item) => {
-    console.log(item);
+    //console.log(item);
     window.localStorage.setItem('platform_no', item.platform_no);
     window.localStorage.setItem('merchant_code', item.bind_merchant_code);
     const params = {
@@ -123,7 +128,7 @@ class FacilityList extends Component {
       device_sn: '',
       operator_id: ''
     };
-    window.api('merchant.pidkeyquery', params).then(rs => {
+    api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
       console.log(rs);
     });
     //window.api2('device.unbind', params).then(rs => {
@@ -188,14 +193,16 @@ class FacilityList extends Component {
         render: (record) => (
           <div className="opearte-blocks">
             <span className="ml10" onClick={() => this.detailEvent(record)}>详情</span>
-            <Popconfirm
-              title="是否需要解绑"
-              onConfirm={() => this.decodingEvent(record)}
-              okText="是"
-              cancelText="否"
-            >
-              <span className="ml10">解绑</span>
-            </Popconfirm>
+            <div className={record.status === '2' ? 'hide' : null}>
+              <Popconfirm
+                title="是否需要解绑"
+                onConfirm={() => this.decodingEvent(record)}
+                okText="是"
+                cancelText="否"
+              >
+                <span className="ml10">解绑</span>
+              </Popconfirm>
+            </div>
           </div>
         )
       }
