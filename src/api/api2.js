@@ -33,7 +33,7 @@ function baseInstance(service, params) {
   };
   //console.log(form);
   return (
-    axios.post(`${baseUrl}gateway.in?requestJson=${JSON.stringify(form)}`, {}).then((response) => response)
+    axios.post(`${baseUrl}gateway.in?requestJson=${JSON.stringify(form)}`).then((response) => response)
   );
 }
 export default {baseInstance};

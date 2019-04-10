@@ -3,7 +3,6 @@ import {AutoComplete, Select, Button, Input, Icon, Table, message, Popconfirm, M
 import {Redirect} from 'react-router';
 import './style.less';
 import Detail from './facilitydetail';
-import api2 from '../../../api/api2';
 
 const Option = Select.Option;
 class FacilityList extends Component {
@@ -136,8 +135,8 @@ class FacilityList extends Component {
       device_sn: '',
       operator_id: ''
     };*/
-    api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
-      console.log(rs.partner_id_key);
+    window.api2('merchant.pidkeyquery', params).then(rs => {
+      console.log(rs);
     });
     //window.api2('device.unbind', params).then(rs => {
     //console.log(rs);
