@@ -21,8 +21,8 @@ function baseInstance(service, params) {
   let baseUrl = 'http://192.168.4.148:8080/NewFront/base/';
   switch (service) {
     case 'merchant.pidkeyquery':
-      // baseUrl = 'http://192.168.4.148:8080/NewFront/base/';
-      baseUrl = 'http://192.168.19.31:8000/NewFront/base/';
+      baseUrl = 'http://192.168.4.148:8080/NewFront/base/';
+      //baseUrl = 'http://192.168.19.31:8000/NewFront/base/';
       form = {
         head: {
           service,
