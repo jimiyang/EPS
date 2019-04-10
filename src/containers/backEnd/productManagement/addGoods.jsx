@@ -118,9 +118,7 @@ class Add extends Component {
       const form = Object.assign(this.state.form, params);
       this.setState({form, isShow: false});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
@@ -184,6 +182,11 @@ class Add extends Component {
             message.success(res.service_error_message);
             this.props.history.push({pathname: '/main/list'});
           }
+        }).catch((error) => {
+          if (error.service_error_code === 'EPS000000801') {
+            this.setState({redirect: true});
+          }
+          message.error(error.service_error_message);
         });
       }
     });
@@ -197,7 +200,7 @@ class Add extends Component {
   // 改变表单选项
   changeForm = (type, value) => {
     if (value === undefined) return;
-    if (Object.prototype.toString.call(value) === '[Object String]' && value.test(/\s/g)) value = value.replace(/\s/g, '');
+    value = utils.deleteBlank(value);
     let form = this.state.form;
     switch (type) {
       case 'goods_category_id':

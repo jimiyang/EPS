@@ -85,9 +85,7 @@ class ProductType extends Component {
         this.setState({productTypeData: arr});
       }
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
       this.setState({isLoading: false});
     });
@@ -119,11 +117,9 @@ class ProductType extends Component {
     window.api('goods.delcategory', {id}).then((res) => {
       message.success(res.service_error_message);
       this.loadList();
-      if (id === this.state.parent_id) this.setState({parent_id: ''}); // 如果删除目录选中项，重置parent_id
+      id === this.state.parent_id ? this.setState({parent_id: ''}) : null; // 如果删除目录选中项，重置parent_id
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }

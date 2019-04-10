@@ -32,7 +32,7 @@ function baseInstance(service, params) {
   };
   switch (service) {
     case 'merchant.pidkeyquery': //通过核心商户编号获取pid和key
-      baseUrl = 'http://192.168.19.31:8000/NewFront/base/';
+      baseUrl = 'http://192.168.5.133:8080/NewFront/base/';
       form = {
         requestJson: {
           head: {

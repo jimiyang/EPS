@@ -41,9 +41,7 @@ class Main extends Component {
     window.api('eps.logout', {login_name: this.state.login_name}).then(res => {
       res.service_status === 'S' ? this.props.history.push({pathname: '/login'}) : null;
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
     window.localStorage.clear();

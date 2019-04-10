@@ -62,9 +62,7 @@ class InventoryList extends Component {
       };
       this.setState({storageList: res.storage_list, isLoading: false, pagination});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
       this.setState({isLoading: false});
     });
@@ -76,9 +74,7 @@ class InventoryList extends Component {
       message.success('删除成功');
       this.getStorageList(this.state.pagination.current, this.state.goodsProperty);
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
       this.setState({isLoading: false});
     });
@@ -102,8 +98,7 @@ class InventoryList extends Component {
   // 获取搜索信息
   getSearchInfo(type, value) {
     if (value === undefined) return;
-    //value = value.replace(/\s/g, '');
-    if (Object.prototype.toString.call(value) === '[Object String]' && value.test(/\s/g)) value = value.replace(/\s/g, '');
+    value = utils.deleteBlank(value);
     this.setState({[type]: value});
   }
 

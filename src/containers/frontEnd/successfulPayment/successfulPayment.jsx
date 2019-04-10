@@ -40,9 +40,7 @@ class SearchDetail extends Component {
     window.api('order.orderList', params).then(res => {
       this.setState({detail: res.orders[0]});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
@@ -61,7 +59,7 @@ class SearchDetail extends Component {
             </div>
             <div className="address">
               <p>货物寄送至：</p>
-              <p>{detail.address}</p>
+              <p>{detail.province} {detail.city} {detail.area} {detail.address}</p>
             </div>
             <div className="link">
               <p>您可以查看：</p>

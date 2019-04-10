@@ -17,11 +17,11 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      canSearch: false, // 是否能够搜索
       searchContent: '', // 搜索的内容
       dataSource: [], // 搜索列表
-      goodsType: [], // 商品类型列表
-      typeName: '请选择分类', // 选择分类名称
+      goodsType: ['软件', '硬件'], // 商品类型列表
+      type: null, // 查询类型
+      id: 'null', // property或category
       ModalText: '是否登出当前账户？',
       visible: false,
       confirmLoading: false,
@@ -39,62 +39,32 @@ export default class App extends Component {
         const dataSource = list !== null ? JSON.parse(list) : [];
         const fullName = window.localStorage.getItem('fullName');
         this.setState({dataSource, fullName});
-        this.getCategoryList();
       }
     }
   }
 
   componentWillReceiveProps(props) {
-    let typeName = '请选择分类';
-    let searchContent = '';
+    let info = {};
     if (props.location.pathname === '/searchDetail') {
-      const info = props.location.state;
-      typeName = info.typeName ? info.typeName : '请选择分类';
-      searchContent = info.searchContent;
+      info = props.location.state;
+    } else {
+      info = {id: null, type: null, searchContent: null};
     }
-    this.setState({typeName, searchContent});
+    this.setState(info);
   }
 
-  // 获取产品类型列表
-  getCategoryList = () => {
-    const params = {
-      page_size: 100,
-      current_page: 1,
-      superior_id: 0,
-    };
-    window.api('goods.getcategorylist', params).then((res) => {
-      const goodsType = res.goods_category_list;
-      this.setState({goodsType});
-      window.localStorage.setItem('goodsType', JSON.stringify(goodsType));
-    }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
-      message.error(error.service_error_message);
-    });
-  }
-
-  // 跳转到首页
-  toHome = () => {
-    if (this.props.location.pathname !== '/') {
-      this.props.history.push('/');
-    }
-  }
-
-  // 跳转到我的订单
-  toMyOrder = () => {
-    if (this.props.location.pathname !== '/orderList') {
-      this.props.history.push('/orderList');
+  // 跳转到指定页面
+  link = (link) => {
+    if (this.props.location.pathname !== link) {
+      this.props.history.push(link);
     }
   }
 
   // 跳转到搜索页
-  toSearchDetail = (id, typeName, searchContent) => {
-    const {
-      dataSource, canSearch
-    } = this.state;
-    this.props.history.push('/searchDetail', {id, typeName, searchContent});
-    if (canSearch) {
+  toSearchDetail = (type, id, searchContent) => {
+    const info = {type, id, searchContent};
+    const {dataSource} = this.state;
+    if (type === 'search') {
       if (searchContent !== '') { // 获取下拉列表
         const list = dataSource;
         const index = dataSource.indexOf(searchContent);
@@ -107,76 +77,54 @@ export default class App extends Component {
         window.localStorage.setItem('dataSource', JSON.stringify(list));
       }
     }
-    this.props.changeSearchDetail({id, typeName, searchContent});
-    this.setState({typeName, searchContent});
+    this.setState(info);
+    this.props.changeSearchDetail(info);
+    this.props.history.push('/searchDetail', info);
   }
 
   // 登出
   logout = () => {
-    this.setState({
-      ModalText: '登出中,请稍后...',
-      confirmLoading: true,
-    });
+    this.setState({ModalText: '登出中,请稍后...', confirmLoading: true});
     const loginName = JSON.parse(window.localStorage.getItem('headParams')).login_name;
-    const params = {
-      login_name: loginName
-    };
+    const params = {login_name: loginName};
     window.api('eps.logout', params).then(res => {
       message.success('已登出');
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '是否登出当前账户？',
-      });
+      this.setState({visible: false, confirmLoading: false, ModalText: '是否登出当前账户？'});
       window.localStorage.clear();
       this.props.history.push('/login');
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
 
-  // 打开登出窗口
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  }
-
-  // 关闭登出窗口
-  handleCancel = () => {
-    this.setState({
-      visible: false,
-    });
+  // 空值Modal
+  changeModal = () => {
+    this.setState({visible: !this.state.visible});
   }
 
   // 获取搜索框内容
   getSearchContent = (value) => {
-    value !== this.state.searchContent ? this.setState({searchContent: value, canSearch: true}) : null;
+    value !== this.state.searchContent ? this.setState({searchContent: value}) : null;
   }
 
   render() {
-    if (this.state.redirect) {
-      return (<Redirect to="/login" />);
-    }
     const {
-      dataSource, searchContent, visible, confirmLoading, ModalText, goodsType, typeName, fullName
+      redirect, dataSource, searchContent, visible, confirmLoading, ModalText, goodsType, id, fullName, type
     } = this.state;
+    if (redirect) return (<Redirect to="/login" />);
     return (
       <div className="page">
         <div className="headers-bar">
           <div className="container">
             <div className="headers-bar-nav">
-              <div onClick={this.toHome}>首页</div>
-              <div>其他入口</div>
-              <div>其他链接</div>
-              <div>MS系统</div>
-              <div onClick={this.showModal}>登出</div>
+              <div onClick={this.link.bind(this, '/')}>首页</div>
+              <div onClick={this.link.bind(this, '/orderList')}>我的订单</div>
+              <div onClick={this.link.bind(this, '/deviceManagement')}>我的设备</div>
+              <div onClick={this.changeModal}>登出</div>
             </div>
             <div className="headers-tool">
-              <IsLogin fullName={fullName} />  <div className="headers-order" onClick={this.toMyOrder}><Icon type="file-text" />我的订单</div>
+              <IsLogin fullName={fullName} />
             </div>
           </div>
         </div>
@@ -187,7 +135,7 @@ export default class App extends Component {
               <ul className="headers-menu">
                 {
                   goodsType.map((item, index) => (
-                    <li className={typeName === item.goods_category_name ? 'isChecked' : null} key={index} onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name, '')}>{item.goods_category_name}</li>
+                    <li className={type === 'property' && index + 1 === id ? 'isChecked' : null} key={index} onClick={this.toSearchDetail.bind(this, 'property', Number(index + 1), '')}>{item}</li>
                   ))
                 }
               </ul>
@@ -200,7 +148,7 @@ export default class App extends Component {
                   onChange={this.getSearchContent}
                   placeholder="搜索商品"
                   style={{width: '100%'}}
-                ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail.bind(this, '', '全部', searchContent)}><Icon type="search" /></Button>)} />
+                ><Input suffix={(<Button className="search-btn" size="large" type="primary" onClick={this.toSearchDetail.bind(this, 'search', 0, searchContent)}><Icon type="search" /></Button>)} />
                 </AutoComplete>
               </div>
             </div>
@@ -215,7 +163,7 @@ export default class App extends Component {
             visible={visible}
             onOk={this.logout}
             confirmLoading={confirmLoading}
-            onCancel={this.handleCancel}
+            onCancel={this.changeModal}
           >
             <p>{ModalText}</p>
           </Modal>

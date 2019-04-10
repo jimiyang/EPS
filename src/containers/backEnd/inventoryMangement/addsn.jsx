@@ -30,9 +30,7 @@ class AddSN extends Component {
     window.api('goods.getgoodslist', params).then(res => {
       this.setState({goodsList: res.goods_list});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
@@ -73,14 +71,12 @@ class AddSN extends Component {
     }
     const params = {file_name, file_str, goods_id: id};
     window.api('storage.add.batch', params).then(() => {
+      this.props.addtionBrandEvent(e);
       message.success('添加成功');
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
-    this.props.addtionBrandEvent(e);
   }
 
   render() {

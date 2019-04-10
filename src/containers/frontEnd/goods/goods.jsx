@@ -39,15 +39,13 @@ export default class Goods extends Component {
       });
       this.setState({part, partList});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
   // 跳转到搜索页
-  toSearchDetail = (id, typeName) => {
-    this.props.history.push('/searchDetail', {id, typeName, searchContent: ''});
+  toSearchDetail = (id) => {
+    this.props.history.push('/searchDetail', {type: 'category', id});
   }
   // 跳转到详情页
   toDetail = (id) => {
@@ -64,7 +62,7 @@ export default class Goods extends Component {
           partList.length > 0 ? (
             part.map((item, index) => (
               <section className="sku-block" key={index} hidden={partList[index].length === 0}>
-                <h3 style={{cursor: 'pointer'}} className="sku-cat-title" onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name)}>{item.goods_category_name}</h3>
+                <h3 style={{cursor: 'pointer'}} className="sku-cat-title" onClick={this.toSearchDetail.bind(this, item.id)}>{item.goods_category_name}</h3>
                 <ul className="sku-list">
                   {
                     partList[index].map(($0, $1) => (

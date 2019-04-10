@@ -42,9 +42,7 @@ class Cashier extends Component {
       res.account[0].available_balance = (Number(res.account[0].available_balance)).toFixed(2);
       this.setState({payInfo: res.account[0]});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
@@ -78,9 +76,7 @@ class Cashier extends Component {
       });
       this.props.history.push('/successfulPayment', {order_no: params.order_no});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       this.setState({
         visible: false,
         confirmLoading: false,
