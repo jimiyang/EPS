@@ -62,7 +62,6 @@ function baseInstance(service, params) {
           ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY'))),
         }
       };
-      console.log(`解绑：${form}`);
       break;
     default:
       baseUrl = 'http://192.168.19.118:8000/eps/base/';

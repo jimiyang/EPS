@@ -22,7 +22,10 @@ class FacilityList extends Component {
       deviceSn: '',
       merchantCode: '',
       search: {
-        page_size: 10,
+        page_size: 7,
+        total: '',
+        current_page: 1,
+        onChange: this.changePage
       },
       facilityData: []
     };
@@ -35,14 +38,16 @@ class FacilityList extends Component {
       goodsName, agentNo, deviceSn, merchantCode
     } = this.state;
     const params = {
-      goods_name: goodsName,
-      agent_no: agentNo,
-      device_sn: deviceSn,
-      merchant_code: merchantCode,
-      ...this.state.search
+      current_page: this.state.search.current_page,
+      page_size: this.state.search.page_size
     };
+    //console.log(params);
+    /*goods_name: goodsName,
+    agent_no: agentNo,
+    device_sn: deviceSn,
+    merchant_code: merchantCode,*/
     window.api('eps.getordergoodsmanager', params).then(rs => {
-      //console.log(rs.order_goods_manager_list);
+      const search = Object.assign(this.state.search, {total: rs.total_result});
       this.setState({facilityData: rs.order_goods_manager_list});
     }).catch((error) => {
       if (error.service_error_code === 'EPS000000801') {
@@ -55,7 +60,9 @@ class FacilityList extends Component {
   // 按条件改变页面
   changePage = (page) => {
     page = page === 0 ? 1 : page;
-    this.getStorageList(page, this.state.goodsProperty);
+    const search = Object.assign(this.state.search, {current_page: page});
+    this.setState({search});
+    this.loadList();
   }
   getState(status) {
     switch (status) {
@@ -106,11 +113,12 @@ class FacilityList extends Component {
     //console.log(item);
     window.localStorage.setItem('platform_no', item.platform_no);
     window.localStorage.setItem('merchant_code', item.bind_merchant_code);
+    window.localStorage.setItem('request_no', window.common.getRequestNo(16));
     const params = {
-      out_request_no: window.common.getRequestNo(16), //随机生成
+      out_request_no: window.localStorage.getItem('request_no'), //随机生成
       core_merchant_no: item.bind_merchant_code //核心商户编号
     };
-    const head = {
+    /*const head = {
       service: 'device.unbind',
       version: '1.0',
       partner_id: '',
@@ -127,9 +135,9 @@ class FacilityList extends Component {
       goods_id: '',
       device_sn: '',
       operator_id: ''
-    };
+    };*/
     api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
-      console.log(rs);
+      console.log(rs.partner_id_key);
     });
     //window.api2('device.unbind', params).then(rs => {
     //console.log(rs);
@@ -193,7 +201,7 @@ class FacilityList extends Component {
         render: (record) => (
           <div className="opearte-blocks">
             <span className="ml10" onClick={() => this.detailEvent(record)}>详情</span>
-            <div className={record.status === '2' ? 'hide' : null}>
+            <div className={record.bind_status === '2' ? 'hide' : 'inline'}>
               <Popconfirm
                 title="是否需要解绑"
                 onConfirm={() => this.decodingEvent(record)}
@@ -260,10 +268,10 @@ class FacilityList extends Component {
         <Table
           columns={columns}
           dataSource={this.state.facilityData}
-          pagination={this.state.search}
           className="table-box"
           rowKey={record => record.id}
           loading={this.state.isLoading}
+          pagination={this.state.search}
         />
       </div>
     );
