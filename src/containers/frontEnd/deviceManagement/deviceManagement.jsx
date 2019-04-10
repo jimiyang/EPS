@@ -11,13 +11,13 @@ const Search = Input.Search;
 class DeviceManagement extends Component {
   state = {
     visible: false, // 是否显示modal
-    confirmLoading: false,
-    ModalText: '确认解除绑定当前设备？',
+    confirmLoading: false, // 确认loading
+    modalText: '确认解除绑定当前设备？', // 弹窗内容
     isvisible: false, // 显示详情弹窗
     list: [], // 设备列表
     total: 0, // 总条目数
     deviceId: null, // 选中的设备id
-    currentPage: 1,
+    currentPage: 1, // 当前页数
     searchType: undefined, // 搜索类型
     searchContent: '', // 搜索内容
     bindStatus: undefined, // 绑定状态
@@ -47,6 +47,9 @@ class DeviceManagement extends Component {
     params = utils.dealElement(params);
     window.api('eps.getordergoodsmanager', params).then(res => {
       this.setState({list: res.order_goods_manager_list, total: res.total_result, currentPage: page});
+    }).catch(error => {
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
+      message.error(error.service_error_message);
     });
   }
 
@@ -93,7 +96,7 @@ class DeviceManagement extends Component {
 
   render() {
     const {
-      redirect, list, currentPage, visible, ModalText, confirmLoading, total, isvisible, deviceId
+      redirect, list, currentPage, visible, modalText, confirmLoading, total, isvisible, deviceId
     } = this.state;
     if (redirect) return (<Redirect to="/login" />);
     return (
@@ -198,7 +201,7 @@ class DeviceManagement extends Component {
             confirmLoading={confirmLoading}
             onCancel={this.changeModal.bind(this, 'cancel')}
           >
-            <p>{ModalText}</p>
+            <p>{modalText}</p>
           </Modal>
           <Modal
             title="详情"

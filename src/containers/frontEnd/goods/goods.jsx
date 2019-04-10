@@ -13,11 +13,10 @@ export default class Goods extends Component {
       identity: false
     };
   }
+
   componentWillMount() {
     if (window.localStorage.getItem('identity') === '0') {
-      this.setState({
-        identity: true
-      });
+      this.setState({identity: true});
     } else {
       const isLogin = window.common.loginOut(this);
       if (isLogin) {
@@ -27,6 +26,7 @@ export default class Goods extends Component {
       }
     }
   }
+
   // 首页信息
   getHomepage() {
     window.api('goods.homepage', {}).then(res => {
@@ -43,14 +43,17 @@ export default class Goods extends Component {
       message.error(error.service_error_message);
     });
   }
+
   // 跳转到搜索页
   toSearchDetail = (id) => {
     this.props.history.push('/searchDetail', {type: 'category', id});
   }
+
   // 跳转到详情页
   toDetail = (id) => {
     this.props.history.push('/goodsDetail', {id});
   }
+
   render() {
     const {identity, redirect} = this.state;
     if (identity) return (<Redirect to="/main" />);

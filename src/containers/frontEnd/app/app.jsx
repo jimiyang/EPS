@@ -22,11 +22,11 @@ export default class App extends Component {
       goodsType: ['软件', '硬件'], // 商品类型列表
       type: null, // 查询类型
       id: 'null', // property或category
-      ModalText: '是否登出当前账户？',
-      visible: false,
-      confirmLoading: false,
+      ModalText: '是否登出当前账户？', // 登出弹窗的内容
+      visible: false, // 空值推出弹窗的显示和隐藏
+      confirmLoading: false, // 确定按钮的loading
       fullName: null, // 用户名
-      redirect: false,
+      redirect: false, // 空值重定向到登录页
     };
   }
 
@@ -87,7 +87,7 @@ export default class App extends Component {
     this.setState({ModalText: '登出中,请稍后...', confirmLoading: true});
     const loginName = JSON.parse(window.localStorage.getItem('headParams')).login_name;
     const params = {login_name: loginName};
-    window.api('eps.logout', params).then(res => {
+    window.api('eps.logout', params).then(() => {
       message.success('已登出');
       this.setState({visible: false, confirmLoading: false, ModalText: '是否登出当前账户？'});
       window.localStorage.clear();
@@ -98,7 +98,7 @@ export default class App extends Component {
     });
   }
 
-  // 空值Modal
+  // 控制Modal
   changeModal = () => {
     this.setState({visible: !this.state.visible});
   }

@@ -61,14 +61,13 @@ class GenerateOrder extends Component {
           };
           this.props.history.push('/cashier', {info});
         }).catch((error) => {
-          if (error.service_error_code === 'EPS000000801') {
-            this.setState({redirect: true});
-          }
+          error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
           message.error(error.service_error_message);
         });
       }
     });
   }
+
   render() {
     if (this.state.redirect) {
       return (<Redirect to="/login" />);

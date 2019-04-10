@@ -34,9 +34,7 @@ class SearchDetail extends Component {
 
   // 获取订单详情
   getOrderDetail = (orderNo) => {
-    const params = {
-      order_no: orderNo,
-    };
+    const params = {order_no: orderNo};
     window.api('order.orderList', params).then(res => {
       this.setState({detail: res.orders[0]});
     }).catch((error) => {
@@ -46,10 +44,8 @@ class SearchDetail extends Component {
   }
 
   render() {
-    if (this.state.redirect) {
-      return (<Redirect to="/login" />);
-    }
-    const {detail} = this.state;
+    const {detail, redirect} = this.state;
+    if (redirect) return (<Redirect to="/login" />);
     return (
       <div id="successfulPayment">
         <section>

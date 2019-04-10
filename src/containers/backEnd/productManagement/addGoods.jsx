@@ -175,17 +175,10 @@ class Add extends Component {
         params = utils.dealElement(params);
         const url = form.id ? 'goods.modgoods' : 'goods.addgoods';
         window.api(url, params).then((res) => {
-          if (res.service_error_code === 'EPS000000801') {
-            message.error(res.service_error_message);
-            this.setState({redirect: true});
-          } else {
-            message.success(res.service_error_message);
-            this.props.history.push({pathname: '/main/list'});
-          }
+          message.success(res.service_error_message);
+          this.props.history.push({pathname: '/main/list'});
         }).catch((error) => {
-          if (error.service_error_code === 'EPS000000801') {
-            this.setState({redirect: true});
-          }
+          error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
           message.error(error.service_error_message);
         });
       }

@@ -41,9 +41,7 @@ class TypeEdit extends Component {
           message.success(res.service_error_message);
           this.props.modifyEvent(e);
         }).catch((error) => {
-          if (error.service_error_code === 'EPS000000801') {
-            this.setState({redirect: true});
-          }
+          error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
           message.error(error.service_error_message);
         });
       }

@@ -174,10 +174,10 @@ class OrderList extends Component {
   }
 
   render() {
-    if (this.state.redirect) return (<Redirect to="/login" />);
     const {
-      tabs, list, loadMore, loadText, status, visible, confirmLoading, ModalText, statusList, orderNo, tabStatus
+      tabs, list, loadMore, loadText, status, visible, confirmLoading, ModalText, statusList, orderNo, tabStatus, redirect
     } = this.state;
+    if (redirect) return (<Redirect to="/login" />);
     return (
       <div id="orderList">
         <section className="top">

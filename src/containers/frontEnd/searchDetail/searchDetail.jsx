@@ -108,20 +108,22 @@ class SearchDetail extends Component {
   }
 
   render() {
-    if (this.state.redirect) return (<Redirect to="/login" />);
-    const {list, pageNumber, total} = this.state;
+    const {
+      list, pageNumber, total, redirect, sortIndex
+    } = this.state;
+    if (redirect) return (<Redirect to="/login" />);
     return (
       <div id="searchDetail">
         <section className="container sort">
           <ul>
             <li onClick={this.changeSort.bind(this, 1)}>
-              <p className={this.state.sortIndex === 1 ? 'isChecked' : null}>综合</p>
+              <p className={sortIndex === 1 ? 'isChecked' : null}>综合</p>
             </li>
             <li onClick={this.changeSort.bind(this, 2)}>
-              <p className={this.state.sortIndex > 1 ? 'isChecked' : null}>价格</p>
+              <p className={sortIndex > 1 ? 'isChecked' : null}>价格</p>
               <div className="toggle">
-                <div className={this.state.sortIndex === 2 ? 'choose1 smallToBig' : 'smallToBig'}><Icon type="caret-up" /></div>
-                <div className={this.state.sortIndex === 3 ? 'choose2 bigToSmall' : 'bigToSmall'}><Icon type="caret-down" /></div>
+                <div className={sortIndex === 2 ? 'choose1 smallToBig' : 'smallToBig'}><Icon type="caret-up" /></div>
+                <div className={sortIndex === 3 ? 'choose2 bigToSmall' : 'bigToSmall'}><Icon type="caret-down" /></div>
               </div>
             </li>
           </ul>

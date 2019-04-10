@@ -22,14 +22,14 @@ class GoodsDetail extends Component {
 
   // 跳转到生成订单页
   toOrder = () => {
-    const {detail} = this.state;
+    const {detail, count} = this.state;
     if (Number(detail.goods_num === 0)) {
       message.error('商品库存为0，暂时无法购买');
       return;
     }
     const goodsDetail = {
       img: detail.goods_picture,
-      count: this.state.count,
+      count,
       price: detail.sale_price,
       name: detail.goods_name,
       id: detail.id,
@@ -40,7 +40,7 @@ class GoodsDetail extends Component {
   // 改变购买数量
   changeCount = (value) => {
     if (value === 0) {
-      message.error('商品数量不能为0');
+      message.error('商品数量为0，无法购买');
       return;
     }
     this.setState({count: value});
@@ -57,11 +57,10 @@ class GoodsDetail extends Component {
       message.error(error.service_error_message);
     });
   }
+
   render() {
-    if (this.state.redirect) {
-      return (<Redirect to="/login" />);
-    }
-    const detail = this.state.detail;
+    const {redirect, detail} = this.state;
+    if (redirect) return (<Redirect to="/login" />);
     return (
       <div id="goodsDetail">
         <section className="sale">
