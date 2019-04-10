@@ -4,6 +4,7 @@ import {Redirect} from 'react-router';
 import './style.less';
 import Detail from './facilitydetail';
 import api2 from '../../../api/api2';
+import aes from '../../../api/aes/public';
 
 const Option = Select.Option;
 class FacilityList extends Component {
@@ -38,17 +39,16 @@ class FacilityList extends Component {
       goodsName, agentNo, deviceSn, merchantCode
     } = this.state;
     const params = {
+      goods_name: goodsName,
+      agent_no: agentNo,
+      device_sn: deviceSn,
+      merchant_code: merchantCode,
       current_page: this.state.search.current_page,
       page_size: this.state.search.page_size
     };
-    //console.log(params);
-    /*goods_name: goodsName,
-    agent_no: agentNo,
-    device_sn: deviceSn,
-    merchant_code: merchantCode,*/
     window.api('eps.getordergoodsmanager', params).then(rs => {
       const search = Object.assign(this.state.search, {total: rs.total_result});
-      this.setState({facilityData: rs.order_goods_manager_list});
+      this.setState({facilityData: rs.order_goods_manager_list, search});
     }).catch((error) => {
       if (error.service_error_code === 'EPS000000801') {
         this.setState({redirect: true});
@@ -109,39 +109,35 @@ class FacilityList extends Component {
       isvisible: false
     });
   }
-  decodingEvent = (item) => {
-    //console.log(item);
+  getPartnerIdKey(item) {
     window.localStorage.setItem('platform_no', item.platform_no);
-    window.localStorage.setItem('merchant_code', item.bind_merchant_code);
+    window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
     window.localStorage.setItem('request_no', window.common.getRequestNo(16));
     const params = {
       out_request_no: window.localStorage.getItem('request_no'), //随机生成
-      core_merchant_no: item.bind_merchant_code //核心商户编号
+      core_merchant_no: item.bind_core_merchant_code //核心商户编号
     };
-    /*const head = {
-      service: 'device.unbind',
-      version: '1.0',
-      partner_id: '',
-      core_merchant_no: item.bind_merchant_code, //联富通核心商户
-      sign: '',
-      sign_type: 'MD5',
-      input_charse: 'UTF-8',
-      request_time: window.common.getDate(new Date(), true)
-    };
-    const headParams = {
-      out_trade_no: '', //商户请求单号
-      merchant_no: '', //门店编号
-      identify_type: 'SN', //device_sn
-      goods_id: '',
-      device_sn: '',
-      operator_id: ''
-    };*/
     api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
-      console.log(rs.partner_id_key);
+      const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
+      window.localStorage.setItem('partnerID', aes.Decrypt(rs.partner_id_key, key));
+    }).catch(error => {
+      message.error(error);
     });
-    //window.api2('device.unbind', params).then(rs => {
-    //console.log(rs);
-    //});
+  }
+  decodingEvent = (item) => {
+    this.getPartnerIdKey(item);
+    const params = {
+      out_trade_no: item.order_no, //商户请求单号
+      merchant_no: item.bind_merchant_code, //门店编号
+      identify_type: 'SN', //device_sn
+      goods_id: item.goods_id,
+      device_sn: item.device_sn,
+      operator_id: JSON.parse(window.localStorage.getItem('headParams')).login_name,
+      notify_url: ''
+    };
+    api2.baseInstance('device.unbind', params).then(res => {
+      console.log(res);
+    });
   }
   searchEvent = () => {
     this.loadList();

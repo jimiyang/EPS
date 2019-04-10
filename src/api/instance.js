@@ -9,7 +9,7 @@ const instance = axios.create({
 instance.interceptors.response.use(
   res => {
     const promise = new Promise((resolve, reject) => {
-      if (res.status === 200 && res.data.body.service_status === 'S' && res.data.head.visit_status === 'S') {
+      if (res.status === 200 && res.data.body.service_status === 'S' && res.data.head.visit_status === 'S' || res.data.body.is_success === 'S') {
         resolve(res.data.body);
       } else {
         reject(res.data.body);
