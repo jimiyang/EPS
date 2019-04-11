@@ -109,12 +109,13 @@ class FacilityList extends Component {
       isvisible: false
     });
   }
-  getPartnerIdKey(item) {
+  getPartnerIdKey = async (item) => {
+    const requestNo = await window.common.getRequestNo(16);
     window.localStorage.setItem('platform_no', item.platform_no);
     window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
-    window.localStorage.setItem('request_no', window.common.getRequestNo(16));
+    window.localStorage.setItem('request_no', requestNo);
     const params = {
-      out_request_no: window.localStorage.getItem('request_no'), //随机生成
+      out_request_no: requestNo, //随机生成
       core_merchant_no: item.bind_core_merchant_code //核心商户编号
     };
     api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
@@ -133,7 +134,7 @@ class FacilityList extends Component {
       goods_id: item.goods_id, //商品goods_id
       device_sn: item.device_sn, //sn码
       operator_id: JSON.parse(window.localStorage.getItem('headParams')).login_name, //操作员登录人userName
-      notify_url: window.common.getUrl[0] //
+      notify_url: (window.common.getUrl())[0] //
     };
     window.api('device.unbind', params).then(res => {
       message.success(`成功：：${res.message}`);
