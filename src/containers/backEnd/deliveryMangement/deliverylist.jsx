@@ -309,7 +309,7 @@ class DeliveryList extends Component {
             </div>
             <ul className={this.state.isHide === false ? null : 'hide'}>
               <li>
-                <div className="order-title">
+                <div className="order-title items-title">
                   <span>商品</span>
                   <span>数量</span>
                   <span>下单时间</span>
