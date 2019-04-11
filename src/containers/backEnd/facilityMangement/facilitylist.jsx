@@ -109,34 +109,38 @@ class FacilityList extends Component {
       isvisible: false
     });
   }
-  getPartnerIdKey(item) {
+  getPartnerIdKey = async (item) => {
+    const requestNo = await window.common.getRequestNo(16);
     window.localStorage.setItem('platform_no', item.platform_no);
     window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
-    window.localStorage.setItem('request_no', window.common.getRequestNo(16));
+    window.localStorage.setItem('request_no', requestNo);
     const params = {
-      out_request_no: window.localStorage.getItem('request_no'), //随机生成
+      out_request_no: requestNo, //随机生成
       core_merchant_no: item.bind_core_merchant_code //核心商户编号
     };
     api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
       const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
       window.localStorage.setItem('partnerID', aes.Decrypt(rs.partner_id_key, key));
     }).catch(error => {
-      message.error(error);
+      message.error(error.message);
     });
   }
   decodingEvent = (item) => {
     this.getPartnerIdKey(item);
     const params = {
-      out_trade_no: item.order_no, //商户请求单号
+      out_trade_no: `EPSUNBIND${window.common.getRequestNo(10)}`, //商户请求单号(自动生成)
       merchant_no: item.bind_merchant_code, //门店编号
       identify_type: 'SN', //device_sn
-      goods_id: item.goods_id,
-      device_sn: item.device_sn,
-      operator_id: JSON.parse(window.localStorage.getItem('headParams')).login_name,
-      notify_url: ''
+      goods_id: item.goods_id, //商品goods_id
+      device_sn: item.device_sn, //sn码
+      operator_id: JSON.parse(window.localStorage.getItem('headParams')).login_name, //操作员登录人userName
+      notify_url: (window.common.getUrl())[0] //
     };
-    api2.baseInstance('device.unbind', params).then(res => {
-      console.log(res);
+    window.api('device.unbind', params).then(res => {
+      message.success(`成功：：${res.message}`);
+      this.loadList();
+    }).catch(error => {
+      message.error(error.message);
     });
   }
   searchEvent = () => {

@@ -4,6 +4,8 @@ import {Redirect} from 'react-router';
 import './deviceManagement.less';
 import utils from '../../../utils/common';
 import Detail from '../../backEnd/facilityMangement/facilitydetail';
+import api2 from '../../../api/api2';
+import aes from '../../../api/aes/public';
 
 const Option = Select.Option;
 const Search = Input.Search;
@@ -22,6 +24,7 @@ class DeviceManagement extends Component {
     searchContent: '', // 搜索内容
     bindStatus: undefined, // 绑定状态
     activateStatus: undefined, // 激活状态
+    unbindDevice: null, // 解绑的设备详情
   }
 
   componentWillMount() {
@@ -81,17 +84,54 @@ class DeviceManagement extends Component {
   }
 
   // 控制弹窗
-  changeModal(type, role) {
+  changeModal = async (type, value) => {
+    let info = {};
     if (type === 'cancel') {
-      role === 'detail' ? this.setState({isvisible: false}) : this.setState({visible: false});
+      info = value === 'detail' ? {isvisible: false} : {visible: false};
     } else {
-      role === 'detail' ? this.setState({isvisible: true}) : this.setState({visible: true});
+      info = value === 'detail' ? {isvisible: true} : {visible: true, unbindDevice: value};
     }
+    await this.setState(info);
+  }
+
+  // 获取和新商户key
+  getPartnerIdKey = async (item) => {
+    const requestNo = await window.common.getRequestNo(16);
+    window.localStorage.setItem('platform_no', item.platform_no);
+    window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
+    window.localStorage.setItem('request_no', requestNo);
+    const params = {
+      out_request_no: requestNo, //随机生成
+      core_merchant_no: item.bind_core_merchant_code //核心商户编号
+    };
+    api2.baseInstance('merchant.pidkeyquery', params).then(res => {
+      const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
+      window.localStorage.setItem('partnerID', aes.Decrypt(res.partner_id_key, key));
+    }).catch(error => {
+      message.error(error.message);
+    });
   }
 
   // 解绑
-  unbind() {
-    console.log('我要解绑了');
+  unbind = async () => {
+    const item = this.state.unbindDevice;
+    await this.getPartnerIdKey(item);
+    const params = {
+      out_trade_no: `EPSUNBIND${window.common.getRequestNo(10)}`, //商户请求单号(自动生成)
+      merchant_no: item.bind_merchant_code, //门店编号
+      identify_type: 'SN', //device_sn
+      goods_id: item.goods_id, //商品goods_id
+      device_sn: item.device_sn, //sn码
+      operator_id: JSON.parse(window.localStorage.getItem('headParams')).login_name, //操作员登录人userName
+      notify_url: (window.common.getUrl())[0] //
+    };
+    window.api('device.unbind', params).then(res => {
+      message.success(`成功：：${res.message}`);
+      this.getDeviceList(this.state.currentPage);
+    }).catch(error => {
+      message.error('解绑失败');
+    });
+    this.setState({visible: false});
   }
 
   render() {
@@ -170,7 +210,7 @@ class DeviceManagement extends Component {
                       item.bind_status === '1' ? (
                         <div>
                           <p onClick={this.openDetail.bind(this, item.id)}>详情</p>
-                          <p onClick={this.changeModal.bind(this, 'open')}>解绑</p>
+                          <p onClick={this.changeModal.bind(this, 'open', item)}>解绑</p>
                         </div>
                       ) : null
                     }
