@@ -94,6 +94,8 @@ font-size:14px;
 .delivery-blocks .order-blocks .items-3 .button-items button{
     margin-left:30px;
 }
+.delivery-blocks .blue{color:#1890ff;}
+.delivery-blocks .cursor{cursor: pointer;}
 .delivery-blocks .order-detaile .items-3 .ant-checkbox-wrapper{line-height:100px;}
 .delivery-blocks .order-detaile .items-3 h1{font-size:16px; padding-bottom:20px;}
 .delivery-blocks .order-detaile .items-3 p{padding-bottom:20px;}
