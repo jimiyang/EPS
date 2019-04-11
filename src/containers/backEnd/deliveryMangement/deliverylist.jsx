@@ -249,6 +249,7 @@ class DeliveryList extends Component {
     if (this.state.redirect) {
       return (<Redirect to="/login" />);
     }
+    //className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')}
     return (
       <div className="delivery-blocks">
         <Modal
@@ -326,9 +327,9 @@ class DeliveryList extends Component {
                       <span className="agentName">{item.agent_no}/{item.agent_name}</span>
                       <span>订单号：{item.order_no}</span>
                       <span>{this.state.statusData[item.status]}</span>
-                      <Button type="primary" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</Button>
+                      <span className="blue cursor" onClick={this.orderDetailEvent.bind(this, item.order_no)}>订单详情</span>
                     </div>
-                    <div className={['order-detaile', this.state.index === index ? null : 'hide'].join(' ')}>
+                    <div className="order-detaile">
                       <div className="goods-con">
                         {
                           item.order_details.map((detail, idx) => (

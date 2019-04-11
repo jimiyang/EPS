@@ -44,6 +44,7 @@ class AddSN extends Component {
   getFile = ($event) => {
     const file = $event.target.files[0];
     const name = $event.target.files[0].name;
+    console.log(name);
     if (!/\.(xlsx|xls)$/.test($event.target.value)) {
       message.error('请上传excel表格');
       return false;
@@ -101,6 +102,7 @@ class AddSN extends Component {
             <div className="file">点击上传文件
               <input type="file" onChange={this.getFile} />
             </div>
+            <span style={{paddingLeft: '10px'}}>{this.state.file_name}</span>
           </li>
           <li>
             <Button type="primary" onClick={this.addtionBrandEvent}>添加</Button>
