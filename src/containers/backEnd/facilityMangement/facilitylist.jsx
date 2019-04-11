@@ -23,6 +23,7 @@ class FacilityList extends Component {
       deviceSn: '',
       merchantCode: '',
       search: {
+        goods_property: '2',
         page_size: 7,
         total: '',
         current_page: 1,
@@ -44,7 +45,8 @@ class FacilityList extends Component {
       device_sn: deviceSn,
       merchant_code: merchantCode,
       current_page: this.state.search.current_page,
-      page_size: this.state.search.page_size
+      page_size: this.state.search.page_size,
+      goods_property: this.state.search.goods_property
     };
     window.api('eps.getordergoodsmanager', params).then(rs => {
       const search = Object.assign(this.state.search, {total: rs.total_result});
@@ -87,9 +89,13 @@ class FacilityList extends Component {
     }
   }
   selTap = (index) => {
+    const idx = index === 0 ? '2' : '1';
+    const params = Object.assign(this.state.search, {goods_property: idx});
     this.setState({
-      isactive: index
+      isactive: index,
+      search: params
     });
+    this.loadList();
   }
   bindValue = (type, e) => {
     if (type === 'status') {
@@ -110,9 +116,10 @@ class FacilityList extends Component {
     });
   }
   getPartnerIdKey(item) {
+    const getNo = window.common.getRequestNo(16);
     window.localStorage.setItem('platform_no', item.platform_no);
     window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
-    window.localStorage.setItem('request_no', window.common.getRequestNo(16));
+    window.localStorage.setItem('request_no', getNo);
     const params = {
       out_request_no: window.localStorage.getItem('request_no'), //随机生成
       core_merchant_no: item.bind_core_merchant_code //核心商户编号

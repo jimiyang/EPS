@@ -117,6 +117,7 @@ class Add extends Component {
       params = utils.dealElement(params);
       const form = Object.assign(this.state.form, params);
       this.setState({form, isShow: false});
+      console.log(this.state.form);
     }).catch((error) => {
       error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
@@ -234,6 +235,7 @@ class Add extends Component {
           };
           form = Object.assign(form, change);
         }
+        console.log(form);
         value = value.target.value;
         break;
       case 'goods_details':
@@ -251,6 +253,7 @@ class Add extends Component {
     const {
       brandsList, redirect, isLoading, form, disabled, treeData, maxLength, isShow, thirdChannelList, showThirdChannel
     } = this.state;
+    console.log(form.is_post);
     if (redirect) return (<Redirect to="/login" />);
     return (
       <div className="add-blocks">
@@ -469,7 +472,7 @@ class Add extends Component {
                     {getFieldDecorator(
                       'use_third_channel',
                       {
-                        initialValue: `${form.use_third_channel}` || '',
+                        initialValue: form.use_third_channel || '',
                         rules: [
                           {required: true, message: '请选择是否调用第三方接口！'},
                         ]
@@ -530,7 +533,7 @@ class Add extends Component {
               {getFieldDecorator(
                 'is_post',
                 {
-                  initialValue: form.is_post || '',
+                  initialValue: form.is_post,
                   rules: [
                     {required: true, message: '请选择是否发货'}
                   ]
