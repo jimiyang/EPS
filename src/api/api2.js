@@ -18,7 +18,7 @@ function baseInstance(service, params) {
     ...params,
   };
   //console.log(signParams);
-  const baseUrl = `${window.common.getUrl[2]}/NewFront/base/gateway.in`; //'http://192.168.4.148:8080/NewFront/base/gateway.in';
+  const baseUrl = `${(window.common.getUrl())[2]}/NewFront/base/gateway.in`; //'http://192.168.4.148:8080/NewFront/base/gateway.in';
   form = {
     head: {
       service,
