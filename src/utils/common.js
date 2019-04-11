@@ -1,4 +1,29 @@
 const utils = {
+  getUrl() {
+    let arrUrl = [];
+    //测试地址
+    //异步通知地址notify_url :::: http://testclubshop.liantuobank.com/notify/device
+    //eps接口地址：：：：http://192.168.19.118:8000
+    //新前置接口地址::: http://192.168.4.148:8080
+    //解绑接口地址::: http://192.168.5.21:9999
+    if (window.location.hostname === 'localhost') {
+      arrUrl = [
+        'http://testclubshop.liantuobank.com/notify/device',
+        'http://192.168.19.118:8000',
+        'http://192.168.19.31:8000',
+        'http://192.168.5.21:9999'
+      ];
+    } else {
+      arrUrl = [
+        'http://api.liantuofu.com/notify/device',
+        'http://eps.liantuobank.com',
+        'http://newfront.liantuobank.com',
+        'http://192.168.19.118:8000'
+      ];
+    }
+    return arrUrl;
+  },
+  //获取时间
   getDate(time, flag) {
     const date = new Date(time);
     const y = date.getFullYear();
@@ -29,6 +54,7 @@ const utils = {
     }
     return code.toUpperCase();
   },
+
   getRequestNo(m) {
     let num = '';
     for (let i = 0; i < m; i++) {
@@ -41,6 +67,8 @@ const utils = {
     }
     return num;
   },
+
+  // 超时登出
   loginOut(obj) {
     if (window.localStorage.getItem('headParams') === null) {
       //msg.error('请重新登录！');
@@ -50,7 +78,9 @@ const utils = {
     }
     return true;
   },
-  beforeUpload(file, msg) { //上传图片之前判断图片大小
+
+  // 上传图片之前判断图片大小
+  beforeUpload(file, msg) {
     const typeArr = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmg'];
     let isJPG = 'image/jpeg';
     typeArr.map(item => {
@@ -67,6 +97,7 @@ const utils = {
     }
     return isJPG && isLt2M;
   },
+
   getQueryString(url) {
     const str = url.split('?');
     const arr = str[1].split('&');
@@ -79,6 +110,7 @@ const utils = {
     }
     return obj;
   },
+
   // 删除对象里的空值
   dealElement(obj) {
     const param = {};
@@ -91,6 +123,7 @@ const utils = {
     }
     return param;
   },
+
   // 删除字符串的空格
   deleteBlank(string) {
     const reg = /\s/g;
