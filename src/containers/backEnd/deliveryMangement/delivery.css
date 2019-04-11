@@ -52,6 +52,7 @@ background:#f6f7f8;padding:10px;
 display: flex;justify-content: space-between;align-items: center;
 font-size:14px;
 }
+.delivery-blocks .order-blocks .items-title span{width:20%;display: block;text-align: center}
 .delivery-blocks .order-blocks .order-title .blocks{
     width:25%;
 }
@@ -81,7 +82,7 @@ font-size:14px;
     margin-left:20px;justify-content: space-between;
     align-items:center;
 }
-.delivery-blocks .order-blocks .order-detaile .item-3 .items-con{margin:0 20px;}
+.delivery-blocks .order-blocks .order-detaile .items-con{margin-right:20px;}
 .delivery-blocks .order-blocks  .item-3 button{margin-right:20px;}
 .delivery-blocks .order-blocks{margin-top:30px;margin-bottom:30px;}
 .delivery-blocks .order-blocks  .arrow-ico{cursor: pointer;}
