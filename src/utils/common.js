@@ -5,8 +5,8 @@ const utils = {
     //异步通知地址notify_url :::: http://testclubshop.liantuobank.com/notify/device
     //eps接口地址：：：：http://192.168.19.118:8000
     //新前置接口地址::: http://192.168.4.148:8080
-    //解绑接口地址::: http://192.168.5.21:9999
-    if (window.location.hostname === 'localhost') {
+    //解绑接口地址::: http://192.168.19.119:8000
+    if (window.location.hostname === 'localhost' || window.location.hostname === 'http://intcms.51ebill.com') {
       arrUrl = [
         'http://testclubshop.liantuobank.com/notify/device',
         'http://192.168.19.118:8000',

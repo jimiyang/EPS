@@ -23,6 +23,7 @@ class FacilityList extends Component {
       deviceSn: '',
       merchantCode: '',
       search: {
+        goods_property: '2',
         page_size: 7,
         total: '',
         current_page: 1,
@@ -44,7 +45,8 @@ class FacilityList extends Component {
       device_sn: deviceSn,
       merchant_code: merchantCode,
       current_page: this.state.search.current_page,
-      page_size: this.state.search.page_size
+      page_size: this.state.search.page_size,
+      goods_property: this.state.search.goods_property
     };
     window.api('eps.getordergoodsmanager', params).then(rs => {
       const search = Object.assign(this.state.search, {total: rs.total_result});
@@ -87,9 +89,13 @@ class FacilityList extends Component {
     }
   }
   selTap = (index) => {
+    const idx = index === 0 ? '2' : '1';
+    const params = Object.assign(this.state.search, {goods_property: idx});
     this.setState({
-      isactive: index
+      isactive: index,
+      search: params
     });
+    this.loadList();
   }
   bindValue = (type, e) => {
     if (type === 'status') {
@@ -110,11 +116,12 @@ class FacilityList extends Component {
     });
   }
   getPartnerIdKey(item) {
+    const getNo = window.common.getRequestNo(16);
     window.localStorage.setItem('platform_no', item.platform_no);
     window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
-    window.localStorage.setItem('request_no', window.common.getRequestNo(16));
+    window.localStorage.setItem('request_no', getNo);
     const params = {
-      out_request_no: window.localStorage.getItem('request_no'), //随机生成
+      out_request_no: getNo, //随机生成
       core_merchant_no: item.bind_core_merchant_code //核心商户编号
     };
     api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
@@ -126,8 +133,9 @@ class FacilityList extends Component {
   }
   decodingEvent = (item) => {
     this.getPartnerIdKey(item);
+    const tradeNo = window.common.getRequestNo(10);
     const params = {
-      out_trade_no: `EPSUNBIND${window.common.getRequestNo(10)}`, //商户请求单号(自动生成)
+      out_trade_no: `EPSUNBIND${tradeNo}`, //商户请求单号(自动生成)
       merchant_no: item.bind_merchant_code, //门店编号
       identify_type: 'SN', //device_sn
       goods_id: item.goods_id, //商品goods_id
@@ -237,7 +245,7 @@ class FacilityList extends Component {
           </div>
         </div>
         <ul className="search-blocks">
-          <li className="items"><label>商品名称：</label>
+          <li className="items"><label style={{width: '120px'}}>商品名称：</label>
             <Input onChange={this.bindValue.bind(this, 'goodsName')} />
           </li>
           <li className="items">
@@ -250,7 +258,7 @@ class FacilityList extends Component {
           </li>
           <li className="items">
             <label>绑定状态：</label>
-            <Select defaultValue={this.state.status} onChange={this.bindValue.bind(this, 'status')} style={{width: '150px'}}>
+            <Select defaultValue={this.state.status} onChange={this.bindValue.bind(this, 'status')} style={{width: '210px'}}>
               {
                 this.state.statusData.map((item, index) => (
                   <Option key={index} value={index}>{item}</Option>
