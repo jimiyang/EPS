@@ -106,6 +106,7 @@ font-size:14px;
 .detail-items li label{
     display: inline-block;width:120px;text-align: right;font-size:14px;
 }
+.order-blocks .hide{display: none;}
 .order-detaile.hide{display: none!important;}
 .delivery-blocks .express-items li{
     margin-bottom:20px;
