@@ -1,4 +1,29 @@
 const utils = {
+  getUrl() {
+    let arrUrl = [];
+    //测试地址
+    //异步通知地址notify_url :::: http://testclubshop.liantuobank.com/notify/device
+    //eps接口地址：：：：http://192.168.19.118:8000
+    //新前置接口地址::: http://192.168.4.148:8080
+    //解绑接口地址::: http://192.168.5.21:9999
+    if (window.location.hostname === 'localhost') {
+      arrUrl = [
+        'http://testclubshop.liantuobank.com/notify/device',
+        'http://192.168.19.118:8000',
+        'http://192.168.19.31:8000',
+        'http://192.168.5.21:9999'
+      ];
+    } else {
+      arrUrl = [
+        'http://api.liantuofu.com/notify/device',
+        'http://eps.liantuobank.com',
+        'http://newfront.liantuobank.com',
+        'http://192.168.19.118:8000'
+      ];
+    }
+    return arrUrl;
+  },
+  //获取时间
   getDate(time, flag) {
     const date = new Date(time);
     const y = date.getFullYear();
