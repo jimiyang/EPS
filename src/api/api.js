@@ -35,10 +35,11 @@ function baseInstance(service, params) {
       baseUrl = `${(window.common.getUrl())[3]}/sahp/base/api/gateway.in`; //'http://192.168.5.21:9999/sahp/base/api/gateway.in';
       signParams = {
         service,
-        channel_partner_id: headParams.partner_id,
+        core_merchant_no: window.localStorage.getItem('merchant_code'), //联富通核心商户
+        request_time: window.common.getDate(new Date(), true),
         input_charset: 'UTF-8',
         version: '1.0',
-        platform_merchant_no: window.localStorage.getItem('platform_no'),
+        partner_id: JSON.parse(window.localStorage.getItem('partnerID'))[0].PID,
         ...params,
       };
       console.log(signParams);
@@ -48,7 +49,7 @@ function baseInstance(service, params) {
           version: '1.0',
           partner_id: JSON.parse(window.localStorage.getItem('partnerID'))[0].PID,
           core_merchant_no: window.localStorage.getItem('merchant_code'), //联富通核心商户
-          ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY'))),
+          ...getSign(signParams, JSON.parse(window.localStorage.getItem('partnerID'))[0].KEY),
           sign_type: 'MD5',
           input_charset: 'UTF-8',
           request_time: window.common.getDate(new Date(), true)

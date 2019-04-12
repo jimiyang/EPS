@@ -126,7 +126,7 @@ class DeviceManagement extends Component {
       notify_url: (window.common.getUrl())[0] //
     };
     window.api('device.unbind', params).then(res => {
-      message.success(`成功：：${res.message}`);
+      message.success('解绑成功');
       this.getDeviceList(this.state.currentPage);
     }).catch(error => {
       message.error('解绑失败');

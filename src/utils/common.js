@@ -11,7 +11,7 @@ const utils = {
         'http://testclubshop.liantuobank.com/notify/device',
         'http://192.168.19.118:8000',
         'http://192.168.19.31:8000',
-        'http://192.168.5.21:9999'
+        'http://192.168.19.119:8000'
       ];
     } else {
       arrUrl = [

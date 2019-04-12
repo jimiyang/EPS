@@ -144,10 +144,10 @@ class FacilityList extends Component {
       notify_url: (window.common.getUrl())[0] //
     };
     window.api('device.unbind', params).then(res => {
-      message.success(`成功：：${res.message}`);
+      message.success('解绑成功');
       this.loadList();
     }).catch(error => {
-      message.error(error.message);
+      message.error('解绑失败');
     });
   }
   searchEvent = () => {
