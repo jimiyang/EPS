@@ -72,7 +72,7 @@ class DeliveryList extends Component {
         this.setState({
           isHide: true
         });
-        console.log(this.state.isHide);
+        //console.log(this.state.isHide);
       } else {
         lastOrdernum = lastOrdernum.order_no;
         firstOrdernum = firstOrdernum.order_no;
@@ -148,7 +148,7 @@ class DeliveryList extends Component {
     });
   }
   checkGoodsEvent = (selectedRowKeys, selectedRows) => {
-    console.log(selectedRows);
+    //console.log(selectedRows);
     const ids = [];
     if (selectedRows.length > 0) {
       selectedRows.map(item => {

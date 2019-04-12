@@ -117,7 +117,7 @@ class Add extends Component {
       params = utils.dealElement(params);
       const form = Object.assign(this.state.form, params);
       this.setState({form, isShow: false});
-      console.log(this.state.form);
+      //console.log(this.state.form);
     }).catch((error) => {
       error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
@@ -228,7 +228,7 @@ class Add extends Component {
           };
           form = Object.assign(form, change);
         }
-        console.log(form);
+        //console.log(form);
         value = value.target.value;
         break;
       case 'goods_details':
@@ -246,7 +246,7 @@ class Add extends Component {
     const {
       brandsList, redirect, isLoading, form, disabled, treeData, maxLength, isShow, thirdChannelList, showThirdChannel
     } = this.state;
-    console.log(form.is_post);
+    //console.log(form.is_post);
     if (redirect) return (<Redirect to="/login" />);
     return (
       <div className="add-blocks">

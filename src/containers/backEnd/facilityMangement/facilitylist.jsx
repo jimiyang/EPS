@@ -49,7 +49,7 @@ class FacilityList extends Component {
       goods_property: this.state.search.goods_property
     };
     window.api('eps.getordergoodsmanager', params).then(rs => {
-      console.log(rs);
+      //console.log(rs);
       const search = Object.assign(this.state.search, {total: rs.total_result});
       this.setState({facilityData: rs.order_goods_manager_list, search});
     }).catch((error) => {
