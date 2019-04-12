@@ -9,7 +9,6 @@ function baseInstance(service, params) {
   let signParams = {};
   headParams = JSON.parse(localStorage.getItem('headParams'));
   headParams.partner_id = aes.Decrypt(headParams.partner_id);
-  console.log(headParams.partner_id);
   signParams = {
     service,
     channel_partner_id: headParams.partner_id,

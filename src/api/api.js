@@ -35,8 +35,13 @@ function baseInstance(service, params) {
       baseUrl = `${(window.common.getUrl())[3]}/sahp/base/api/gateway.in`; //'http://192.168.5.21:9999/sahp/base/api/gateway.in';
       signParams = {
         service,
-        ...headParams,
+        // ...headParams,
         ...params,
+        partner_id: headParams.partner_id,
+        version: '1.0',
+        input_charset: 'UTF-8',
+        request_time: window.common.getDate(new Date(), true),
+        core_merchant_no: window.localStorage.getItem('merchant_code'), //联富通核心商户
       };
       form = {
         head: {
@@ -46,11 +51,12 @@ function baseInstance(service, params) {
           core_merchant_no: window.localStorage.getItem('merchant_code'), //联富通核心商户
           ...getSign(signParams, aes.Decrypt(localStorage.getItem('PKEY'))),
           sign_type: 'MD5',
-          input_charse: 'UTF-8',
+          input_charset: 'UTF-8',
           request_time: window.common.getDate(new Date(), true)
         },
         body: params
       };
+      console.log(form);
       break;
     default:
       baseUrl = `${(window.common.getUrl())[1]}/eps/base/gateway.in`; //'http://192.168.19.118:8000/eps/base/gateway.in';
