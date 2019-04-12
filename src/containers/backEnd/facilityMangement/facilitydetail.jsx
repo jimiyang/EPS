@@ -77,8 +77,8 @@ class FacilityDetail extends Component {
             <div>{form.bind_date}</div>
           </li>
           <li>
-            <label>所属核心商户编号/名称：</label>
-            <div className={!form.core_code ? 'hide' : null}>{form.core_code}/{form.core_name}</div>
+            <label>绑定核心商户编号/名称：</label>
+            <div className={!form.bind_core_merchant_code ? 'hide' : null}>{form.bind_core_merchant_code}/{form.bind_core_merchant_name}</div>
           </li>
           <li>
             <label>商品解绑时间：</label>
@@ -86,7 +86,7 @@ class FacilityDetail extends Component {
           </li>
           <li>
             <label>绑定门店编号/门店名称：</label>
-            <div className={!form.bind_core_merchant_code ? 'hide' : null}>{form.bind_core_merchant_code}/{form.bind_core_merchant_name}</div>
+            <div className={!form.bind_merchant_code ? 'hide' : null}>{form.bind_merchant_code}/{form.bind_merchant_name}</div>
           </li>
           <li>
             <label>商品激活状态：</label>
