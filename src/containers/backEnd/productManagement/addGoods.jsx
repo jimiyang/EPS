@@ -520,23 +520,6 @@ class Add extends Component {
                 }
               </Form.Item> : null
             }
-            <Form.Item
-              label="是否需要发货"
-            >
-              {getFieldDecorator(
-                'is_post',
-                {
-                  initialValue: form.is_post,
-                  rules: [
-                    {required: true, message: '请选择是否发货'}
-                  ]
-                },
-              )(<RadioGroup onChange={this.changeForm.bind(this, 'is_post')}>
-                <Radio value={0}>是</Radio>
-                <Radio value={1}>否</Radio>
-              </RadioGroup>)
-              }
-            </Form.Item>
             <div className="content">
               <div className="ant-form-item-label">
                 <label className="ant-form-item-required">商品图片</label>
