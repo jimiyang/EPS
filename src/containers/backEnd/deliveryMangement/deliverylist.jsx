@@ -343,12 +343,12 @@ class DeliveryList extends Component {
                                   <div className="items-con">￥{detail.goods_sale_price}</div>
                                 </div>
                               </div>
+                              <div className="button-items">
+                                <Button type="primary" className={detail.is_post === 0 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no)}>{this.state.text}</Button>
+                              </div>
                             </div>
                           ))
                         }
-                      </div>
-                      <div className="button-items">
-                        <Button type="primary" className={item.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no)}>{this.state.text}</Button>
                       </div>
                     </div>
                   </li>

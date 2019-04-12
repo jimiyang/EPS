@@ -52,6 +52,7 @@ class AddSN extends Component {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (e) => {
+      message.success('上传成功');
       const ary = e.target.result.split(',');
       this.setState({file_str: ary[ary.length - 1], file_name: name});
     };
