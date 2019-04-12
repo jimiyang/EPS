@@ -125,7 +125,9 @@ class FacilityList extends Component {
       core_merchant_no: item.bind_core_merchant_code //核心商户编号
     };
     api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
+      console.log(rs);
       const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
+      console.log(aes.Decrypt(rs.partner_id_key, key));
       window.localStorage.setItem('partnerID', aes.Decrypt(rs.partner_id_key, key));
     }).catch(error => {
       message.error(error.message);
