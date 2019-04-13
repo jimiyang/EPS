@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Tabs, Input, message, Modal, Empty, Select} from 'antd';
+import {Tabs, Input, message, Modal, Empty, Select, Button, Drawer} from 'antd';
 import {Redirect} from 'react-router';
 import utils from '../../../utils/common';
 import './orderList.less';
@@ -45,10 +45,12 @@ class OrderList extends Component {
     ModalText: '确认取消当前订单？',
     visible: false,
     confirmLoading: false,
+    snVisible: false, // sn码弹窗
     orderNo: null, // 搜索的订单号
     cancelOrderNo: null, // 将要取消的订单编号
     cancelIndex: null, // 将要取消订单的索引
     redirect: false,
+    snList: [], // sn码列表
     statusList: ['全部状态', '等待付款', '等待发货', '等待收货', '已完成', '已取消'], // 状态列表
   }
 
@@ -168,14 +170,19 @@ class OrderList extends Component {
     this.setState({visible: true, cancelOrderNo: orderNo, cancelIndex});
   }
 
+  // 打开sn列表碳层
+  openSnModal(snList) {
+    this.setState({snVisible: true, snList});
+  }
+
   // 关闭取消窗口
   handleCancel = () => {
-    this.setState({visible: false});
+    this.setState({visible: false, snVisible: false});
   }
 
   render() {
     const {
-      tabs, list, loadMore, loadText, status, visible, confirmLoading, ModalText, statusList, orderNo, tabStatus, redirect
+      tabs, list, loadMore, loadText, visible, confirmLoading, ModalText, statusList, snList, tabStatus, redirect, snVisible
     } = this.state;
     if (redirect) return (<Redirect to="/login" />);
     return (
@@ -233,6 +240,7 @@ class OrderList extends Component {
                               <p style={{marginTop: '30px', cursor: 'pointer'}} onClick={this.toOrderDetail.bind(this, item2.order_details[0].order_no)}>订单详情</p>
                             </div>
                             <div className="operation">
+                              {item2.order_details[0].sn_list !== null && item2.order_details[0].sn_list.length > 0 ? <p onClick={this.openSnModal.bind(this, item2.order_details[0].sn_list)} style={{color: '#009dd2'}}>查看sn码</p> : null}
                               {item2.order_details[0].status === 2 ? <button onClick={this.confirmReceipt.bind(this, item2.order_details[0].order_no, item2.order_details[0].id, index2)}>确认收货</button> : null}
                               {item2.order_details[0].status === 0 ? <div><button onClick={this.pay.bind(this, index2)}>付款</button><p onClick={this.showModal.bind(this, item2.order_details[0].order_no, index2)}>取消订单</p></div> : null}
                             </div>
@@ -270,6 +278,19 @@ class OrderList extends Component {
           >
             <p>{ModalText}</p>
           </Modal>
+          <Drawer
+            visible={snVisible}
+            onClose={this.handleCancel}
+            placement="right"
+            closable={false}
+            title="Sn列表"
+          >
+            {
+              snList.map((item, index) => (
+                <p style={{width: '200px'}} key={index}>{item}</p>
+              ))
+            }
+          </Drawer>
         </div>
       </div>
     );
