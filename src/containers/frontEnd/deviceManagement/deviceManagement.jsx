@@ -116,6 +116,10 @@ class DeviceManagement extends Component {
   unbind = async () => {
     const item = this.state.unbindDevice;
     await this.getPartnerIdKey(item);
+    if (!JSON.parse(window.localStorage.getItem('partnerID'))[0]) {
+      this.unbind();
+      return;
+    }
     const params = {
       out_trade_no: `EPSUNBIND${window.common.getRequestNo(10)}`, //商户请求单号(自动生成)
       merchant_no: item.bind_merchant_code, //门店编号
