@@ -98,6 +98,10 @@ class ProductType extends Component {
       if (!err) {
         const pid = this.state.parent_id === '' ? 0 : this.state.parent_id;
         this.setState({formParams: values});
+        if (this.state.goods_category_hierarchy === 3) {
+          message.warning('只能创建三级分类');
+          return false;
+        }
         Object.assign(this.state.formParams, {superior_id: pid, goods_category_hierarchy: this.state.goods_category_hierarchy + 1});
         window.api('goods.addcategory', this.state.formParams).then((res) => {
           message.success(res.service_error_message);
