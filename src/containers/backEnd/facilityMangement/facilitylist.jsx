@@ -54,9 +54,7 @@ class FacilityList extends Component {
       const search = Object.assign(this.state.search, {total: rs.total_result});
       this.setState({facilityData: rs.order_goods_manager_list, search});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
       this.setState({isLoading: false});
     });

@@ -105,15 +105,18 @@ class DeliveryList extends Component {
     });
   }
   sendDeliveryEvent = (orderno, item) => {
+    const flag = (item.is_post === 1 ? Boolean(0) : Boolean(1));
     this.setState({
-      expressVisible: (item.is_post === 1 ? Boolean(0) : Boolean(1)),
+      expressVisible: flag,
       orderNumber: orderno
     });
-    const params = {
-      order_no: orderno,
-      ids: item.id
-    };
-    this.sendFun(params);
+    if (flag === false) {
+      const params = {
+        order_no: orderno,
+        ids: item.id
+      };
+      this.sendFun(params);
+    }
   }
   closeEvent = () => {
     this.setState({

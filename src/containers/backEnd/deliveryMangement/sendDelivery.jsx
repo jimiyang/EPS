@@ -36,7 +36,8 @@ class sendDelivery extends Component {
   }
   loadList() {
     window.api('order.orderList', {order_no: this.state.order_no}).then(rs => {
-      this.setState({orderData: rs.orders[0].order_details});
+      //console.log(rs);
+      this.setState({orderData: rs.orders[0]});
     });
   }
   selExpressNameEvent = (value) => {
@@ -86,15 +87,16 @@ class sendDelivery extends Component {
         name: record.express_no,
       }),
     };
+    const {orderData} = this.state;
     return (
       <div className="delivery-blocks">
         <ul className="express-items">
-          <li>(选择商品 待发货：1已发货：1）</li>
+          <li>(选择商品 待发货：1 已发货：0）</li>
           <li>
             <Table
               rowSelection={rowSelection}
               columns={columns}
-              dataSource={this.state.orderData}
+              dataSource={this.state.orderData.order_details}
               className="table-box"
               rowKey={record => record.id}
               hideOnSinglePage="true"
@@ -103,8 +105,8 @@ class sendDelivery extends Component {
           </li>
           <li>
             <h1>配送信息</h1>
-            <div>收货人：张三  15001200720</div>
-            <div>收货地址：北京市朝阳区北花园中路联拓集团院内六号四合院  102500</div>
+            <div>收货人：{orderData.receiver}  {orderData.mobile}</div>
+            <div>收货地址：{orderData.province}{orderData.city}{orderData.area}{orderData.address}  {orderData.post_code}</div>
           </li>
           <li>
             <h1>发货方式</h1>
