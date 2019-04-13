@@ -67,8 +67,8 @@ class OrderDetail extends Component {
       const data = res.orders[0];
       const goods = data.order_details[0];
       let list = [];
-      if (res.sn_list != null) {
-        list = res.sn_list;
+      if (res.orders[0].order_details[0].sn_list != null) {
+        list = res.orders[0].order_details[0].sn_list;
       }
       const form = {
         receiver: data.receiver,
@@ -168,7 +168,7 @@ class OrderDetail extends Component {
         </li>
         <li style={{width: '100%'}}>
           <label>sn码：</label>
-          <div>{this.state.form.sn_list}</div>
+          <div style={{width: '70%'}}>{this.state.form.sn_list}</div>
         </li>
       </ul>
     );
