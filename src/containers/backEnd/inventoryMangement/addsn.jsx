@@ -44,7 +44,6 @@ class AddSN extends Component {
   getFile = ($event) => {
     const file = $event.target.files[0];
     const name = $event.target.files[0].name;
-    //console.log(name);
     if (!/\.(xlsx|xls)$/.test($event.target.value)) {
       message.error('请上传excel表格');
       return false;

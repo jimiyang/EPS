@@ -95,8 +95,9 @@ class DeviceManagement extends Component {
   }
 
   // 获取和新商户key
-  getPartnerIdKey = async (item) => {
-    const requestNo = await window.common.getRequestNo(16);
+  getPartnerIdKey = () => {
+    const item = this.state.unbindDevice;
+    const requestNo = window.common.getRequestNo(16);
     window.localStorage.setItem('platform_no', item.platform_no);
     window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
     window.localStorage.setItem('request_no', requestNo);
@@ -104,18 +105,17 @@ class DeviceManagement extends Component {
       out_request_no: requestNo, //随机生成
       core_merchant_no: item.bind_core_merchant_code //核心商户编号
     };
-    api2.baseInstance('merchant.pidkeyquery', params).then(res => {
+    api2.baseInstance('merchant.pidkeyquery', params).then(async (res) => {
       const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
-      window.localStorage.setItem('partnerID', aes.Decrypt(res.partner_id_key, key));
+      await window.localStorage.setItem('partnerID', aes.Decrypt(res.partner_id_key, key));
+      await this.unbind(item);
     }).catch(error => {
       message.error(error.message);
     });
   }
 
   // 解绑
-  unbind = async () => {
-    const item = this.state.unbindDevice;
-    await this.getPartnerIdKey(item);
+  unbind = (item) => {
     const params = {
       out_trade_no: `EPSUNBIND${window.common.getRequestNo(10)}`, //商户请求单号(自动生成)
       merchant_no: item.bind_merchant_code, //门店编号
@@ -129,7 +129,7 @@ class DeviceManagement extends Component {
       message.success('解绑成功');
       this.getDeviceList(this.state.currentPage);
     }).catch(error => {
-      message.error('解绑失败');
+      message.error(error.message);
     });
     this.setState({visible: false});
   }
@@ -206,14 +206,8 @@ class DeviceManagement extends Component {
                     item.activate_status === '1' ? <p>未激活</p> : <p>{item.activate_status === '2' ? '激活中' : '已激活'}</p>
                   }
                   <div className="operation">
-                    {
-                      item.bind_status === '1' ? (
-                        <div>
-                          <p onClick={this.openDetail.bind(this, item.id)}>详情</p>
-                          <p onClick={this.changeModal.bind(this, 'open', item)}>解绑</p>
-                        </div>
-                      ) : null
-                    }
+                    <p onClick={this.openDetail.bind(this, item.id)}>详情</p>
+                    <p onClick={this.changeModal.bind(this, 'open', item)} hidden={item.bind_status !== '1'}>解绑</p>
                   </div>
                 </li>
               ))
@@ -237,7 +231,7 @@ class DeviceManagement extends Component {
         <div>
           <Modal
             visible={visible}
-            onOk={this.unbind}
+            onOk={this.getPartnerIdKey}
             confirmLoading={confirmLoading}
             onCancel={this.changeModal.bind(this, 'cancel')}
           >

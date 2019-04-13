@@ -173,10 +173,10 @@ class OrderDetail extends Component {
           </div>
           {order.status === 1 || order.status === 2 || order.status === 3 ? (<div>
             <h3><Icon type="file-text" />订单信息</h3>
-            <div>
+            {/* <div>
               <i>交易流水号：</i>
               <span>{order.order_no}</span>
-            </div>
+            </div> */}
             <div>
               <i>付款方式：</i>
               {
