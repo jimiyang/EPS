@@ -69,7 +69,7 @@ class FacilityDetail extends Component {
           </li>
           <li>
             <label>所属代理商编号/名称：</label>
-            <div className={form.agent_no ? 'hide' : null}>{form.agent_no}/{form.agent_name}</div>
+            <div className={!form.agent_no ? 'hide' : null}>{form.agent_no}/{form.agent_name}</div>
           </li>
           <li>
             <label>商品绑定时间：</label>
