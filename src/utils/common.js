@@ -56,16 +56,11 @@ const utils = {
   },
 
   getRequestNo(m) {
-    let num = '';
-    for (let i = 0; i < m; i++) {
-      const val = parseInt(Math.random() * 10, 10);
-      if (i === 0 && val === 0) {
-        i--;
-        break;
-      }
-      num += val;
+    let random = '';
+    while (random.length < m) {
+      random += `${Math.floor(Math.random() * 10)}`;
     }
-    return num;
+    return random;
   },
 
   // 超时登出
