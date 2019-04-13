@@ -349,7 +349,7 @@ class DeliveryList extends Component {
                       {
                         item.order_details.map((detail, idx) => (
                           <div className="order-content" key={idx}>
-                            <div className="items-con">
+                            <div className="items-con" style={{textAlign: 'left', paddingLeft: '10px'}}>
                               <img src={detail.goods_pic} />
                               <label>{detail.goods_name}</label>
                             </div>

@@ -230,10 +230,10 @@ class FacilityList extends Component {
     return (
       <div className="facility-blocks">
         <Modal
-          title="详情"
+          title="设备详情"
           visible={this.state.isvisible}
           onCancel={this.cancel}
-          width="800px"
+          width="600px"
           footer={
             <Button onClick={this.cancel}>关闭</Button>
           }
