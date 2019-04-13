@@ -104,12 +104,16 @@ class DeliveryList extends Component {
       orderNumber: value
     });
   }
-  sendDeliveryEvent = (orderno) => {
-    //const index = (this.state.index === idx) ? '-1' : idx;
+  sendDeliveryEvent = (orderno, item) => {
     this.setState({
-      expressVisible: true,
+      expressVisible: (item.is_post === 1 ? Boolean(0) : Boolean(1)),
       orderNumber: orderno
     });
+    const params = {
+      order_no: orderno,
+      ids: item.id
+    };
+    this.sendFun(params);
   }
   closeEvent = () => {
     this.setState({
@@ -157,6 +161,18 @@ class DeliveryList extends Component {
       });
     }
   }
+  sendFun(params) {
+    window.api('order.send', params).then((res) => {
+      message.success(res.service_error_message);
+      this.loadList(this.state.search);
+      this.setState({
+        expressVisible: false
+      });
+    }).catch((error) => {
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
+      message.error(error.service_error_message);
+    });
+  }
   sendEvent = () => {
     if (this.state.ids === '') {
       message.error('请选择发货商品');
@@ -176,16 +192,7 @@ class DeliveryList extends Component {
       express_no: this.state.expressNo,
       ids: this.state.ids
     };
-    window.api('order.send', params).then((res) => {
-      message.success(res.service_error_message);
-      this.loadList(this.state.search);
-      this.setState({
-        expressVisible: false
-      });
-    }).catch((error) => {
-      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
-      message.error(error.service_error_message);
-    });
+    this.sendFun(params);
   }
   agentEvent = (e) => {
     this.setState({
@@ -345,7 +352,7 @@ class DeliveryList extends Component {
                             <div className="items-con">{item.gmt_created}</div>
                             <div className="items-con">￥{detail.real_amt}</div>
                             <div className="button-items" style={{width: '20%'}}>
-                              <Button type="primary" className={detail.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no)}>{this.state.text}</Button>
+                              <Button type="primary" className={detail.status === 1 ? null : 'hide'} onClick={this.sendDeliveryEvent.bind(this, item.order_no, detail)}>{this.state.text}</Button>
                             </div>
                           </div>
                         ))

@@ -5,6 +5,7 @@ import './style.less';
 import Detail from './facilitydetail';
 import api2 from '../../../api/api2';
 import aes from '../../../api/aes/public';
+import utils from '../../../utils/common';
 
 const Option = Select.Option;
 class FacilityList extends Component {
@@ -39,7 +40,7 @@ class FacilityList extends Component {
     const {
       goodsName, agentNo, deviceSn, merchantCode
     } = this.state;
-    const params = {
+    let params = {
       goods_name: goodsName,
       agent_no: agentNo,
       device_sn: deviceSn,
@@ -48,6 +49,7 @@ class FacilityList extends Component {
       page_size: this.state.search.page_size,
       goods_property: this.state.search.goods_property
     };
+    params = utils.dealElement(params);
     window.api('eps.getordergoodsmanager', params).then(rs => {
       const search = Object.assign(this.state.search, {total: rs.total_result});
       this.setState({facilityData: rs.order_goods_manager_list, search});
