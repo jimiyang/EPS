@@ -240,7 +240,7 @@ class OrderList extends Component {
                               <p style={{marginTop: '30px', cursor: 'pointer'}} onClick={this.toOrderDetail.bind(this, item2.order_details[0].order_no)}>订单详情</p>
                             </div>
                             <div className="operation">
-                              {item2.order_details[0].sn_list !== null && item2.order_details[0].sn_list.length > 0 ? <p onClick={this.openSnModal.bind(this, item2.order_details[0].sn_list)} style={{color: '#009dd2'}}>查看sn码</p> : null}
+                              {item2.order_details[0].sn_list !== null ? <p onClick={this.openSnModal.bind(this, item2.order_details[0].sn_list)} style={{color: '#009dd2'}}>查看sn码</p> : null}
                               {item2.order_details[0].status === 2 ? <button onClick={this.confirmReceipt.bind(this, item2.order_details[0].order_no, item2.order_details[0].id, index2)}>确认收货</button> : null}
                               {item2.order_details[0].status === 0 ? <div><button onClick={this.pay.bind(this, index2)}>付款</button><p onClick={this.showModal.bind(this, item2.order_details[0].order_no, index2)}>取消订单</p></div> : null}
                             </div>
