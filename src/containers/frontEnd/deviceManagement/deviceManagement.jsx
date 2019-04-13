@@ -206,14 +206,10 @@ class DeviceManagement extends Component {
                     item.activate_status === '1' ? <p>未激活</p> : <p>{item.activate_status === '2' ? '激活中' : '已激活'}</p>
                   }
                   <div className="operation">
-                    {
-                      item.bind_status === '1' ? (
-                        <div>
-                          <p onClick={this.openDetail.bind(this, item.id)}>详情</p>
-                          <p onClick={this.changeModal.bind(this, 'open', item)}>解绑</p>
-                        </div>
-                      ) : null
-                    }
+                    <div>
+                      <p onClick={this.openDetail.bind(this, item.id)}>详情</p>
+                      <p onClick={this.changeModal.bind(this, 'open', item)} hidden={item.bind_status !== '1'}>解绑</p>
+                    </div>
                   </div>
                 </li>
               ))
