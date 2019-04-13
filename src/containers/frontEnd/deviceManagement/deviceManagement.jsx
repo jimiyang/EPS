@@ -95,9 +95,9 @@ class DeviceManagement extends Component {
   }
 
   // 获取和新商户key
-  getPartnerIdKey = async () => {
+  getPartnerIdKey = () => {
     const item = this.state.unbindDevice;
-    const requestNo = await window.common.getRequestNo(16);
+    const requestNo = window.common.getRequestNo(16);
     window.localStorage.setItem('platform_no', item.platform_no);
     window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
     window.localStorage.setItem('request_no', requestNo);
