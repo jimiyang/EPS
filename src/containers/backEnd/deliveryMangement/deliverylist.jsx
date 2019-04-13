@@ -197,7 +197,7 @@ class DeliveryList extends Component {
       express_no: this.state.expressNo,
       ids: this.state.ids
     };
-    //this.sendFun(params);
+    this.sendFun(params);
   }
   agentEvent = (e) => {
     this.setState({
