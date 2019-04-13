@@ -14,36 +14,31 @@ class sendDelivery extends Component {
     super(props);
     this.state = {
       expressData: Data.expressData,
-      defaultValue: '请选择快递',
+      defaultValue: '',
       orderData: [],
-      order_no: ''
+      expno: ''
     };
   }
-  async componentWillMount() {
+  componentWillMount() {
     //验证是否需要登录
     if (!window.common.loginOut(this)) {
       message.error('登录信息失效，请重新登录');
     }
-    await this.setState({
-      order_no: this.props.order_no
-    });
-    this.loadList();
+    this.setState({orderData: this.props.orderData, defaultValue: this.props.expname, expno: this.props.expno});
   }
-  async componentWillReceiveProps(props) {
-    await this.setState({
-      order_no: props.order_no
-    });
-  }
-  loadList() {
-    window.api('order.orderList', {order_no: this.state.order_no}).then(rs => {
-      //console.log(rs);
-      this.setState({orderData: rs.orders[0]});
-    });
+  componentWillReceiveProps(props) {
+    this.setState({orderData: props.orderData, defaultValue: props.expname, expno: props.expno});
   }
   selExpressNameEvent = (value) => {
+    this.setState({
+      defaultValue: value
+    });
     this.props.selExpressNameEvent(value);
   }
   orderNumberEvent = (e) => {
+    this.setState({
+      expno: e.target.value
+    });
     this.props.orderNumberEvent(e.target.value);
   }
   checkGoodsEvent = (selectedRowKeys, selectedRows) => {
@@ -70,7 +65,10 @@ class sendDelivery extends Component {
       {
         title: '状态',
         key: 'status',
-        dataIndex: 'status'
+        dataIndex: 'status',
+        render: (record) => (
+          <span>待发货</span>
+        )
       },
       {
         title: '运单号',
@@ -120,7 +118,7 @@ class sendDelivery extends Component {
             </div>
             <div className="flex-blocks">
               <label>快递单号：</label>
-              <Input onChange={this.orderNumberEvent} style={{width: '50%'}} />
+              <Input onChange={this.orderNumberEvent} style={{width: '50%'}} value={this.state.expno} />
             </div>
           </li>
           <li>

@@ -26,6 +26,7 @@ class OrderDetail extends Component {
         receiver: '',
         mobile: '',
         post_code: '',
+        sn_list: ''
       },
       redirect: false,
     };
@@ -65,6 +66,10 @@ class OrderDetail extends Component {
     window.api('order.orderList', {order_no: id}).then((res) => {
       const data = res.orders[0];
       const goods = data.order_details[0];
+      let list = [];
+      if (res.sn_list != null) {
+        list = res.sn_list;
+      }
       const form = {
         receiver: data.receiver,
         mobile: data.mobile,
@@ -84,7 +89,8 @@ class OrderDetail extends Component {
         created_no: goods.created_no,
         order_no: goods.order_no,
         gmt_created: goods.gmt_created,
-        goods_qty: goods.goods_qty
+        goods_qty: goods.goods_qty,
+        sn_list: list.join(',')
       };
       this.setState({
         form
@@ -159,6 +165,10 @@ class OrderDetail extends Component {
         <li>
           <label>付款时间：</label>
           <div>{this.state.form.gmt_cashed}</div>
+        </li>
+        <li style={{width: '100%'}}>
+          <label>sn码：</label>
+          <div>{this.state.form.sn_list}</div>
         </li>
       </ul>
     );

@@ -45,7 +45,8 @@ class DeliveryList extends Component {
       lastOrdernum: '', //分页下一页所用的订单编号
       redirect: false,
       text: '发货',
-      isLoading: true
+      isLoading: true,
+      orderData: []
     };
   }
   componentWillMount() {
@@ -108,7 +109,9 @@ class DeliveryList extends Component {
     const flag = (item.is_post === 1 ? Boolean(0) : Boolean(1));
     this.setState({
       expressVisible: flag,
-      orderNumber: orderno
+      orderNumber: orderno,
+      expressName: '请选择快递',
+      expressNo: ''
     });
     if (flag === false) {
       const params = {
@@ -116,12 +119,18 @@ class DeliveryList extends Component {
         ids: item.id
       };
       this.sendFun(params);
+    } else {
+      window.api('order.orderList', {order_no: orderno}).then(rs => {
+        this.setState({orderData: rs.orders[0]});
+      });
     }
   }
   closeEvent = () => {
     this.setState({
       expressVisible: false,
-      detailVisible: false
+      detailVisible: false,
+      expressName: '请选择快递',
+      expressNo: ''
     });
   }
   openEvent = (idx, number) => {
@@ -129,19 +138,6 @@ class DeliveryList extends Component {
     this.setState({
       index
     });
-    /*let str = '';
-    window.api('goods.goodsDetail', {order_no: number}).then(rs => {
-      if (rs.goods_detail.length > 0) {
-        this.state.orderDetailData.map(item => {
-          str += `${str}${item.goods_id},`;
-        });
-        this.setState({
-          orderDetailData: rs.goods_detail
-        });
-      }
-    }).catch(error => {
-      message.error(error);
-    });*/
   }
   selExpressNameEvent = (value) => {
     this.setState({
@@ -159,17 +155,20 @@ class DeliveryList extends Component {
       selectedRows.map(item => {
         ids.push(item.id);
       });
-      this.setState({
-        ids: ids.join(',')
-      });
     }
+    this.setState({
+      ids: ids.join(',')
+    });
   }
   sendFun(params) {
     window.api('order.send', params).then((res) => {
       message.success(res.service_error_message);
       this.loadList(this.state.search);
       this.setState({
-        expressVisible: false
+        expressVisible: false,
+        ids: '',
+        expressName: '',
+        expressNo: ''
       });
     }).catch((error) => {
       error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
@@ -177,6 +176,7 @@ class DeliveryList extends Component {
     });
   }
   sendEvent = () => {
+    //console.log(this.state.ids);
     if (this.state.ids === '') {
       message.error('请选择发货商品');
       return false;
@@ -292,8 +292,10 @@ class DeliveryList extends Component {
           <SendDelivery
             selExpressNameEvent={this.selExpressNameEvent.bind(this)}
             orderNumberEvent={this.orderNumberEvent}
-            order_no={this.state.orderNumber}
+            orderData={this.state.orderData}
             checkGoodsEvent={this.checkGoodsEvent}
+            expname={this.state.expressName}
+            expno={this.state.expressNo}
           />
         </Modal>
         <div className="nav-items">
