@@ -50,10 +50,7 @@ export default (params, key) => {
         delete params.sign
     }
     let _params = parseParam(sortObj(params))
-    //console.log(_params);
     const sign = md5(_params + key)
-    //console.log(_params, key)
     const MD5 = sign.toLowerCase()
-    //console.log(MD5)
     return {sign:MD5}
 }

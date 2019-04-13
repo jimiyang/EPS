@@ -48,7 +48,6 @@ class FacilityDetail extends Component {
   }
   initForm(id) {
     window.api('eps.getordergoodsmanager', {id}).then(rs => {
-      //console.log();
       this.setState({
         form: rs.order_goods_manager_list[0]
       });

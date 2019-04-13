@@ -17,7 +17,6 @@ function baseInstance(service, params) {
     platform_merchant_no: window.localStorage.getItem('platform_no'),
     ...params,
   };
-  //console.log(signParams);
   const baseUrl = `${(window.common.getUrl())[2]}/NewFront/base/gateway.in`; //'http://192.168.4.148:8080/NewFront/base/gateway.in';
   form = {
     head: {
@@ -31,7 +30,6 @@ function baseInstance(service, params) {
     },
     body: params
   };
-  //console.log(form);
   return (
     axios.post(`${baseUrl}?requestJson=${JSON.stringify(form)}`).then((response) => response)
   );
