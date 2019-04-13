@@ -28,7 +28,6 @@ class sendDelivery extends Component {
       order_no: this.props.order_no
     });
     this.loadList();
-    console.log(this.props.order_no);
   }
   async componentWillReceiveProps(props) {
     await this.setState({

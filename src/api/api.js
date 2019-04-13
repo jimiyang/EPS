@@ -42,7 +42,6 @@ function baseInstance(service, params) {
         partner_id: JSON.parse(window.localStorage.getItem('partnerID'))[0].PID,
         ...params,
       };
-      console.log(signParams);
       form = {
         head: {
           service,
@@ -56,7 +55,6 @@ function baseInstance(service, params) {
         },
         body: params
       };
-      console.log(form);
       break;
     default:
       baseUrl = `${(window.common.getUrl())[1]}/eps/base/gateway.in`; //'http://192.168.19.118:8000/eps/base/gateway.in';
