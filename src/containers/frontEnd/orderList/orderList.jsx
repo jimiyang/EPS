@@ -250,7 +250,6 @@ class OrderList extends Component {
             placeholder="订单编号"
             enterButton="搜索"
             size="default"
-            value={orderNo}
             onSearch={this.searchOrder.bind(this)}
           />
         </section>

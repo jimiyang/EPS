@@ -104,7 +104,7 @@ class DeviceManagement extends Component {
       out_request_no: requestNo, //随机生成
       core_merchant_no: item.bind_core_merchant_code //核心商户编号
     };
-    api2.baseInstance('merchant.pidkeyquery', params).then(res => {
+    await api2.baseInstance('merchant.pidkeyquery', params).then(res => {
       const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
       window.localStorage.setItem('partnerID', aes.Decrypt(res.partner_id_key, key));
     }).catch(error => {
