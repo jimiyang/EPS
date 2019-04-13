@@ -114,7 +114,7 @@ class sendDelivery extends Component {
               <label>快递名称：</label>
               <Select defaultValue={this.state.defaultValue} onChange={this.selExpressNameEvent} style={{width: '50%'}}>
                 {
-                  this.state.expressData.map((item, index) => <Option key={index} value={item.express_coding}>{item.express_name}</Option>)
+                  this.state.expressData.map((item, index) => <Option key={index} value={item.express_name}>{item.express_name}</Option>)
                 }
               </Select>
             </div>
