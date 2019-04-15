@@ -82,7 +82,7 @@ class GenerateOrder extends Component {
             <img src={info.img} />
             <div className="goods-info">
               <h2>{info.name}</h2>
-              <p className="price">￥{info.price} <span> × 1</span></p>
+              <p className="price">￥{info.price} <span> × {info.count}</span></p>
             </div>
             <div className="price"><em>合计：￥</em><b>{(info.count * Number(info.price)).toFixed(2)}</b></div>
           </div>
