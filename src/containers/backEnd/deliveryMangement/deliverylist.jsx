@@ -121,10 +121,10 @@ class DeliveryList extends Component {
   sendDeliveryEvent = (orderno, item) => {
     const flag = (item.is_post === 1 ? Boolean(0) : Boolean(1));
     this.setState({
-      expressVisible: flag,
       orderNumber: orderno,
       expressName: '请选择快递',
-      expressNo: ''
+      expressNo: '',
+      expressVisible: false
     });
     if (flag === false) {
       const params = {
@@ -134,7 +134,10 @@ class DeliveryList extends Component {
       this.sendFun(params);
     } else {
       this.getGoodsList(orderno).then(rs => {
-        this.setState({orderData: rs, detailVisible: true});
+        this.setState({
+          orderData: rs.orders[0],
+          expressVisible: true
+        });
       });
     }
   }

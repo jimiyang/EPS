@@ -116,23 +116,27 @@ class FacilityList extends Component {
     });
   }
   getPartnerIdKey(item) {
-    const getNo = window.common.getRequestNo(16);
-    window.localStorage.setItem('platform_no', item.platform_no);
-    window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
-    window.localStorage.setItem('request_no', getNo);
-    const params = {
-      out_request_no: getNo, //随机生成
-      core_merchant_no: item.bind_core_merchant_code //核心商户编号
-    };
-    api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
-      const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
-      window.localStorage.setItem('partnerID', aes.Decrypt(rs.partner_id_key, key));
-    }).catch(error => {
-      message.error(error.message);
+    const promise = new Promise((resolve, reject) => {
+      const getNo = window.common.getRequestNo(16);
+      window.localStorage.setItem('platform_no', item.platform_no);
+      window.localStorage.setItem('merchant_code', item.bind_core_merchant_code);
+      window.localStorage.setItem('request_no', getNo);
+      const params = {
+        out_request_no: getNo, //随机生成
+        core_merchant_no: item.bind_core_merchant_code //核心商户编号
+      };
+      api2.baseInstance('merchant.pidkeyquery', params).then(rs => {
+        //const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
+        //window.localStorage.setItem('partnerID', aes.Decrypt(rs.partner_id_key, key));
+        resolve(rs);
+      }).catch(error => {
+        message.error(error.message);
+        reject(error);
+      });
     });
+    return promise;
   }
   decodingEvent = (item) => {
-    this.getPartnerIdKey(item);
     const tradeNo = window.common.getRequestNo(10);
     const params = {
       out_trade_no: `EPSUNBIND${tradeNo}`, //商户请求单号(自动生成)
@@ -143,11 +147,16 @@ class FacilityList extends Component {
       operator_id: JSON.parse(window.localStorage.getItem('headParams')).login_name, //操作员登录人userName
       notify_url: (window.common.getUrl())[0] //
     };
-    window.api('device.unbind', params).then(res => {
-      message.success('解绑成功');
-      this.loadList();
-    }).catch(error => {
-      message.error('解绑失败');
+    this.getPartnerIdKey(item).then(rs => {
+      const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
+      window.localStorage.setItem('partnerID', aes.Decrypt(rs.partner_id_key, key));
+      console.log(aes.Decrypt(rs.partner_id_key, key));
+      window.api('device.unbind', params).then(res => {
+        message.success('解绑成功');
+        this.loadList();
+      }).catch(error => {
+        message.error('解绑失败');
+      });
     });
   }
   searchEvent = () => {
