@@ -69,6 +69,10 @@ class DeliveryList extends Component {
   }
   loadList = (params) => {
     window.api('order.orderList', params).then(res => {
+      const orderList = res.orders;
+      this.setState({
+        isLoading: false
+      });
       let firstOrdernum = res.orders[0];
       let lastOrdernum = res.orders[res.orders.length - 1];
       if (this.state.pagetype === 'prev' && firstOrdernum === undefined) {
@@ -79,7 +83,7 @@ class DeliveryList extends Component {
         message.warning('最后一页');
         return false;
       }
-      if (res.orders.length === 0) {
+      if (orderList.length === 0) {
         this.setState({
           isHide: true
         });
@@ -88,10 +92,9 @@ class DeliveryList extends Component {
         firstOrdernum = firstOrdernum.order_no;
         this.setState({
           isHide: false,
-          orderListData: res.orders,
+          orderListData: orderList,
           firstOrdernum,
-          lastOrdernum,
-          isLoading: false
+          lastOrdernum
         });
       }
     }).catch((error) => {
@@ -105,7 +108,8 @@ class DeliveryList extends Component {
     this.setState({
       isActive: index,
       search: params,
-      pagetype: ''
+      pagetype: '',
+      isLoading: true
     });
     this.loadList(this.state.search);
   }
