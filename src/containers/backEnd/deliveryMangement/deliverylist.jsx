@@ -271,6 +271,10 @@ class DeliveryList extends Component {
   }
   //下一页
   nextEvent = (type) => {
+    if (this.state.orderListData.length < 10) {
+      message.warn('已是最后一页');
+      return;
+    }
     this.setState({pagetype: type});
     const params = {
       ...this.state.search,
