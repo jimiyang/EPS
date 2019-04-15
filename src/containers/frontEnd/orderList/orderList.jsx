@@ -217,7 +217,6 @@ class OrderList extends Component {
                             }}
                             >
                               <span>{`${item2.created_no}/${item2.agent_name}`}</span>
-                              <span>{item2.gmt_created}</span>
                             </div>
                             <div>
                               <span style={{color: '#000'}}>创建时间：</span>
