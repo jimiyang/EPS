@@ -18,7 +18,7 @@ const utils = {
         'http://api.liantuofu.com/notify/device',
         'http://eps.liantuobank.com',
         'http://newfront.liantuobank.com',
-        'http://192.168.19.118:8000'
+        'http://eps.liantuobank.com'
       ];
     }
     return arrUrl;
