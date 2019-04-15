@@ -57,6 +57,16 @@ class DeliveryList extends Component {
       message.error('登录信息失效，请重新登录');
     }
   }
+  getGoodsList(orderno) {
+    const promise = new Promise((resolve, reject) => {
+      window.api('order.orderList', {order_no: orderno}).then(rs => {
+        resolve(rs);
+      }).catch(error => {
+        reject(error);
+      });
+    });
+    return promise;
+  }
   loadList = (params) => {
     window.api('order.orderList', params).then(res => {
       let firstOrdernum = res.orders[0];
@@ -100,9 +110,8 @@ class DeliveryList extends Component {
     this.loadList(this.state.search);
   }
   orderDetailEvent = (value) => {
-    this.setState({
-      detailVisible: true,
-      orderNumber: value
+    this.getGoodsList(value).then(rs => {
+      this.setState({orderData: rs, detailVisible: true});
     });
   }
   sendDeliveryEvent = (orderno, item) => {
@@ -120,8 +129,8 @@ class DeliveryList extends Component {
       };
       this.sendFun(params);
     } else {
-      window.api('order.orderList', {order_no: orderno}).then(rs => {
-        this.setState({orderData: rs.orders[0]});
+      this.getGoodsList(orderno).then(rs => {
+        this.setState({orderData: rs, detailVisible: true});
       });
     }
   }
@@ -278,7 +287,7 @@ class DeliveryList extends Component {
             <Button type="primary" onClick={this.closeEvent.bind(this)}>确定</Button>
           }
         >
-          <OrderDetaile order_no={this.state.orderNumber} />
+          <OrderDetaile orderData={this.state.orderData} />
         </Modal>
         <Modal
           title="填写快递信息"
