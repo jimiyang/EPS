@@ -150,7 +150,7 @@ class FacilityList extends Component {
     this.getPartnerIdKey(item).then(rs => {
       const key = aes.Decrypt(window.localStorage.getItem('PKEY'));
       window.localStorage.setItem('partnerID', aes.Decrypt(rs.partner_id_key, key));
-      console.log(aes.Decrypt(rs.partner_id_key, key));
+      //console.log(aes.Decrypt(rs.partner_id_key, key));
       window.api('device.unbind', params).then(res => {
         message.success('解绑成功');
         this.loadList();

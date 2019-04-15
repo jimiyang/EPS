@@ -34,7 +34,7 @@ class OrderDetail extends Component {
   componentWillMount() {
     //验证是否需要登录
     if (window.common.loginOut(this)) {
-      console.log(this.props.orderData);
+      //console.log(this.props.orderData);
       this.loadList(this.props.orderData);
     } else {
       message.error('登录信息失效，请重新登录');
