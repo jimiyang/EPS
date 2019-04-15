@@ -9,8 +9,8 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: 'csdls', // dlsy_test128 ptdls1 jrpt 登录名
-      userPwd: '111qqq', // 登录密码
+      userName: '', // dlsy_test128 ptdls1 jrpt 登录名
+      userPwd: '', // 登录密码
       authCode: '', // 显示的验证码
       txtCode: '', // 输入的验证码
     };
