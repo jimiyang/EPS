@@ -80,7 +80,8 @@ class Add extends Component {
       if (!err) {
         const form = Object.assign(this.state.form, values);
         this.setState({
-          form
+          form,
+          isLoading: false
         });
         if (this.state.form.goods_bar_no === '') {
           message.error('请生成商品条形码');
@@ -242,9 +243,9 @@ class Add extends Component {
               {getFieldDecorator(
                 'cost_price',
                 {
-                  initialValue: this.state.form.cost_price || '',
+                  initialValue: `${this.state.form.cost_price}` || '',
                   rules: [
-                    {required: true, message: '请输入商品原价！'},
+                    {required: true, message: '请输入商品成本价！'},
                     {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
                   ]
                 }
@@ -257,7 +258,7 @@ class Add extends Component {
               {getFieldDecorator(
                 'sale_price',
                 {
-                  initialValue: this.state.form.sale_price || '',
+                  initialValue: `${this.state.form.sale_price}` || '',
                   rules: [
                     {required: true, message: '请输入商品售价！'},
                     {pattern: /^[0-9]+([.]{1}[0-9]{1,2})?$/, message: '只能输入整数或小数(保留后两位)'}
