@@ -25,7 +25,7 @@ class GenerateOrder extends Component {
     }
   }
 
-  // 提交表单
+  // 创建订单
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -36,11 +36,7 @@ class GenerateOrder extends Component {
         }
         const orderNo = `${moment().format('YYYYMMDDHHmmssSSS')}${random}`;
         const price = (this.state.info.count * Number(this.state.info.price)).toFixed(2);
-        const goods = JSON.stringify([{
-          goods_id: this.state.info.id,
-          goods_qty: this.state.info.count,
-          total_amt: price
-        }]);
+        const goods = JSON.stringify([{goods_id: this.state.info.id, goods_qty: this.state.info.count, total_amt: price}]);
         const params = {
           order_no: orderNo,
           total_amt: price,
@@ -65,14 +61,13 @@ class GenerateOrder extends Component {
           };
           this.props.history.push('/cashier', {info});
         }).catch((error) => {
-          if (error.service_error_code === 'EPS000000801') {
-            this.setState({redirect: true});
-          }
+          error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
           message.error(error.service_error_message);
         });
       }
     });
   }
+
   render() {
     if (this.state.redirect) {
       return (<Redirect to="/login" />);
@@ -87,7 +82,7 @@ class GenerateOrder extends Component {
             <img src={info.img} />
             <div className="goods-info">
               <h2>{info.name}</h2>
-              <p className="price">￥{info.price} <span> × 1</span></p>
+              <p className="price">￥{info.price} <span> × {info.count}</span></p>
             </div>
             <div className="price"><em>合计：￥</em><b>{(info.count * Number(info.price)).toFixed(2)}</b></div>
           </div>

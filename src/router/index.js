@@ -10,16 +10,19 @@ import Store from '../store';
 import DevTools from '../store/DevTools';
 //登陆
 import Login from '../containers/frontEnd/login/login';
-//前台
-import App from '../containers/frontEnd/app/app';
 //后台主页(入口) jimiyang
 import Main from '../containers/backEnd/main/main';
 import List from '../containers/backEnd/productManagement/list';
 import DeliveryList from '../containers/backEnd/deliveryMangement/deliverylist';
 import TypeList from '../containers/backEnd/productType/typelist';
 import addGoods from '../containers/backEnd/productManagement/addGoods';
+import brandList from '../containers/backEnd/brandMangement/brandlist';//品牌管理列表
+import inventoryList from '../containers/backEnd/inventoryMangement/inventorylist';//库存管理列表
+import facilityList from '../containers/backEnd/facilityMangement/facilitylist';//设备管理列表
 import NotFound from '../containers/404';
 
+//前台
+import App from '../containers/frontEnd/app/app';
 import goods from '../containers/frontEnd/goods/goods';
 import searchDetail from '../containers/frontEnd/searchDetail/searchDetail';
 import goodsDetail from '../containers/frontEnd/goodsDetail/goodsDetail';
@@ -28,6 +31,7 @@ import cashier from '../containers/frontEnd/cashier/cashier';
 import successfulPayment from '../containers/frontEnd/successfulPayment/successfulPayment';
 import orderList from '../containers/frontEnd/orderList/orderList';
 import orderDetail from '../containers/frontEnd/orderDetail/orderDetail';
+import deviceManagement from '../containers/frontEnd/deviceManagement/deviceManagement';
 
 moment.locale('cn');
 const Router = ({component: Component, children, ...rest}) => (
@@ -49,6 +53,9 @@ const Root = () => (
             <Route exact path="/main/deliverylist" component={DeliveryList} />
             <Route exact path="/main/typelist" component={TypeList} />
             <Route exact path="/main/addGoods" component={addGoods} />
+            <Route exact path="/main/brandlist" component={brandList} />
+            <Route exact path="/main/inventorylist" component={inventoryList} />
+            <Route exact path="/main/facilitylist" component={facilityList} />
             <Redirect to="/main/list" />
             <Route path="*" component={NotFound} />
           </Router>
@@ -61,6 +68,7 @@ const Root = () => (
             <Route exact path="/successfulPayment" component={successfulPayment} />
             <Route exact path="/orderList" component={orderList} />
             <Route exact path="/orderDetail" component={orderDetail} />
+            <Route exact path="/deviceManagement" component={deviceManagement} />
             <Redirect to="/goods" />
             <Route path="*" component={NotFound} />
           </Router>

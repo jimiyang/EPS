@@ -26,6 +26,7 @@ class OrderDetail extends Component {
         receiver: '',
         mobile: '',
         post_code: '',
+        sn_list: ''
       },
       redirect: false,
     };
@@ -33,67 +34,47 @@ class OrderDetail extends Component {
   componentWillMount() {
     //验证是否需要登录
     if (window.common.loginOut(this)) {
-      this.loadList(this.props.order_no);
+      //console.log(this.props.orderData);
+      this.loadList(this.props.orderData);
     } else {
       message.error('登录信息失效，请重新登录');
     }
   }
   componentWillReceiveProps(props) {
-    this.loadList(props.order_no);
+    this.loadList(props.orderData);
   }
-  loadList = (id) => {
-    /*window.api('goods.goodsDetail', {order_no: id}).then((rs) => {
-      //Object.assign(form, rs.goods_detail[0]);
-      const data = rs.goods_detail[0];
-      const form = {
-        goods_name: data.goods_name,
-        goods_bar_no: data.goods_bar_no,
-        goods_category_name: data.goods_category_name,
-        goods_sale_price: data.goods_sale_price,
-        total_amt: data.real_amt,
-        agent_name: data.agent_name,
-        created_name: data.created_name,
-        created_no: data.created_no,
-        order_no: data.order_no,
-        gmt_created: data.gmt_created,
-        goods_qty: data.goods_qty
-      };
-      this.setState({
-        form
-      });
-    });*/
-    window.api('order.orderList', {order_no: id}).then((res) => {
-      const data = res.orders[0];
-      const goods = data.order_details[0];
-      const form = {
-        receiver: data.receiver,
-        mobile: data.mobile,
-        address: data.address,
-        province: data.province,
-        city: data.city,
-        area: data.area,
-        post_code: data.post_code,
-        gmt_cashed: data.gmt_cashed, //付款时间
-        goods_name: goods.goods_name,
-        goods_bar_no: goods.goods_bar_no,
-        goods_category_name: goods.goods_category_name,
-        goods_sale_price: goods.goods_sale_price,
-        total_amt: goods.real_amt,
-        agent_name: goods.agent_name,
-        created_name: goods.created_name,
-        created_no: goods.created_no,
-        order_no: goods.order_no,
-        gmt_created: goods.gmt_created,
-        goods_qty: goods.goods_qty
-      };
-      this.setState({
-        form
-      });
-    }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
-      message.error(error.service_error_message);
+  loadList = (res) => {
+    //console.log(res);
+    const data = res.orders[0];
+    const goods = data.order_details[0];
+    let list = [];
+    if (res.orders[0].order_details[0].sn_list != null) {
+      list = res.orders[0].order_details[0].sn_list;
+    }
+    const form = {
+      receiver: data.receiver,
+      mobile: data.mobile,
+      address: data.address,
+      province: data.province,
+      city: data.city,
+      area: data.area,
+      post_code: data.post_code,
+      gmt_cashed: data.gmt_cashed, //付款时间
+      goods_name: goods.goods_name,
+      goods_bar_no: goods.goods_bar_no,
+      goods_category_name: goods.goods_category_name,
+      goods_sale_price: goods.goods_sale_price,
+      total_amt: goods.real_amt,
+      agent_name: goods.agent_name,
+      created_name: goods.created_name,
+      created_no: goods.created_no,
+      order_no: goods.order_no,
+      gmt_created: goods.gmt_created,
+      goods_qty: goods.goods_qty,
+      sn_list: list.join(',')
+    };
+    this.setState({
+      form
     });
   }
   render() {
@@ -161,6 +142,10 @@ class OrderDetail extends Component {
         <li>
           <label>付款时间：</label>
           <div>{this.state.form.gmt_cashed}</div>
+        </li>
+        <li style={{width: '100%'}}>
+          <label>sn码：</label>
+          <div style={{width: '70%'}}>{this.state.form.sn_list}</div>
         </li>
       </ul>
     );

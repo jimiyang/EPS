@@ -10,14 +10,14 @@ export default class Goods extends Component {
       part: [], // 一级类的列表
       partList: [], // 类的商品列表
       redirect: false,
-      identity: false
+      identity: false,
+      level: ['金牌', '银牌', '铜牌', '钻石', '白金', '联'],
     };
   }
+
   componentWillMount() {
     if (window.localStorage.getItem('identity') === '0') {
-      this.setState({
-        identity: true
-      });
+      this.setState({identity: true});
     } else {
       const isLogin = window.common.loginOut(this);
       if (isLogin) {
@@ -27,47 +27,48 @@ export default class Goods extends Component {
       }
     }
   }
+
   // 首页信息
   getHomepage() {
     window.api('goods.homepage', {}).then(res => {
       const info = res.hot_category;
       const part = [];
       const partList = [];
-      info.forEach((item, index) => {
+      info.forEach((item) => {
         part.push(item);
         partList.push(item.goods);
       });
       this.setState({part, partList});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
+
   // 跳转到搜索页
-  toSearchDetail = (id, typeName) => {
-    this.props.history.push('/searchDetail', {id, typeName, searchContent: ''});
+  toSearchDetail = (id) => {
+    this.props.history.push('/searchDetail', {type: 'category', id});
   }
+
   // 跳转到详情页
   toDetail = (id) => {
     this.props.history.push('/goodsDetail', {id});
   }
+
   render() {
-    if (this.state.identity) {
-      return (<Redirect to="/main" />);
-    }
-    if (this.state.redirect) {
-      return (<Redirect to="/login" />);
-    }
-    const {part, partList} = this.state;
+    const {identity, redirect} = this.state;
+    if (identity) return (<Redirect to="/main" />);
+    if (redirect) return (<Redirect to="/login" />);
+    const {part, partList, level} = this.state;
     return (
       <div className="sku">
         {
           partList.length > 0 ? (
             part.map((item, index) => (
               <section className="sku-block" key={index} hidden={partList[index].length === 0}>
-                <h3 style={{cursor: 'pointer'}} className="sku-cat-title" onClick={this.toSearchDetail.bind(this, item.id, item.goods_category_name)}>{item.goods_category_name}</h3>
+                <h3 style={{cursor: 'pointer'}} className="sku-cat-title" onClick={this.toSearchDetail.bind(this, item.id)}>{item.goods_category_name}</h3>
+                {level.map(($item, $index) => (<div className={`tag tag-${$index}`}><i className={`icon-s${$index}`}><s>.</s></i>{$item}</div>))}
+                <div className="tag tag"><i className="icon-vip"><s>.</s></i>会员</div>
                 <ul className="sku-list">
                   {
                     partList[index].map(($0, $1) => (

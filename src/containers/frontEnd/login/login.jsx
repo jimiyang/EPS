@@ -9,19 +9,17 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userName: '', // dlsy_test128 ptdls1 jrpt
-      userPwd: '',
-      authCode: '',
-      txtCode: ''
+      userName: '', // dlsy_test128 ptdls1 jrpt 登录名
+      userPwd: '', // 登录密码
+      authCode: '', // 显示的验证码
+      txtCode: '', // 输入的验证码
     };
   }
 
   //组件刚经历constructor,初始完数据,未渲染,dom还未渲染
   componentWillMount() {
     this.getKey();
-    this.setState({
-      authCode: window.common.createCode()
-    });
+    this.setState({authCode: window.common.createCode()});
   }
 
   //组件渲染完成
@@ -35,7 +33,8 @@ class Login extends Component {
     document.removeEventListener('keydown', this.onKeyDown);
   }
 
-  getKey() {
+  // 从其他渠道进入login，直接获取登录信息登录
+  getKey = () => {
     const query = this.props.location.search;
     if (query) {
       const key = common.getQueryString(query).key;
@@ -43,73 +42,61 @@ class Login extends Component {
       this.loginCallback(res);
     }
   }
-  loginCallback(res) {
+
+  // 登陆后的处理
+  loginCallback = (res) => {
+    const headParams = {login_name: res.login_name, partner_id: res.partner_id};
     window.localStorage.setItem('fullName', res.full_name);
     window.localStorage.setItem('PKEY', res.partner_key);
     window.localStorage.setItem('identity', res.identity);
-    const headParams = {
-      login_name: res.login_name,
-      partner_id: res.partner_id,
-    };
     window.localStorage.setItem('headParams', JSON.stringify(headParams));
-    if (res.identity === 0) {
-      this.props.history.push({pathname: '/main'});
-    } else {
-      this.props.history.push({pathname: '/'});
-    }
+    const url = res.identity === 0 ? '/main' : '/';
+    this.props.history.push({pathname: url});
   }
+
   // 登录
-  login() {
-    if (this.state.userName === '' || this.state.userPwd === '') {
-      message.error('请输入用户名或密码');
-      return false;
+  login = () => {
+    const {
+      userName, userPwd, txtCode, authCode
+    } = this.state;
+    if (!userName) {
+      message.error('请输入用户名');
+      return;
     }
-    if (this.state.txtCode === '') {
+    if (!userPwd) {
+      message.error('请输入密码');
+      return;
+    }
+    if (!txtCode) {
       message.error('验证码不能为空，请输入验证码');
-      return false;
-    } else if (this.state.txtCode !== this.state.authCode) {
+      return;
+    } else if (txtCode !== authCode) {
       message.error('验证码输入不一致');
-      return false;
+      return;
     }
     const params = {
-      login_name: this.state.userName,
-      login_pwd: this.state.userPwd
+      login_name: userName,
+      login_pwd: userPwd
     };
     window.api('eps.login', params).then(res => {
       this.loginCallback(res);
     }).catch(error => {
-      message.error(error);
+      message.error(error.service_error_message);
     });
   }
+
+  // 按enter键登录
   onKeyDown = (e) => {
-    if (e.keyCode === 13) {
-      this.login();
-    }
+    e.keyCode === 13 ? this.login() : null;
   }
-  onChangeUserName = (e) => {
-    this.setState({
-      userName: e.target.value
-    });
+
+  // 变更登录信息
+  changeInfo = (type, e) => {
+    let value = e.target.value;
+    type === 'txtCode' ? value = value.toUpperCase() : null;
+    this.setState({[type]: value});
   }
-  onChangeUserPwd = (e) => {
-    this.setState({
-      userPwd: e.target.value
-    });
-  }
-  onChangeAuthName = (e) => {
-    this.setState({
-      txtCode: e.target.value.toUpperCase()
-    });
-  }
-  authCodeEvent = (e) => {
-    this.setState({
-      authCode: window.common.createCode()
-    });
-  }
-  //登录
-  loginInEvent = () => {
-    this.login();
-  }
+
   render() {
     return (
       <div className="login-blocks">
@@ -122,7 +109,7 @@ class Login extends Component {
               prefix={
                 <Icon type="user" />
               }
-              onChange={this.onChangeUserName}
+              onChange={this.changeInfo.bind(this, 'userName')}
               value={this.state.userName}
             />
           </li>
@@ -133,7 +120,7 @@ class Login extends Component {
               prefix={
                 <Icon type="lock" />
               }
-              onChange={this.onChangeUserPwd}
+              onChange={this.changeInfo.bind(this, 'userPwd')}
               value={this.state.userPwd}
             />
           </li>
@@ -141,7 +128,7 @@ class Login extends Component {
             <Input
               placeholder="请输入验证码"
               size="large"
-              onChange={this.onChangeAuthName}
+              onChange={this.changeInfo.bind(this, 'txtCode')}
               value={this.state.txtCode}
               addonAfter={this.state.authCode}
             />
@@ -150,7 +137,7 @@ class Login extends Component {
             <Button
               type="primary"
               size="large"
-              onClick={this.loginInEvent.bind(this)}
+              onClick={this.login}
               block
             >
               登录

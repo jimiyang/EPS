@@ -34,24 +34,18 @@ class SearchDetail extends Component {
 
   // 获取订单详情
   getOrderDetail = (orderNo) => {
-    const params = {
-      order_no: orderNo,
-    };
+    const params = {order_no: orderNo};
     window.api('order.orderList', params).then(res => {
       this.setState({detail: res.orders[0]});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
 
   render() {
-    if (this.state.redirect) {
-      return (<Redirect to="/login" />);
-    }
-    const {detail} = this.state;
+    const {detail, redirect} = this.state;
+    if (redirect) return (<Redirect to="/login" />);
     return (
       <div id="successfulPayment">
         <section>

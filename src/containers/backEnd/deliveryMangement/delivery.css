@@ -16,7 +16,7 @@
     text-align: center;display: flex;justify-content: space-between;
     align-items: center;
 }
-.delivery-blocks .search-blocks li.items input{height:40px;line-height:40px;}
+.delivery-blocks .search-blocks li.items input{height:32px;line-height:32px;}
 .delivery-blocks .search-blocks li.items button{margin-left:10px;}
 .delivery-blocks .search-blocks li label{display:inline-block;width:100px;}
 .delivery-blocks .search-blocks li input{text-align: left;}
@@ -47,11 +47,15 @@
     margin-bottom:10px;cursor: pointer;
 }
 
-.delivery-blocks .order-blocks .order-title{
+.delivery-blocks .order-blocks .order-title,.delivery-blocks .order-blocks .order-title2{
 background:#f6f7f8;padding:10px;
-display: flex;justify-content: space-between;align-items: center;
+display: flex;align-items: center;justify-content: space-between;
 font-size:14px;
 }
+.delivery-blocks .order-blocks .order-title2 {justify-content: flex-start;}
+.delivery-blocks .order-blocks .order-title2 .arrow-ico{margin-right:20px;}
+.delivery-blocks .order-blocks .order-title2 span{display: block;margin-right:10%;}
+.delivery-blocks .order-blocks .items-title span{width:20%;display: block;text-align: center}
 .delivery-blocks .order-blocks .order-title .blocks{
     width:25%;
 }
@@ -79,26 +83,29 @@ font-size:14px;
     display: flex; margin-right:20px;
     font-size:14px;margin-top: 10px;
     margin-left:20px;justify-content: space-between;
-    align-items:flex-start;
+    align-items:center;
 }
+.delivery-blocks .order-blocks .order-detaile .items-con{width:20%;text-align: center;}
 .delivery-blocks .order-blocks  .item-3 button{margin-right:20px;}
 .delivery-blocks .order-blocks{margin-top:30px;margin-bottom:30px;}
 .delivery-blocks .order-blocks  .arrow-ico{cursor: pointer;}
-.delivery-blocks .order-blocks .order-detaile .items-3 .left{
-    display: flex;
+.delivery-blocks .order-blocks .order-detaile .order-content{
+    display: flex;align-items: center;justify-content: space-between;
+    padding:10px 0;
 }
 .delivery-blocks .order-blocks .button-items{
-   width:40%;text-align: right;
+   text-align: center;
 }
 .delivery-blocks .order-blocks .items-3 .button-items button{
     margin-left:30px;
 }
+.delivery-blocks .blue{color:#1890ff;}
+.delivery-blocks .cursor{cursor: pointer;}
 .delivery-blocks .order-detaile .items-3 .ant-checkbox-wrapper{line-height:100px;}
-.delivery-blocks .order-detaile .items-3 .title{padding-top:10px;}
 .delivery-blocks .order-detaile .items-3 h1{font-size:16px; padding-bottom:20px;}
 .delivery-blocks .order-detaile .items-3 p{padding-bottom:20px;}
-.delivery-blocks .order-detaile .items-3 img{
-    width:100px;height:100px;margin-right:20px;
+.delivery-blocks .order-detaile img{
+    width:60px;height:60px;margin-right:10px;vertical-align: middle;
 }
 .detail-items li{
     display: flex;justify-content: flex-start;line-height:2;
@@ -106,18 +113,31 @@ font-size:14px;
 .detail-items li label{
     display: inline-block;width:120px;text-align: right;font-size:14px;
 }
-.hide{display: none;}
+.delivery-blocks .red{color:#f00;}
+.order-blocks .hide{display: none;}
+.order-detaile.hide{display: none!important;}
 .delivery-blocks .express-items li{
-    display: flex;justify-content: flex-start;align-items: center;
     margin-bottom:20px;
+}
+.delivery-blocks .express-items li h1{padding-bottom:10px;}
+.delivery-blocks .express-items li .flex-blocks{
+    display: flex;justify-content: flex-start;align-items: center;margin-bottom:10px;
 }
 .delivery-blocks .express-items li label{
     display: inline-block;width:100px;
 }
-.delivery-blocks .express-items li .ant-select, input{width:100%;}
+.delivery-blocks .express-items li .ant-select, input{width:50%;}
+.delivery-blocks .express-items .flex-blocks{
+    display: flex;justify-content: space-between;align-items: center;
+}
+.delivery-blocks .express-items img{
+    width:60px;height:60px;margin-right:10px;
+}
+.delivery-blocks .express-items .ant-table-tbody > tr > td{vertical-align: middle;}
 .pagetion{
     text-align:center;font-size:12px;color:#1890ff;
 }
+.pagetion.hide{display: none;}
 .pagetion span{
     border:1px solid #1890ff;border-radius: 4px;
     padding:5px 10px;display: inline-block;margin:0 20px;

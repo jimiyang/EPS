@@ -13,7 +13,7 @@
         margin: 25px 45px 0 0;
       }
     }
-    .info {
+    .orderInfo {
       flex: 1;
       margin-top: 25px;
       h3 {
@@ -44,9 +44,12 @@
           font-size:12px;
         }
       }
-      .address {
+      .info {
         height: 55px;
         border-bottom: 1px solid #d7d7d7;
+        display: flex;
+        justify-content: space-between;
+        padding-right: 200px;
         p {
           line-height: 55px;
           &:last-of-type {
@@ -54,8 +57,13 @@
           }
         }
       }
+      .stock {
+        padding-left: 30px;
+        color: #949494;
+        font-size: 14px;
+      }
       .count {
-        margin-top: 20px;
+        margin-top: 7px;
         height: 60px;
         display: flex;
         justify-content: flex-start;
@@ -63,7 +71,7 @@
         font-size:12px;
       }
       button {
-        margin-top: 60px;
+        margin-top: 20px;
         width: 140px;
         height: 40px;
         border: 0;

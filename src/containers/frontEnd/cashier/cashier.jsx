@@ -7,14 +7,14 @@ class Cashier extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      detail: {},
-      payInfo: {},
+      detail: {}, // 订单详情
+      payInfo: {}, // 支付信息
       index: 0, // 支付模式 0 返佣账户 1 充值账户
       payMode: ['返佣账户'], // ['返佣账户', '充值账户']
-      ModalText: '确认支付当前订单？',
-      visible: false,
-      confirmLoading: false,
-      redirect: false,
+      ModalText: '确认支付当前订单？', // 支付弹窗信息
+      visible: false, // 控制支付弹窗的显示隐藏
+      confirmLoading: false, // 确定按钮的loading
+      redirect: false, // 控制重定向
     };
   }
 
@@ -42,26 +42,19 @@ class Cashier extends Component {
       res.account[0].available_balance = (Number(res.account[0].available_balance)).toFixed(2);
       this.setState({payInfo: res.account[0]});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
 
   // 打开支付窗口
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
+  changeModal = (value) => {
+    this.setState({visible: value});
   }
 
   // 确认支付
   handleOk = () => {
-    this.setState({
-      ModalText: '正在支付，请稍候',
-      confirmLoading: true,
-    });
+    this.setState({ModalText: '正在支付，请稍候', confirmLoading: true});
     const {detail, index, payInfo} = this.state;
     const params = {
       order_no: detail.order_no,
@@ -71,39 +64,20 @@ class Cashier extends Component {
     };
     window.api('trade.innerpay', params).then(() => {
       message.success('支付成功');
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '确认支付当前订单？',
-      });
+      this.setState({visible: false, confirmLoading: false, ModalText: '确认支付当前订单？'});
       this.props.history.push('/successfulPayment', {order_no: params.order_no});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
-      this.setState({
-        visible: false,
-        confirmLoading: false,
-        ModalText: '确认支付当前订单？',
-      });
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
+      this.setState({visible: false, confirmLoading: false, ModalText: '确认支付当前订单？'});
       message.error(error.service_error_message);
     });
   }
 
-  // 关闭支付窗口
-  handleCancel = () => {
-    this.setState({
-      visible: false,
-    });
-  }
-
   render() {
-    if (this.state.redirect) {
-      return (<Redirect to="/login" />);
-    }
     const {
-      visible, confirmLoading, ModalText, payMode, detail, payInfo
+      visible, confirmLoading, ModalText, payMode, detail, payInfo, redirect
     } = this.state;
+    if (redirect) return (<Redirect to="/login" />);
     return (
       <div id="cashier">
         <div>
@@ -111,7 +85,7 @@ class Cashier extends Component {
             visible={visible}
             onOk={this.handleOk}
             confirmLoading={confirmLoading}
-            onCancel={this.handleCancel}
+            onCancel={this.changeModal.bind(this, false)}
           >
             <p>{ModalText}</p>
           </Modal>
@@ -144,7 +118,7 @@ class Cashier extends Component {
           </div>
         </section>
         <section className="button">
-          <button onClick={this.showModal}>立即支付</button>
+          <button onClick={this.changeModal.bind(this, true)}>立即支付</button>
         </section>
       </div>
     );

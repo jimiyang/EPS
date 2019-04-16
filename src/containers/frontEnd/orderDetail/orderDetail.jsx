@@ -55,42 +55,22 @@ class OrderDetail extends Component {
 
   // 获取订单详情
   getOrderDetail = (orderNo) => {
-    const params = {
-      order_no: orderNo,
-    };
-    window.api('order.orderList', params).then(res => {
+    window.api('order.orderList', {order_no: orderNo}).then(res => {
       const status = res.orders[0].status;
-      let step; // 0：等待付款，1：等待发货，2：等待收货，3：已完成，4：已取消（默认0）
-      switch (status) {
-        case 0:
-          step = 1;
-          break;
-        case 1:
-          step = 2;
-          break;
-        case 2:
-          step = 3;
-          break;
-        case 3:
-          step = 4;
-          break;
-        case 4:
-          step = 1;
-          break;
-        default:
-          step = 5;
-      }
+      let step = status + 1; // 0：等待付款，1：等待发货，2：等待收货，3：已完成，4：已取消（默认0）
+      status === 4 ? step = 1 : null;
       const detail = res.orders[0].order_details[0];
-      if (status === 0) {
-        const create = (new Date(detail.gmt_created)).getTime();
-        const deadline = create + 24 * 60 * 60 * 1000;
-        let alltime = deadline - (new Date()).getTime();
-        if (alltime < 0) { // 超时判断，超过时间后取消订单
-          res.orders[0].status = 4;
-          detail.status = 4;
-          window.api('order.cancelOrder', {order_no: res.orders[0].order_details[0].order_no});
-        } else {
-          const timer = setInterval(() => {
+      const create = (new Date(detail.gmt_created)).getTime();
+      const deadline = create + 24 * 60 * 60 * 1000;
+      let alltime = deadline - (new Date()).getTime();
+      if (alltime < 0) { // 超时判断，超过时间后取消订单
+        res.orders[0].status = 4;
+        detail.status = 4;
+        window.api('order.cancelOrder', {order_no: res.orders[0].order_details[0].order_no});
+      } else {
+        let timer = null;
+        if (status === 0) {
+          timer = setInterval(() => {
             alltime = deadline - (new Date()).getTime();
             const hours = parseInt(alltime / (60 * 60 * 1000), 10);
             const time1 = alltime - hours * 60 * 60 * 1000;
@@ -102,17 +82,13 @@ class OrderDetail extends Component {
           }, 1000);
           this.setState({timer});
         }
-        detail.total_amt = (detail.total_amt).toFixed(2);
-        detail.real_amt = (detail.real_amt).toFixed(2);
-        detail.goods_sale_price = (detail.goods_sale_price).toFixed(2);
-        this.setState({
-          order: res.orders[0], step, goods: detail
-        });
       }
+      detail.total_amt = (detail.total_amt).toFixed(2);
+      detail.real_amt = (detail.real_amt).toFixed(2);
+      detail.goods_sale_price = (detail.goods_sale_price).toFixed(2);
+      this.setState({order: res.orders[0], step, goods: detail});
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
@@ -143,9 +119,7 @@ class OrderDetail extends Component {
       this.setState({step: 4});
       message.success('确认收货，已完成订单！');
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
   }
@@ -156,12 +130,10 @@ class OrderDetail extends Component {
   }
 
   render() {
-    if (this.state.redirect) {
-      return (<Redirect to="/login" />);
-    }
     const {
-      order, goods, step, time
+      order, goods, step, time, redirect
     } = this.state;
+    if (redirect) return (<Redirect to="/login" />);
     return (
       <div id="orderDetail">
         <header>
@@ -201,10 +173,10 @@ class OrderDetail extends Component {
           </div>
           {order.status === 1 || order.status === 2 || order.status === 3 ? (<div>
             <h3><Icon type="file-text" />订单信息</h3>
-            <div>
+            {/* <div>
               <i>交易流水号：</i>
               <span>{order.order_no}</span>
-            </div>
+            </div> */}
             <div>
               <i>付款方式：</i>
               {
@@ -256,6 +228,7 @@ class OrderDetail extends Component {
           <div className="content2">
             <div className="money">
               <p>商品总额：￥{goods.total_amt}</p>
+              <p>运费：￥0.00</p>
               <p style={{color: 'red'}}>应付总额：<span><em>￥</em>{goods.real_amt}</span></p>
             </div>
           </div>

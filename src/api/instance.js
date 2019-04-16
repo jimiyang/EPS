@@ -1,15 +1,15 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://192.168.19.118:8000/eps/base/', // 测试
-  // baseURL: 'http://eps.liantuobank.com/eps/base/', // 线上
+  baseURL: '',
+  // baseURL: 'http://eps.liantuobank.com/eps/base/',
   timeout: 50000,
   withCredentials: true
 });
 instance.interceptors.response.use(
   res => {
     const promise = new Promise((resolve, reject) => {
-      if (res.status === 200 && res.data.body.service_status === 'S' && res.data.head.visit_status === 'S') {
+      if (res.status === 200 && res.data.body.service_status === 'S' && res.data.head.visit_status === 'S' || res.data.body.is_success === 'S') {
         resolve(res.data.body);
       } else {
         reject(res.data.body);

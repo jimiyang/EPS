@@ -1,0 +1,63 @@
+.sn-blocks {
+    .nav-items{
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .tap-items span{
+            display: inline-block;font-size:14px;padding:10px 20px;border-bottom: 2px solid transparent;
+            position: relative; top:1px; cursor: pointer;
+        }
+        span.active{
+            border-bottom: 2px solid #1890ff;color: #1890ff;
+        }
+    }
+    .search-blocks{
+        display: flex;align-items: center;
+        li.items{
+            display: flex;align-items: center;margin:20px 10px;
+            .ant-select-auto-complete.ant-select-lg .ant-input{
+                height:32px;line-height:32px;
+            }
+        }
+    }
+    .form{
+        .ant-row{
+            display: flex;
+        }
+    }
+    .list{
+        li{
+            padding: 20px 0;
+        }
+        .select{width:300px;}
+        .file {
+            position: relative;/*绝对定位!*/
+            display: inline-block;/*设置为行内元素*/
+            background: #D0EEFF;
+            border: 1px solid #99D3F5;
+            border-radius: 4px;
+            padding: 4px 12px;
+            overflow: hidden;
+            color: #1E88C7;
+            text-decoration: none;
+            text-indent: 0;
+            line-height: 20px;
+            vertical-align: middle;
+            cursor: pointer;
+        } 
+        .file input {
+            position: absolute;/*相对定位*/
+            left: 0;
+            top: 0;
+            opacity: 0;/*将上传组件设置为透明的*/
+            height: 40px;
+            width: 100%;
+        } .file:hover {
+            background: #AADDFF;
+            border-color: #78C3F3;
+            color: #004974;
+            text-decoration: none;
+        }
+    }
+}

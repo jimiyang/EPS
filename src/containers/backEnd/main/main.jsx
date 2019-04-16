@@ -1,10 +1,6 @@
 import React, {Component} from 'react';
-import {Layout, Menu, Upload, message, Icon} from 'antd';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-} from 'react-router-dom';
+import {Layout, Menu, message, Icon} from 'antd';
+import {Link} from 'react-router-dom';
 import {Redirect} from 'react-router';
 import './main.less';
 
@@ -16,7 +12,15 @@ class Main extends Component {
     super(props);
     this.state = {
       redirect: false,
-      login_name: ''
+      login_name: '',
+      menuData: [
+        {name: '商品管理', url: '/main/list', icon: 'appstore'},
+        {name: '发货订单管理', url: '/main/deliverylist', icon: 'folder'},
+        {name: '商品类型管理', url: '/main/typelist', icon: 'project'},
+        {name: '品牌管理', url: '/main/brandlist', icon: 'cluster'},
+        {name: '库存管理', url: '/main/inventorylist', icon: 'shop'},
+        {name: '设备管理', url: '/main/facilitylist', icon: 'robot'}
+      ]
     };
   }
   componentWillMount() {
@@ -31,20 +35,20 @@ class Main extends Component {
       message.error('登录信息失效，请重新登录');
     }
   }
+
+  // 登出
   loginOutEvent = () => {
     window.api('eps.logout', {login_name: this.state.login_name}).then(res => {
-      if (res.service_status === 'S') {
-        this.props.history.push({pathname: '/login'});
-      }
+      res.service_status === 'S' ? this.props.history.push({pathname: '/login'}) : null;
     }).catch((error) => {
-      if (error.service_error_code === 'EPS000000801') {
-        this.setState({redirect: true});
-      }
+      error.service_error_code === 'EPS000000801' ? this.setState({redirect: true}) : null;
       message.error(error.service_error_message);
     });
     window.localStorage.clear();
   }
+
   render() {
+    const {menuData} = this.state;
     if (this.state.redirect) {
       return (<Redirect to="/login" />);
     }
@@ -60,9 +64,13 @@ class Main extends Component {
         <Layout>
           <Sider>
             <Menu mode="inline" style={{height: '100%', borderRight: 0}}>
-              <Menu.Item key="1"><Link to="/main/list"><Icon type="appstore" />商品管理</Link></Menu.Item>
-              <Menu.Item key="2"><Link to="/main/deliverylist"><Icon type="folder" />发货订单管理</Link></Menu.Item>
-              <Menu.Item key="3"><Link to="/main/typelist"><Icon type="project" />商品类型管理</Link></Menu.Item>
+              {
+                menuData.map((item, index) => (
+                  (
+                    <Menu.Item key={index}><Link to={item.url}><Icon type={item.icon} />{item.name}</Link></Menu.Item>
+                  )
+                ))
+              }
             </Menu>
           </Sider>
           <Content className="main-content">

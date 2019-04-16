@@ -1,10 +1,9 @@
 const CHANGE_SEARCH_DETAIL = 'frontEnd/CHANGE_SEARCH_DETAIL';
-const GET_GOODS_TYPE = 'frontEnd/GET_GOODS_TYPE';
 
 const initialState = {
+  type: null, // 查询类型
   searchContent: '', // 搜索内容
-  id: null, // 选中的商品类型
-  typeName: null, // 选种类型
+  id: null, // 属性或类型
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -12,9 +11,9 @@ export default function reducer(state = initialState, action = {}) {
     case CHANGE_SEARCH_DETAIL:
       return {
         ...state,
-        searchContent: action.payload.searchContent,
+        type: action.payload.type,
         id: action.payload.id,
-        typeName: action.payload.typeName
+        searchContent: action.payload.searchContent,
       };
     default:
       return state;
